@@ -2,7 +2,7 @@
 
 JSON-stat Javascript Toolkit v. 0.4.1
 http://json-stat.org
-http://code.google.com/p/json-stat/
+https://github.com/badosa/JSON-stat
 
 Copyright 2013 Xavier Badosa (http://xavierbadosa.com)
 
