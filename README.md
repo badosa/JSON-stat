@@ -21,17 +21,17 @@ For instance, to retrieve information about the first category of the first dime
 
      JSONstat(j).Dataset(0).Dimension(0).Category(0)
 
-## General properties
+### General properties
 
  * *label*: label of the selected element (string)
  * *length*: number of children of the selected element (number).
  * *id*: IDs of the children of the selected element (array).
 
-## Traversing methods
+### Traversing methods
 
 These methods (except JSONstat, that is not actually a method) accept a selection argument (ID or index). If it is not provided, an array is returned with the information for every child of the selected element.
 
-### JSONstat
+#### JSONstat
 
 Retrieves the root element from a JSON-stat response.
 
@@ -39,18 +39,18 @@ Retrieves the root element from a JSON-stat response.
      //number of datasets in the object
 
      JSONstat("http://json-stat.org/samples/oecd-canada.json").length
-     //number of datasets in oecd-unr.json. Sync connection
+     //number of datasets in oecd-canada.json. Sync connection
 
      JSONstat("http://json-stat.org/samples/oecd-canada.json", function(){console.log(this.length);})
-     //number of datasets in oecd-unr.json. Async connection
+     //number of datasets in oecd-canada.json. Async connection
 
-### Dataset
+#### Dataset
 
 Selects a particular dataset in the JSON-stat response.
 
      JSONstat(j).Dataset(0).id //IDs of the dimensions in the first dataset
 
-### Dimension
+#### Dimension
 
 Selects a particular dimension in a dataset in the JSON-stat response.
 
@@ -60,14 +60,14 @@ Selects a particular dimension in a dataset in the JSON-stat response.
      JSONstat(j).Dataset(0).Dimension('country').role
      //Role of the 'country' dimension in the first dataset
 
-### Category
+#### Category
 
 Selects a particular category in a dimension in a dataset in the JSON-stat response.
 
      JSONstat(j).Dataset(0).Dimension('time').Category(0).label
      //Label of the first category of the 'time' dimension in the first dataset
 
-### Data
+#### Data
 
 When an argument is passed, selects a single cell of the data cube in the JSON-stat response. If no argument is passed, returns all the cells. In the future this method might be able to select slices (subsets of cells).
 
@@ -91,11 +91,11 @@ This method accepts the property "value" to get the value of a cell and "status"
      JSONstat(j).Dataset(0).Data({"metric":"UNR","geo":"GR","time":"2014"}).status
      //Status of unemployment rate in Greece in 2014.
 
-## Transformation methods
+### Transformation methods
 
 Transformation methods get the information at a certain level of the JSON-stat tree and export it to other JSON structure for convenience.
 
-### toTable
+#### toTable
 
 This is a dataset method. It converts the information of a particular dataset into a JSON table. The conversion can be setup using an optional argument.
 
