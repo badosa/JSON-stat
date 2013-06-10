@@ -10,7 +10,7 @@ The goal of the JSON-stat Javascript Toolkit is to help dealing with JSON-stat r
 
 JSON-stat is based on a data cube information structure. The JSON-stat Javascript Toolkit exposes the data cube as a tree.
 
-## The JSON-stat tree
+### The JSON-stat tree
 
  * *Dataset*
    * *Dimension*
@@ -39,10 +39,12 @@ Retrieves the root element from a JSON-stat response.
      //number of datasets in the object
 
      JSONstat("http://json-stat.org/samples/oecd-canada.json").length
-     //number of datasets in oecd-canada.json. Sync connection
+     //number of datasets in oecd-canada.json. Sync connection.
 
-     JSONstat("http://json-stat.org/samples/oecd-canada.json", function(){console.log(this.length);})
-     //number of datasets in oecd-canada.json. Async connection
+     JSONstat("http://json-stat.org/samples/oecd-canada.json", 
+        function(){console.log(this.length);}
+     )
+     //number of datasets in oecd-canada.json. Async connection.
 
 #### Dataset
 
