@@ -75,12 +75,6 @@ When an argument is passed, selects a single cell of the data cube in the JSON-s
 
 This method accepts the property "value" to get the value of a cell and "status" to get its status.
 
-     JSONstat(j).Dataset(0).Data().value
-     //Values in the first dataset (array)
-
-     JSONstat(j).Dataset(0).Data().status
-     //If status metadata is present, status of each data in the first dataset (array)
-
      JSONstat(j).Dataset(0).Data(0).value
      //Value of the first cell (usually a number, but values can be of any type).
 
