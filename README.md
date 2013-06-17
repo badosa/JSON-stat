@@ -134,6 +134,6 @@ Current version is *0.4.1*.
 
 ## Test suite and documentation
 
-To test this library, check the *JSON-stat Test Suite* page: http://json-stat.org/test/suite/. That page also serve as *documentation*.
+To test this library, check the *JSON-stat Test Suite* page: http://json-stat.org/test/suite/. That page also serves as *documentation*.
 
 This toolkit is also used in the *JSON-stat Test* page: http://json-stat.org/test/ and in the *JSON-stat Dataviz* page: http://json-stat.org/dataviz/.
