@@ -57,7 +57,7 @@ function JSONstat(resp,f){
 			var json, async=(func!==false);
 			if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to some domain won't be specified using an absolute address). Not integrated because it'll will be removed someday...
 				if(!async){
-					console.log("JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).");
+					//console.log("JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).");
 					return;
 				}
 				var req=new XDomainRequest();
