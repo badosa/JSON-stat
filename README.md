@@ -128,10 +128,6 @@ This is a dataset method. It converts the information of a particular dataset in
      //Get only the female population by age of Canada 
      //and convert values from thousands to persons.
 
-## Current version
-
-Current version is *0.4.1*.
-
 ## Test suite and documentation
 
 To test this library, check the *JSON-stat Test Suite* page: http://json-stat.org/test/suite/. That page also serves as *documentation*.
