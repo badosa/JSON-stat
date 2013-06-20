@@ -29,7 +29,7 @@ For instance, to retrieve information about the first category of the first dime
 
 ### Traversing methods
 
-These methods (except JSONstat, that is not actually a method) accept a selection argument (ID or index). If it is not provided, an array is returned with the information for every child of the selected element.
+These methods (except JSONstat, which is not actually a method) accept a selection argument (ID or index). If it is not provided, an array is returned with the information for every child of the selected element.
 
 #### JSONstat
 
