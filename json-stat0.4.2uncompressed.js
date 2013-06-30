@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.4.2
+JSON-stat Javascript Toolkit v. 0.4.2.1
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.4.2";
+JSONstat.version="0.4.2.1";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -207,7 +207,7 @@ function JSONstat(resp,f){
 							// If index is array instead of object convert into object
 							// That is: we normalize it (instead of defining a function depending on
 							// index type to read categories -maybe in the future when indexOf can be
-							// assume for all browsers and default is array instead of object-)
+							// assumed for all browsers and default is array instead of object-)
 							if(isArray(otd[otd.id[d]].category.index)){
 								var oindex={}, index=otd[otd.id[d]].category.index;
 								for (var i=0, len=index.length; i<len; i++){
@@ -241,7 +241,7 @@ function JSONstat(resp,f){
 
 				//Array conversion
 				for (var prop in otc.index){
-					cats.push(prop);
+					cats[otc.index[prop]]=prop; //0.4.3 cats.push(prop) won't do because order not in control when index was originally an array and was converted to object by the Toolkit.
 				}
 
 				this.__tree__=ot;
@@ -317,7 +317,7 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		//currently only role is supported as filter criterion
+		//currently only "role" is supported as filter criterion
 		if(typeof dim==="object" && dim.hasOwnProperty("role")){
 			var ar=[];
 			for(var c=0, len=this.id.length; c<len; c++){
@@ -407,7 +407,6 @@ function JSONstat(resp,f){
 		//Less positions than needed will return undefined
 		if(isArray(e)){
 			var mult=1,
-				  m=[],
 				  res=0,
 				  miss=[],
 				  nmiss=[],
@@ -422,9 +421,9 @@ function JSONstat(resp,f){
 					}
 					//Used if normal case (miss.length===0)
 					mult*=(i>0) ? n[(dims-i)] : 1;
-					m.push(mult);
+					res+=mult*e[dims-i-1]; //simplified in 0.4.3
 				}else{
-					//Used is missing dimensions miss.length>0
+					//Used if missing dimensions miss.length>0
 					miss.push(i); //missing dims
 					nmiss.push(n[i]); //missing dims size
 				}
@@ -451,10 +450,7 @@ function JSONstat(resp,f){
 				return ret;
 			}
 
-			//miss.length===0
-			for(var i=dims; i--;){
-				res+=m[i]*e[dims-i-1];
-			}
+			//miss.length===0 (use previously computed res) //simplified in 0.4.3
 			return {"value" : this.value[res], "status": getStatus(this,res), "length" : 1};//To do: add more metada...
 		}
 
