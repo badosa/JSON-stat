@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.4.2.1
+JSON-stat Javascript Toolkit v. 0.4.2.2
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.4.2.1";
+JSONstat.version="0.4.2.2";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -210,7 +210,7 @@ function JSONstat(resp,f){
 							// assumed for all browsers and default is array instead of object-)
 							if(isArray(otd[otd.id[d]].category.index)){
 								var oindex={}, index=otd[otd.id[d]].category.index;
-								for (var i=0, len=index.length; i<len; i++){
+								for (var i=0, ilen=index.length; i<ilen; i++){
 									oindex[index[i]]=i;
 								}
 								otd[otd.id[d]].category.index=oindex;
