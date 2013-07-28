@@ -1,0 +1,54 @@
+body {
+	margin: 1em 2em;
+	font-family: Verdana, Geneva, sans-serif;
+}
+h1 {
+	font-size: 110%;
+}
+a {
+	color: blue;
+	text-decoration: none;
+}
+a:hover, a:active {
+	color: red;
+	text-decoration: underline;
+}
+address {
+	font-style: normal;
+	font-size: 85%;
+	font-weight: normal;
+}
+strong {
+	color: green;
+}
+dt {
+	font-weight: bold;
+	margin: 1em 0 0.5em 0;
+}
+dd {
+	margin: 0;
+	padding: 0;
+}
+dd.text {
+	font-size: 90%;
+	margin-top: 1em;
+	padding: 1em;
+	background-color: #f0f0f0;
+	line-height: 1.6;
+}
+code {
+	font-family: "Courier New", Courier, monospace;
+	font-weight: bold;
+	font-size: 1em;
+	color: green;
+}
+em {
+	color: blue;
+	font-style: normal;
+}
+dd em {
+	font-size: 90%;
+}
+.nok {
+	color: red;
+}
