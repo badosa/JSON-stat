@@ -1,10 +1,10 @@
 # JSON-stat
 
-The ultimate goal of JSON-stat.org is to define a lightweight JSON format that is suitable for statistical dissemination using web services.
+The JSON-stat format is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
 
-JSON-stat is documented at http://json-stat.org/doc/.
+The JSON-stat format is documented at http://json-stat.org/doc/.
 
-The goal of the JSON-stat Javascript Toolkit is to help dealing with JSON-stat responses in Javascript.
+The goal of the JSON-stat Javascript Toolkit (JJT) is to help dealing with JSON-stat responses in Javascript.
 
 ## Design principles
 
@@ -130,6 +130,8 @@ This is a dataset method. It converts the information of a particular dataset in
 
 ## Test suite and documentation
 
-To test this library, check the *JSON-stat Test Suite* page: http://json-stat.org/test/suite/. That page also serves as *documentation*.
+To test this library, [download this repository as a ZIP file](https://github.com/badosa/JSON-stat/archive/master.zip) and try the [Test Suite](https://github.com/badosa/JSON-stat/tree/master/test). Currently, that page also serves as *documentation*.
 
-This toolkit is also used in the *JSON-stat Test* page: http://json-stat.org/test/ and in the *JSON-stat Dataviz* page: http://json-stat.org/dataviz/.
+## Code samples
+
+See the [Examples](https://github.com/badosa/JSON-stat/wiki/Examples) page in the [Wiki](https://github.com/badosa/JSON-stat/wiki).
