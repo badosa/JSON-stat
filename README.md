@@ -2,7 +2,7 @@
 
 The JSON-stat format is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
 
-The JSON-stat format is documented at http://json-stat.org/doc/.
+The JSON-stat format is documented at http://json-stat.org/format/.
 
 The goal of the JSON-stat Javascript Toolkit (JJT) is to help dealing with JSON-stat responses in Javascript.
 
@@ -128,9 +128,9 @@ This is a dataset method. It converts the information of a particular dataset in
      //Get only the female population by age of Canada 
      //and convert values from thousands to persons.
 
-## Test suite and documentation
+## Test suite
 
-To test this library, [download this repository as a ZIP file](https://github.com/badosa/JSON-stat/archive/master.zip) and try the [Test Suite](https://github.com/badosa/JSON-stat/tree/master/test). Currently, that page also serves as *documentation*.
+To test this library, [download this repository as a ZIP file](https://github.com/badosa/JSON-stat/archive/master.zip) and try the [Test Suite](https://github.com/badosa/JSON-stat/tree/master/test). Or visit http://json-stat.org/tools/.
 
 ## Code samples
 
