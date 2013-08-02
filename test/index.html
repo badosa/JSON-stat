@@ -12,23 +12,20 @@
 		<link rel="openid.delegate" href="http://badosa.myopenid.com/" />
 		<link rel="openid.server" href="http://www.myopenid.com/server" />
 		<script src="../json-stat.js"></script>
+		<script src="sample.js"></script><!-- Contains sample response (oecd-canada.json) -->
 	</head>
 	<body>
 		<h1>JSON-stat Javascript Toolkit <span id="version"></span> / Test Suite</h1>
 		<dl></dl>
 
-		<!--[if lt IE 10]>
-			<script>var oldie=true;</script>
-		<![endif]-->
 
 		<script>
 			var 
-				oldie=oldie||false,
 				test=[
 					{
 						title: 'Assign a JSON-stat response to variable J',
 						exp: "root",
-						code: 'J=JSONstat("http://json-stat.org/samples/oecd-canada.json")',
+						code: 'J=JSONstat(response)',
 						text: 'JSONstat() accepts a JSON-stat response (object) or a URI (string). It returns an object of class jsonstat. You can try this same sample from your own domain as JSON-stat.org is <a href="http://enable-cors.org/">CORS-enabled</a> (you will need to use a modern browser). In this page, result is "root" because this is the content of the type property. This property is returned when toString is invoked. When a URI is specified, the connection will be sync unless a callback function is passed as a second argument: JSONstat("http://json-stat.org/samples/oecd-canada.json", function(){ console.log(this.length); })'
 					},
 
@@ -361,38 +358,34 @@
 
 			ver.innerHTML='(v. '+JSONstat.version+')';
 
-			if(!oldie){
-				for(var t=0, len=test.length; t<len; t++){
-					var 
-						r=eval(test[t].code),
-						ok=(r==test[t].exp) ? '<em>Passed</em>' : '<em class="nok">Not passed</em>',
-						n=t+1,
-						res=r.toString(),
-						res=(res.length<100) ? res : res.substr(0,100)+'&hellip;',
-						dt=d.createElement('dt'),
-						dd1=d.createElement('dd'),
-						dd2=d.createElement('dd'),
-						dd3=d.createElement('dd')
-					;
-					dd1.className='code';
-					dd2.className='result';
-					dd3.className='text';
-					dt.id='c'+n;
-					dt.innerHTML=n+'. '+test[t].title+' ('+ok+')';
-					dd1.innerHTML='Code: <code>'+test[t].code+'</code>';
-					dd2.innerHTML='Result: <em>'+res+'</em>';
-					dd3.innerHTML=test[t].text;
+			for(var t=0, len=test.length; t<len; t++){
+				var 
+					r=eval(test[t].code),
+					ok=(r==test[t].exp) ? '<em>Passed</em>' : '<em class="nok">Not passed</em>',
+					n=t+1,
+					res=r.toString(),
+					res=(res.length<100) ? res : res.substr(0,100)+'&hellip;',
+					dt=d.createElement('dt'),
+					dd1=d.createElement('dd'),
+					dd2=d.createElement('dd'),
+					dd3=d.createElement('dd')
+				;
+				dd1.className='code';
+				dd2.className='result';
+				dd3.className='text';
+				dt.id='c'+n;
+				dt.innerHTML=n+'. '+test[t].title+' ('+ok+')';
+				dd1.innerHTML='Code: <code>'+test[t].code+'</code>';
+				dd2.innerHTML='Result: <em>'+res+'</em>';
+				dd3.innerHTML=test[t].text;
 
-					dl.appendChild(dt);
-					dl.appendChild(dd1);
-					dl.appendChild(dd2);
-					dl.appendChild(dd3);
-				}
-			}else{
-				dl.innerHTML='Sorry, <strong>this Test Suite uses a synchronous cross-domain request that won&rsquo;t work on Internet Explorer 9 or older</strong>. All the features of the JSON-stat Javascript Toolkit will work on any browser, except the http request features. Http request features will work on any modern browser. Internet Explorer 9 is also supported but only if the request is cross-domain and <strong>asynchronous</strong>. Please, use a different browser to view this Test Suite.';
+				dl.appendChild(dt);
+				dl.appendChild(dd1);
+				dl.appendChild(dd2);
+				dl.appendChild(dd3);
 			}
 		</script>
 		<noscript>Errrrr... This is embarassing... This page needs Javascript to work.</noscript>
-		<address><a href="http://json-stat.org">JSON-stat.org</a> | <a href="http://badosa.github.io/JSON-stat/">GitHub</a> | Last update: 2013-07-31 &copy; <a href="http://xavierbadosa.com">Xavier Badosa</a></address>
+		<address><a href="http://json-stat.org">JSON-stat.org</a> | <a href="http://badosa.github.io/JSON-stat/">GitHub</a> | Last update: 2013-08-01 &copy; <a href="http://xavierbadosa.com">Xavier Badosa</a></address>
 	</body>
 </html>
