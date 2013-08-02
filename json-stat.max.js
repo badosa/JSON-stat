@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.4.2.2
+JSON-stat Javascript Toolkit v. 0.5.0
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.4.2.2";
+JSONstat.version="0.5.0";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -55,7 +55,7 @@ function JSONstat(resp,f){
 	function jsonstat(o,f){
 		var xhr=function(uri, func){
 			var json, async=(func!==false);
-			if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to some domain won't be specified using an absolute address). Not integrated because it'll will be removed someday...
+			if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to same domain won't be specified using an absolute address). Not integrated because it'll will be removed someday...
 				if(!async){
 					//console.log("JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).");
 					return;
@@ -110,7 +110,7 @@ function JSONstat(resp,f){
 		if (o===null || typeof o==="undefined"){
 			return;
 		}
-		var type=o.type||"root";
+		var type=o.type || "root";
 		switch(type){
 			case "root" :
 				this.type="root";
@@ -146,8 +146,9 @@ function JSONstat(resp,f){
 				}
 				var ot=o.__tree__;
 				this.__tree__=ot;
-				this.label=o.label;
-				this.updated=o.updated;
+				this.label=ot.label || null;
+				this.updated=ot.updated || null;
+				this.source=ot.source || null; //v.0.5.0
 
 				//Sparse cube (If toTable() removed, this logic can be moved inside Data()
 				//which is more efficient when retrieving a single value/status.
@@ -169,11 +170,7 @@ function JSONstat(resp,f){
 				}
 
 				this.value=normalize(ot.value,dsize);
-				if(!(ot.hasOwnProperty("status"))){
-					this.status=null;
-				}else{
-					this.status=normalize(ot.status,dsize);
-				}
+				this.status=(!(ot.hasOwnProperty("status"))) ? null : normalize(ot.status,dsize);
 				
 				// if dimensions are defined, id and size arrays are required and must have equal length
 				if (ot.hasOwnProperty("dimension")){
@@ -245,18 +242,26 @@ function JSONstat(resp,f){
 				}
 
 				this.__tree__=ot;
-				this.label=o.label;
+				//When no dimension label, undefined is returned.
+				//Discarded options: null / dim
+				this.label=ot.label || null;
 				this.id=cats;
 				this.length=cats.length;
 				this.role=o.role;
 			break;
 			case "cat" :
+				var par=o.parent;
 				this.type="cat";
-				this.length=0;
-				this.id=o.id; //unneeded: just to have id length and label everywhere
+
+				//0.5.0 changed. It was autoreference: id, And length was 0 always
+				this.id=par; 
+				this.length=(par===null) ? 0 : par.length;
+
 				this.index=o.index;
 				this.label=o.label;
-				this.__tree__=o.__tree__;
+				this.unit=o.unit; //v.0.5.0
+				this.coordinates=o.coord; //v.0.5.0
+			break;
 		}
 	}
 
@@ -280,7 +285,7 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		return new jsonstat({"label" : tds.label, "updated" : tds.updated, "type" : "ds", "__tree__": tds});
+		return new jsonstat({"type" : "ds", "__tree__": tds});
 	}
 
 	jsonstat.prototype.Dimension=function(dim){
@@ -334,11 +339,7 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		//When no dimension label, undefined is returned.
-		//Discarded options: null / dim
-		//var label=(typeof otdd.label!=="undefined") ? otdd.label : null;
-		//var label=(typeof otdd.label!=="undefined") ? otdd.label : dim;
-		return new jsonstat({"__tree__": otdd, "label" : otdd.label, "role": role(otd,dim), "type" : "dim"});
+		return new jsonstat({"type" : "dim", "__tree__": otdd, "role": role(otd,dim)});
 	}
 
 	jsonstat.prototype.Category=function(cat){
@@ -359,7 +360,11 @@ function JSONstat(resp,f){
 		if(typeof oc==="undefined"){
 			return null;
 		}
-		return new jsonstat({"index": oc.index[cat], "label": oc.label[cat], "__tree__" : null, "type" : "cat", "id" : cat});
+
+		var unit=(oc["unit"] && oc["unit"][cat]) || null;
+		var coord=(oc["coordinates"] && oc["coordinates"][cat]) || null;
+		var parent=(oc["parent"] && oc["parent"][cat]) || null;
+		return new jsonstat({"type" : "cat", "index": oc.index[cat], "label": oc.label[cat], "parent" : parent, "unit" : unit, "coord" : coord});
 	}
 
 	//Validations, pending

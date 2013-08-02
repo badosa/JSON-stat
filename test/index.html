@@ -79,6 +79,13 @@
 					},
 
 					{
+						title: 'Get the source of the OECD dataset',
+						exp: 'Economic Outlook No 92 - December 2012 - OECD Annual Projections',
+						code: 'J.Dataset("oecd").source',
+						text: 'A string is returned explaining where the dataset comes from.'
+					},
+
+					{
 						title: 'Get the number of dimensions of the dataset "oecd"',
 						exp: 3,
 						code: 'J.Dataset("oecd").length',
@@ -233,18 +240,40 @@
 					},
 
 					{
-						title: 'Get the label of the first category in the same dimension as before using the Category() method without arguments',
+						title: 'Get the label of the first category as before using the Category() method without arguments',
 						exp: 'Australia',
 						code: 'J.Dataset(0).Dimension(1).Category()[0].label',
 						text: 'Using methods without arguments is only recommended when you need to retrieve all the information of all the children in one step.'
 					},
 
 					{
-						title: 'Get the ID of the first category in the same dimension as before using the Category() method',
-						exp: 'AU',
-						code: 'J.Dataset(0).Dimension(1).Category(0).id',
-						text: 'This is not the recommended way to get this information (use <a href="#c26">code 26</a> instead). As categories have no children, the "id" attribute does not return an array of children IDs but refers to itself. This use of the "id" attribute is not homogeneous and might be deprecated in the future. In fact, it allows you to ask silly things like J.Dataset(0).Dimension(1).Category("AU").id. It has been included to allow the same attributes in all levels (even if it has a slightly different meaning in the last one).'
+						title: 'Get the number of children of the "EU15" category in the "area" dimension',
+						exp: 15,
+						code: 'J.Dataset(0).Dimension("area").Category("EU15").length',
+						text: 'When a dimension is hierchical, use length to check if a category has children.'
 					},
+
+					{
+						title: 'Get the IDs of of the children of the "EU15" category in the "area" dimension',
+						exp: 'AT,BE,DE,DK,ES,FI,FR,GR,IE,IT,LU,NL,PT,SE,UK',
+						code: 'J.Dataset(0).Dimension("area").Category("EU15").id',
+						text: 'An array is returned.'
+					},
+
+					{
+						title: 'Get the coordinates of the "AU" category in the "area" dimension, if available',
+						exp: null,
+						code: 'J.Dataset(0).Dimension("area").Category("AU").coordinates',
+						text: 'A [long, lat] array is returned, or null if coordinates information is not available.'
+					},
+
+					{
+						title: 'Get the unit information of the "UNR" category in the "concept" dimension, if available',
+						exp: '[object Object]',
+						code: 'J.Dataset(0).Dimension("concept").Category("UNR").unit',
+						text: 'An object is returned with all the properties included by the data provider inside "unit".'
+					},
+
 
 					{
 						title: 'Get the first value in the first dataset',
@@ -363,7 +392,7 @@
 					r=eval(test[t].code),
 					ok=(r==test[t].exp) ? '<em>Passed</em>' : '<em class="nok">Not passed</em>',
 					n=t+1,
-					res=r.toString(),
+					res=(r!==null) ? r.toString() : "null",
 					res=(res.length<100) ? res : res.substr(0,100)+'&hellip;',
 					dt=d.createElement('dt'),
 					dd1=d.createElement('dd'),
