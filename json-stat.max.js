@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.5.1
+JSON-stat Javascript Toolkit v. 0.5.2
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.5.1";
+JSONstat.version="0.5.2";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -278,7 +278,8 @@ function JSONstat(resp,f){
 			return ar;
 		}
 		if(typeof ds==="number"){
-			return this.Dataset(this.id[ds]);
+			var num=this.id[ds];
+			return (typeof num!=="undefined") ? this.Dataset(num) : null;
 		}
 
 		var tds=this.__tree__[ds];
@@ -315,7 +316,8 @@ function JSONstat(resp,f){
 			return ar;
 		}
 		if(typeof dim==="number"){
-			return this.Dimension(this.id[dim]);
+			var num=this.id[dim];
+			return (typeof num!=="undefined") ? this.Dimension(num) : null;
 		}
 
 		var otd=this.__tree__.dimension;
@@ -355,17 +357,23 @@ function JSONstat(resp,f){
 			return ar;
 		}
 		if(typeof cat==="number"){
-			return this.Category(this.id[cat]);
+			var num=this.id[cat];
+			return (typeof num!=="undefined") ? this.Category(num) : null;
 		}
+
 		var oc=this.__tree__.category;
 		if(typeof oc==="undefined"){
+			return null;
+		}
+		var index=oc.index[cat];
+		if(typeof index==="undefined"){
 			return null;
 		}
 
 		var unit=(oc["unit"] && oc["unit"][cat]) || null;
 		var coord=(oc["coordinates"] && oc["coordinates"][cat]) || null;
 		var parent=(oc["parent"] && oc["parent"][cat]) || null;
-		return new jsonstat({"type" : "cat", "index": oc.index[cat], "label": oc.label[cat], "parent" : parent, "unit" : unit, "coord" : coord});
+		return new jsonstat({"type" : "cat", "index": index, "label": oc.label[cat], "parent" : parent, "unit" : unit, "coord" : coord});
 	}
 
 	//Validations, pending
