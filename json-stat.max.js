@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.5.0
+JSON-stat Javascript Toolkit v. 0.5.1
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.5.0";
+JSONstat.version="0.5.1";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -248,12 +248,13 @@ function JSONstat(resp,f){
 				this.id=cats;
 				this.length=cats.length;
 				this.role=o.role;
+				this.hierarchy=otc.hasOwnProperty("parent"); //0.5.1
 			break;
 			case "cat" :
 				var par=o.parent;
 				this.type="cat";
 
-				//0.5.0 changed. It was autoreference: id, And length was 0 always
+				//0.5.0 changed. It was autoreference: id. And length was 0 always
 				this.id=par; 
 				this.length=(par===null) ? 0 : par.length;
 
