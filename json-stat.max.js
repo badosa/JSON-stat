@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.5.2
+JSON-stat Javascript Toolkit v. 0.5.2.1
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.5.2";
+JSONstat.version="0.5.2.1";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -326,15 +326,19 @@ function JSONstat(resp,f){
 		}
 
 		//currently only "role" is supported as filter criterion
-		if(typeof dim==="object" && dim.hasOwnProperty("role")){
-			var ar=[];
-			for(var c=0, len=this.id.length; c<len; c++){
-				var oid=this.id[c];
-				if(role(otd,oid)===dim.role){
-					ar.push(this.Dimension(oid));
+		if(typeof dim==="object"){
+			if(dim.hasOwnProperty("role")){
+				var ar=[];
+				for(var c=0, len=this.id.length; c<len; c++){
+					var oid=this.id[c];
+					if(role(otd,oid)===dim.role){
+						ar.push(this.Dimension(oid));
+					}
 				}
+				return (typeof ar[0]==="undefined") ? null : ar;
+			}else{
+				return null;
 			}
-			return ar;
 		}
 
 		var otdd=otd[dim];
