@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.5.2.1
+JSON-stat Javascript Toolkit v. 0.5.2.2
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.5.2.1";
+JSONstat.version="0.5.2.2";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -267,7 +267,7 @@ function JSONstat(resp,f){
 	}
 
 	jsonstat.prototype.Dataset=function(ds){
-		if (this===null){
+		if (this===null || this.type!=="root"){
 			return null;
 		}
 		if(typeof ds==="undefined"){
@@ -305,7 +305,7 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		if (this===null){
+		if (this===null || this.type!=="ds"){
 			return null;
 		}
 		if(typeof dim==="undefined"){
@@ -350,7 +350,7 @@ function JSONstat(resp,f){
 	}
 
 	jsonstat.prototype.Category=function(cat){
-		if(this===null){
+		if (this===null || this.type!=="dim"){
 			return null;
 		}
 		if(typeof cat==="undefined"){
@@ -380,9 +380,7 @@ function JSONstat(resp,f){
 		return new jsonstat({"type" : "cat", "index": index, "label": oc.label[cat], "parent" : parent, "unit" : unit, "coord" : coord});
 	}
 
-	//Validations, pending
 	jsonstat.prototype.Data=function(e){
-		//DataById {"sex" : "M", "age" : "A", "ter": "B"}).value -> value or undefined
 		function firstprop(o){
 			for (var p in o) {
 				if(o.hasOwnProperty(p)){
@@ -417,13 +415,17 @@ function JSONstat(resp,f){
 
 		//Data By Position in original array
 		if(typeof e==="number"){
-			return (e<this.n) ? {"value" : this.value[e] , "status": getStatus(this,e), length: 1} : {"value" : undefined, "status": undefined, "length" : 0};//To do: add more metada...
+			var num=this.value[e];
+			return (typeof num!=="undefined") ? {"value" : num, "status": getStatus(this,e)} : null; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
 		}
 
 		//DataByPosition in every dim
 		//If more positions than needed are provided, they will be ignored.
 		//Less positions than needed will return undefined
 		if(isArray(e)){
+			if(this.length!==e.length){ //0.5.2.2
+				return null;
+			}
 			var mult=1,
 				  res=0,
 				  miss=[],
@@ -435,7 +437,7 @@ function JSONstat(resp,f){
 			for(var i=0; i<dims; i++){
 				if(typeof e[i]!=="undefined"){
 					if(typeof e[i]!=="number" || e[i]>=n[i]){
-						return {"value" : undefined, "status": undefined, "length" : 0};//To do: add more metada...
+						return null; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
 					}
 					//Used if normal case (miss.length===0)
 					mult*=(i>0) ? n[(dims-i)] : 1;
@@ -451,7 +453,7 @@ function JSONstat(resp,f){
 			//If one non-single dimension is missing create array of results
 			//If more than one non-single dimension is missing, WARNING
 			if(miss.length>1){
-				return {"value" : undefined, "status": undefined, "length" : 0};//To do: add more metada...
+				return null; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
 			}
 			if(miss.length===1){
 				for(var c=0, clen=nmiss[0]; c<clen; c++){
@@ -469,7 +471,7 @@ function JSONstat(resp,f){
 			}
 
 			//miss.length===0 (use previously computed res) //simplified in 0.4.3
-			return {"value" : this.value[res], "status": getStatus(this,res), "length" : 1};//To do: add more metada...
+			return {"value" : this.value[res], "status": getStatus(this,res)/*, "length" : 1*/};
 		}
 
 		var id=dimObj2Array(tree, e);
