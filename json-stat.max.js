@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.5.3.1
+JSON-stat Javascript Toolkit v. 0.5.3.2
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.5.3.1";
+JSONstat.version="0.5.3.2";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -35,9 +35,9 @@ function JSONstat(resp,f){
 	function isArray(o) {
 		return Object.prototype.toString.call(o) === "[object Array]";
 	}
-	//Check availability as a last step (after sparse cube problem, which is treated at dimension level (normalize). Support for ["a"] and "a".
+	//Check availability as a last step (after sparse cube problem, which is treated at dataset level (normalize). Support for ["a"] and "a".
 	//Used by Data() and toTable(), that is: always after Dataset(): e.value (this.value) is defined but not used in current implementation.
-	//Using s.length>0 means that if value and status have length different it will assume last values have undefined statuses
+	//Using s.length>0 means that if value and status have different lengths it will assume last values have undefined statuses
 	function getStatus(e,i){
 		var s=e.status;
 		if(s!==null){
@@ -558,6 +558,7 @@ function JSONstat(resp,f){
 		if(opts.type==="object"){
 			//Object
 			var 
+				valuetype=(typeof this.value[0]==="number" || this.value[0]===null) ? "number" : "string", //cell type inferred from first cell. If null, number is assumed (naif)
 				addCol=function(dimid,dimlabel){
 					var label=(useid && dimid) || dimlabel || dimid; //if userid then id; else label; then id if not label
 					cols.push({id: dimid, label: label, type: "string"}); //currently not using datetime Google type (requires a Date object)
@@ -570,7 +571,7 @@ function JSONstat(resp,f){
 					if(status){
 						cols.push({id: "status", label: slabel, type: "string"});
 					}
-					cols.push({id: "value", label: vlabel, type: "number"});
+					cols.push({id: "value", label: vlabel, type: valuetype});
 				},
 				addRow=function(r){
 					row.push({v: r});
