@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.5.2.2
+JSON-stat Javascript Toolkit v. 0.5.3
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.5.2.2";
+JSONstat.version="0.5.3";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -516,7 +516,7 @@ function JSONstat(resp,f){
 
 			for(var r=0, len=arr.length; r<len; r++){
 				var a=func.call(
-					null,
+					this, //0.5.3
 					arr[r], //Discarded for efficiency: (opts.type!=='object') ? arr[r] : arr[r].c,
 					r
 				);
