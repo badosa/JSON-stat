@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.5.3
+JSON-stat Javascript Toolkit v. 0.5.3.1
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.5.3";
+JSONstat.version="0.5.3.1";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -398,8 +398,7 @@ function JSONstat(resp,f){
 			return a;
 		}
 
-		var tree=this.__tree__, n=tree.dimension.size, dims=n.length //same as this.length;
-		if(this===null || typeof tree==="undefined"){
+		if(this===null || this.type!=="ds"){
 			return null;
 		}
 
@@ -418,6 +417,8 @@ function JSONstat(resp,f){
 			var num=this.value[e];
 			return (typeof num!=="undefined") ? {"value" : num, "status": getStatus(this,e)} : null; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
 		}
+
+		var tree=this.__tree__, n=tree.dimension.size, dims=n.length //same as this.length;
 
 		//DataByPosition in every dim
 		//If more positions than needed are provided, they will be ignored.
@@ -490,9 +491,10 @@ function JSONstat(resp,f){
 		PENDING: use metric or any dim cat IDs instead of "value" and assign as many fields as metrics (pivot "by").
 	*/
 	jsonstat.prototype.toTable=function(opts, func){
-		if (typeof this.__tree__==="undefined"){
+		if(this===null || this.type!=="ds"){
 			return null;
 		}
+
 		if(arguments.length==1 && typeof opts==="function"){
 			func=opts, opts=null;
 		}
