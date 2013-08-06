@@ -17,10 +17,10 @@ JSON-stat is based on a data cube information structure. The JSON-stat Javascrip
      * *Category*
    * *Data*
 
-For instance, to retrieve information about the first category of the first dimension of the first dataset in a JSON-stat response _j_, the JSON-stat Javascript Toolkit allows you to traverse the JSON-stat tree like this:
+For instance, to retrieve information about the first category of the first dimension of the first dataset in a JSON-stat response *j*, the JSON-stat Javascript Toolkit allows you to traverse the JSON-stat tree like this:
 
 ```js
-     JSONstat( j ).Dataset( 0 ).Dimension( 0 ).Category( 0 )
+JSONstat( j ).Dataset( 0 ).Dimension( 0 ).Category( 0 )
 ```
 
 ### General properties
@@ -146,4 +146,4 @@ JSONstat( j ).Dataset( "canada" ).toTable(
 
 ## Further information
 
-For installation instructions, code samples or the API reference, etc., see the [Wiki](https://github.com/badosa/JSON-stat/wiki).
+For **installation instructions**, **code samples**, the **API reference**, etc., see the [Wiki](https://github.com/badosa/JSON-stat/wiki).
