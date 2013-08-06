@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="JSON-stat Javascript Toolkit : JSON-stat Javascript Toolkit, a library for the JSON-stat format" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>JSON-stat Javascript Toolkit</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/badosa/JSON-stat">View on GitHub</a>
+
+          <h1 id="project_title">JSON-stat Javascript Toolkit</h1>
+          <h2 id="project_tagline">JSON-stat Javascript Toolkit, a library for the JSON-stat format</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/badosa/JSON-stat/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/badosa/JSON-stat/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="json-stat" class="anchor" href="#json-stat"><span class="octicon octicon-link"></span></a>JSON-stat</h1>
+
+<p>The JSON-stat format is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, <strong>datasets</strong> are organized in <strong>dimensions</strong>. Dimensions are organized in <strong>categories</strong>.</p>
+
+<p>The JSON-stat format is documented at <a href="http://json-stat.org/format/">http://json-stat.org/format/</a>.</p>
+
+<p>The goal of the JSON-stat Javascript Toolkit (JJT) is to help dealing with JSON-stat responses in Javascript.</p>
+
+<h2>
+<a name="design-principles" class="anchor" href="#design-principles"><span class="octicon octicon-link"></span></a>Design principles</h2>
+
+<p>JSON-stat is based on a data cube information structure. The JSON-stat Javascript Toolkit exposes the data cube as a tree.</p>
+
+<h3>
+<a name="the-json-stat-tree" class="anchor" href="#the-json-stat-tree"><span class="octicon octicon-link"></span></a>The JSON-stat tree</h3>
+
+<ul>
+<li>
+<em>Dataset</em>
+
+<ul>
+<li>
+<em>Dimension</em>
+
+<ul>
+<li><em>Category</em></li>
+</ul>
+</li>
+<li><em>Data</em></li>
+</ul>
+</li>
+</ul><p>For instance, to retrieve information about the first category of the first dimension of the first dataset in a JSON-stat response <em>j</em>, the JSON-stat Javascript Toolkit allows you to traverse the JSON-stat tree like this:</p>
+
+<div class="highlight"><pre><span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Dimension</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Category</span><span class="p">(</span> <span class="mi">0</span> <span class="p">)</span>
+</pre></div>
+
+<h3>
+<a name="general-properties" class="anchor" href="#general-properties"><span class="octicon octicon-link"></span></a>General properties</h3>
+
+<ul>
+<li>
+<em>label</em>: label of the selected element (string)</li>
+<li>
+<em>length</em>: number of children of the selected element (number).</li>
+<li>
+<em>id</em>: IDs of the children of the selected element (array).</li>
+</ul><h3>
+<a name="reading-and-traversing-methods" class="anchor" href="#reading-and-traversing-methods"><span class="octicon octicon-link"></span></a>Reading and traversing methods</h3>
+
+<p>These methods (except JSONstat, which is not actually a method) accept a selection argument (ID or index). If it is not provided, an array is returned with the information for every child of the selected element.</p>
+
+<h4>
+<a name="jsonstat" class="anchor" href="#jsonstat"><span class="octicon octicon-link"></span></a>JSONstat</h4>
+
+<p>Reads a JSON-stat response and creates an internal <em>jsonstat</em> object.</p>
+
+<div class="highlight"><pre><span class="nx">JSONstat</span><span class="p">(</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span> <span class="p">).</span><span class="nx">length</span>
+<span class="c1">//number of datasets in the object</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="s2">"http://json-stat.org/samples/oecd-canada.json"</span> <span class="p">).</span><span class="nx">length</span>
+<span class="c1">//number of datasets in oecd-canada.json. Sync connection.</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="s2">"http://json-stat.org/samples/oecd-canada.json"</span><span class="p">,</span> 
+   <span class="kd">function</span><span class="p">(){</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">length</span> <span class="p">);</span>
+   <span class="p">}</span>
+<span class="p">)</span>
+<span class="c1">//number of datasets in oecd-canada.json. Async connection.</span>
+</pre></div>
+
+<h4>
+<a name="dataset" class="anchor" href="#dataset"><span class="octicon octicon-link"></span></a>Dataset</h4>
+
+<p>Selects a particular dataset in the JSON-stat response.</p>
+
+<div class="highlight"><pre><span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">id</span> <span class="c1">//IDs of the dimensions in the first dataset</span>
+</pre></div>
+
+<h4>
+<a name="dimension" class="anchor" href="#dimension"><span class="octicon octicon-link"></span></a>Dimension</h4>
+
+<p>Selects a particular dimension in a dataset in the JSON-stat response.</p>
+
+<div class="highlight"><pre><span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Dimension</span><span class="p">(</span> <span class="s2">"time"</span> <span class="p">).</span><span class="nx">label</span>
+<span class="c1">//Label of the "time" dimension in the first dataset</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Dimension</span><span class="p">(</span> <span class="s2">"country"</span> <span class="p">).</span><span class="nx">role</span>
+<span class="c1">//Role of the "country" dimension in the first dataset</span>
+</pre></div>
+
+<h4>
+<a name="category" class="anchor" href="#category"><span class="octicon octicon-link"></span></a>Category</h4>
+
+<p>Selects a particular category in a dimension in a dataset in the JSON-stat response.</p>
+
+<div class="highlight"><pre><span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Dimension</span><span class="p">(</span> <span class="s2">"time"</span> <span class="p">).</span><span class="nx">Category</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">label</span>
+<span class="c1">//Label of the first category of the "time" dimension in the first dataset</span>
+</pre></div>
+
+<h4>
+<a name="data" class="anchor" href="#data"><span class="octicon octicon-link"></span></a>Data</h4>
+
+<p>When an argument is passed, selects a single cell of the data cube in the JSON-stat response. If no argument is passed, returns all the cells. In the future this method might be able to select slices (subsets of cells).</p>
+
+<p>This method accepts the property "value" to get the value of a cell and "status" to get its status.</p>
+
+<div class="highlight"><pre><span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Data</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">value</span>
+<span class="c1">//Value of the first cell (usually a number, but values can be of any type).</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Data</span><span class="p">(</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span> <span class="p">]</span> <span class="p">).</span><span class="nx">value</span>
+<span class="c1">//Value of the first cell in a dataset with 3 dimensions (usually a number).</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Data</span><span class="p">(</span> <span class="p">{</span> <span class="s2">"metric"</span> <span class="o">:</span> <span class="s2">"UNR"</span><span class="p">,</span> <span class="s2">"geo"</span> <span class="o">:</span> <span class="s2">"GR"</span><span class="p">,</span> <span class="s2">"time"</span> <span class="o">:</span> <span class="s2">"2014"</span> <span class="p">}</span> <span class="p">).</span><span class="nx">value</span>
+<span class="c1">//Unemployment rate in Greece in 2014 (usually a number).</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">Data</span><span class="p">(</span> <span class="p">{</span> <span class="s2">"metric"</span> <span class="o">:</span> <span class="s2">"UNR"</span><span class="p">,</span> <span class="s2">"geo"</span> <span class="o">:</span> <span class="s2">"GR"</span><span class="p">,</span> <span class="s2">"time"</span> <span class="o">:</span> <span class="s2">"2014"</span> <span class="p">}</span> <span class="p">).</span><span class="nx">status</span>
+<span class="c1">//Status of unemployment rate in Greece in 2014.</span>
+</pre></div>
+
+<h3>
+<a name="transformation-methods" class="anchor" href="#transformation-methods"><span class="octicon octicon-link"></span></a>Transformation methods</h3>
+
+<p>Transformation methods get the information at a certain level of the JSON-stat tree and export it to other JSON structure for convenience.</p>
+
+<h4>
+<a name="totable" class="anchor" href="#totable"><span class="octicon octicon-link"></span></a>toTable</h4>
+
+<p>This is a dataset method. It converts the information of a particular dataset into a JSON table. The conversion can be setup using an optional argument.</p>
+
+<div class="highlight"><pre><span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">toTable</span><span class="p">()</span>
+<span class="c1">//Returns an array of arrays that exposes a tabular structure (rows and columns).</span>
+<span class="c1">//Useful in many situations. For example, it can be a Google Visualization API input. </span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">toTable</span><span class="p">(</span> <span class="p">{</span> <span class="nx">field</span> <span class="o">:</span> <span class="s2">"id"</span> <span class="p">}</span> <span class="p">)</span>
+<span class="c1">//Uses ids instead of labels as column names.</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">toTable</span><span class="p">(</span> <span class="p">{</span> <span class="nx">vlabel</span> <span class="o">:</span> <span class="s2">"Valor"</span><span class="p">,</span> <span class="nx">type</span> <span class="o">:</span> <span class="s2">"object"</span> <span class="p">}</span> <span class="p">)</span>
+<span class="c1">//Returns an object of arrays (of objects) that exposes a tabular structure (rows and columns)</span>
+<span class="c1">//in the Google DataTable format (it's the native input format of Google</span>
+<span class="c1">//Visualization API input). The "vlabel" property is instructing the method to use</span>
+<span class="c1">//"Valor" as the label of the values column (instead of "Value").</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">toTable</span><span class="p">(</span> <span class="p">{</span> <span class="nx">status</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">slabel</span> <span class="o">:</span> <span class="s2">"Metadata"</span> <span class="p">}</span> <span class="p">)</span>
+<span class="c1">//The table will include a status column with label "Metadata".</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">toTable</span><span class="p">(</span> <span class="p">{</span> <span class="nx">type</span> <span class="o">:</span> <span class="s2">"arrobj"</span> <span class="p">}</span> <span class="p">)</span>
+<span class="c1">//Returns an array of objects where each dimension id is a property, plus a "value" property.</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="mi">0</span> <span class="p">).</span><span class="nx">toTable</span><span class="p">(</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s2">"arrobj"</span><span class="p">,</span> <span class="nx">content</span><span class="o">:</span> <span class="s2">"id"</span> <span class="p">}</span> <span class="p">)</span>
+<span class="c1">//same but category ids ("AU") are used instead of labels ("Australia") even for content.</span>
+
+<span class="nx">JSONstat</span><span class="p">(</span> <span class="nx">j</span> <span class="p">).</span><span class="nx">Dataset</span><span class="p">(</span> <span class="s2">"canada"</span> <span class="p">).</span><span class="nx">toTable</span><span class="p">(</span>
+   <span class="p">{</span> <span class="nx">type</span> <span class="o">:</span> <span class="s2">"arrobj"</span><span class="p">,</span> <span class="nx">content</span> <span class="o">:</span> <span class="s2">"id"</span> <span class="p">},</span>
+   <span class="kd">function</span><span class="p">(</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">i</span> <span class="p">){</span>
+      <span class="k">if</span> <span class="p">(</span> <span class="nx">d</span><span class="p">.</span><span class="nx">sex</span> <span class="o">===</span> <span class="s2">"F"</span> <span class="o">&amp;&amp;</span> <span class="nx">d</span><span class="p">.</span><span class="nx">concept</span> <span class="o">===</span> <span class="s2">"POP"</span> <span class="p">){</span>
+         <span class="k">return</span> <span class="p">{</span> <span class="nx">age</span> <span class="o">:</span> <span class="nx">d</span><span class="p">.</span><span class="nx">age</span><span class="p">,</span> <span class="nx">population</span> <span class="o">:</span> <span class="nx">d</span><span class="p">.</span><span class="nx">value</span><span class="o">*</span><span class="mi">1000</span> <span class="p">};</span>
+      <span class="p">}</span>
+   <span class="p">}</span>
+<span class="p">)</span>
+<span class="c1">//Get only the female population by age of Canada </span>
+<span class="c1">//and convert values from thousands to persons.</span>
+</pre></div>
+
+<h2>
+<a name="further-information" class="anchor" href="#further-information"><span class="octicon octicon-link"></span></a>Further information</h2>
+
+<p>For <strong>installation</strong> instructions, code <strong>samples</strong>, the <strong>API reference</strong>, etc., see the <strong><a href="https://github.com/badosa/JSON-stat/wiki">Wiki</a></strong>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">JSON-stat Javascript Toolkit maintained by <a href="https://github.com/badosa">badosa</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-27240137-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
