@@ -1,0 +1,15 @@
+{
+	"name"          : "jsonstat",
+	"description"   : "JavaScript library to deal with JSON-stat responses.",
+	"homepage"      : "https://github.com/badosa/JSON-stat",
+	"keywords"      : ["util", "jsonstat", "stats", "data", "cube"],
+	"author"        : {
+		"name": "Xavier Badosa",
+		"url": "http://xavierbadosa.com"
+	},
+	"repository"    : {"type": "git", "url": "https://github.com/badosa/JSON-stat.git"},
+	"main"          : "json-stat.js",
+	"version"       : "0.5.3",
+	"license"       : "Apache",
+	"files"         : ["json-stat.js", "LICENSE", "README.md"]
+}
