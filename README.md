@@ -146,4 +146,4 @@ JSONstat( j ).Dataset( "canada" ).toTable(
 
 ## Further information
 
-For **installation instructions**, **code samples**, the **API reference**, etc., see the [Wiki](https://github.com/badosa/JSON-stat/wiki).
+For **installation** instructions, code **samples**, the **API reference**, etc., see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**.
