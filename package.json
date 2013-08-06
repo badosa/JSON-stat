@@ -11,5 +11,5 @@
 	"main"          : "module.js",
 	"version"       : "0.5.3",
 	"license"       : "Apache",
-	"files"         : ["module.js", "json-stat.js", "LICENSE", "README.md"]
+	"files"         : ["module.js", "LICENSE", "README.md"]
 }
