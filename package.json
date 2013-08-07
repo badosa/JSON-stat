@@ -9,7 +9,12 @@
 	},
 	"repository"    : {"type": "git", "url": "https://github.com/badosa/JSON-stat.git"},
 	"main"          : "module.js",
+	"scripts": {
+		"test": "node test/nodejs.js"
+	},
+	"dependencies": {},
+	"devDependencies": {},
 	"version"       : "0.5.3",
 	"license"       : "Apache",
-	"files"         : ["module.js", "LICENSE", "README.md"]
+	"files"         : ["module.js", "LICENSE", "README.md, "test/nodejs.js""]
 }
