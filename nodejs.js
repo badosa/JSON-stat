@@ -81,6 +81,7 @@ http.get(uri, function(res) {
 				}
 			});
 			console.log(ok?"\nAll tests were successfully passed.\n":"\nWarning: Some test failed!\n");
+			return ok;
 		});
 	}else{
 		console.log("Can't retrieve document (error "+s+")");
