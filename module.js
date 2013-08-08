@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.5.3.2 (module)
+JSON-stat Javascript Toolkit v. 0.6.0 (module)
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.5.3.2";
+JSONstat.version="0.6.0";
 
 function JSONstat(resp,f){
 		return new JSONstat.jsonstat(resp,f); //nodejs
@@ -213,10 +213,10 @@ function JSONstat(resp,f){
 				this.id=cats;
 				this.length=cats.length;
 				this.role=o.role;
-				this.hierarchy=otc.hasOwnProperty("parent"); //0.5.1
+				this.hierarchy=otc.hasOwnProperty("child"); //0.5.1
 			break;
 			case "cat" :
-				var par=o.parent;
+				var par=o.child;
 				this.type="cat";
 
 				//0.5.0 changed. It was autoreference: id. And length was 0 always
@@ -341,8 +341,8 @@ function JSONstat(resp,f){
 
 		var unit=(oc["unit"] && oc["unit"][cat]) || null;
 		var coord=(oc["coordinates"] && oc["coordinates"][cat]) || null;
-		var parent=(oc["parent"] && oc["parent"][cat]) || null;
-		return new jsonstat({"type" : "cat", "index": index, "label": oc.label[cat], "parent" : parent, "unit" : unit, "coord" : coord});
+		var child=(oc["child"] && oc["child"][cat]) || null;
+		return new jsonstat({"type" : "cat", "index": index, "label": oc.label[cat], "child" : child, "unit" : unit, "coord" : coord});
 	}
 
 	jsonstat.prototype.Data=function(e){
