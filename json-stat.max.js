@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.6.0
+JSON-stat Javascript Toolkit v. 0.6.1
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.6.0";
+JSONstat.version="0.6.1";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -35,35 +35,19 @@ function JSONstat(resp,f){
 	function isArray(o) {
 		return Object.prototype.toString.call(o) === "[object Array]";
 	}
-	//Check availability as a last step (after sparse cube problem, which is treated at dataset level (normalize). Support for ["a"] and "a".
-	//Used by Data() and toTable(), that is: always after Dataset(): e.value (this.value) is defined but not used in current implementation.
-	//Using s.length>0 means that if value and status have different lengths it will assume last values have undefined statuses
-	function getStatus(e,i){
-		var s=e.status;
-		if(s!==null){
-			if(isArray(s)){
-				//instead of e.value.length===s.length
-				return (s.length>1) ? s[i] : s[0];
-				//No status for all obs was provided: it means same for all
-			}
-			if(typeof s==="string"){ //A string? It means same status for all
-				return s;
-			}
-		}
-		return null;
-	}
 	function jsonstat(o,f){
 		var xhr=function(uri, func){
 			var json, async=(func!==false);
 			if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to same domain won't be specified using an absolute address). Not integrated because it'll will be removed someday...
-				if(!async){
-					//console.log("JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).");
+				if(!async){ //JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).
 					return;
 				}
 				var req=new XDomainRequest();
+				/*
 				req.onerror=function(){
-					console.log("JSONstat: Can't access "+uri);
+					return;  //JSONstat: Can't access "+uri;
 				}
+				*/
 				req.onload=function(){
 					json=JSON.parse(req.responseText);
 					func.call(JSONstat(json));
@@ -89,15 +73,26 @@ function JSONstat(resp,f){
 			}
 		}
 		//sparse cube (value or status)
+		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
 		function normalize(s,len){
 			var ret=[];
 
-			//if string, leave it alone (instead of return [s]): getStatus will take care of it
-			if(isArray(s) || typeof s==="string"){
-				return s;
+			if(typeof s==="string"){
+				s=[s];
+			}
+			if(isArray(s)){
+				if(s.length===len){ //normal case
+					return s;
+				}
+				if(s.length===1){ //all obs same status
+					for(var l=0; l<len; l++){
+						ret.push(s[0]);
+					}
+					return ret;
+				}
 			}
 
-			//It's an object (sparse cube)
+			//It's an object (sparse cube) or an incomplete array that must be filled with nulls
 			for(var l=0; l<len; l++){
 				var e=(typeof s[l]==="undefined") ? null: s[l];
 				ret.push(e);
@@ -415,7 +410,7 @@ function JSONstat(resp,f){
 		//Data By Position in original array
 		if(typeof e==="number"){
 			var num=this.value[e];
-			return (typeof num!=="undefined") ? {"value" : num, "status": getStatus(this,e)} : null; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
+			return (typeof num!=="undefined") ? {"value" : num, "status": this.status[e]} : null; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
 		}
 
 		var tree=this.__tree__, n=tree.dimension.size, dims=n.length //same as this.length;
@@ -472,7 +467,7 @@ function JSONstat(resp,f){
 			}
 
 			//miss.length===0 (use previously computed res) //simplified in 0.4.3
-			return {"value" : this.value[res], "status": getStatus(this,res)/*, "length" : 1*/};
+			return {"value" : this.value[res], "status": this.status[res]/*, "length" : 1*/};
 		}
 
 		var id=dimObj2Array(tree, e);
@@ -665,7 +660,7 @@ function JSONstat(resp,f){
 				addRow(label[d][x]); //Global row
 			}
 			if(opts.status){
-				addRow(getStatus(this,x)); //0.3.7
+				addRow(this.status[x]);
 			}
 			addRowValue(this.value[x]); //Global row, rows and table
 		}
