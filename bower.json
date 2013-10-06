@@ -1,6 +1,5 @@
 {
 	"name": "jsonstat",
-	"description": "JavaScript library to deal with JSON-stat responses.",
 	"author": {
 		"name": "Xavier Badosa",
 		"url": "http://xavierbadosa.com"
