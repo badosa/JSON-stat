@@ -117,6 +117,7 @@ p {
 
 footer p {
   color: #f2f2f2;
+  margin: 0;
 }
 
 a {
@@ -290,13 +291,17 @@ Full-Width Styles
   margin: 0 auto;
 }
 
+footer.inner {
+  padding: 8px 10px;
+}
+
 #forkme_banner {
   display: block;
   position: absolute;
   top:0;
   right: 10px;
   z-index: 10;
-  padding: 10px 50px 10px 10px;
+  padding: 4px 45px 3px 8px;
   color: #fff;
   background: url('../images/blacktocat.png') #0090ff no-repeat 95% 50%;
   font-weight: 700;
