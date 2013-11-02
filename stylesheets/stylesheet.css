@@ -1,5 +1,5 @@
 /*******************************************************************************
-Slate Theme for GitHub Pages
+Based on Slate Theme for GitHub Pages
 by Jason Costello, @jsncostello
 *******************************************************************************/
 
@@ -45,6 +45,21 @@ blockquote, q {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+/*******************************************************************************
+Nevis font
+*******************************************************************************/
+
+@font-face {
+	font-family: 'nevis';
+	src: url('../f/nevis-webfont.eot');
+	src: url('../f/nevis-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../f/nevis-webfont.woff') format('woff'),
+		url('../f/nevis-webfont.ttf') format('truetype'),
+		url('../f/nevis-webfont.svg#nevis') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }
 
 /*******************************************************************************
@@ -304,11 +319,15 @@ Full-Width Styles
 }
 
 #project_title {
-  margin: 0;
-  color: #fff;
+	color: #bebebe;
+	font-family: nevis, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 285%;
+
+	margin: 0;
+/*  color: #fff; 
   font-size: 42px;
   font-weight: 700;
-  text-shadow: #111 0px 0px 10px;
+  text-shadow: #111 0px 0px 10px; */
 }
 
 #project_tagline {
@@ -372,8 +391,6 @@ Full-Width Styles
   background: #212121;
 }
 
-
-
 /*******************************************************************************
 Small Device Styles
 *******************************************************************************/
@@ -425,5 +442,4 @@ Small Device Styles
     max-width: 480px;
     font-size: 11px;
   }
-
 }
