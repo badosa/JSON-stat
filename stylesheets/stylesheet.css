@@ -392,7 +392,9 @@ footer.inner {
 }
 
 #footer_wrap {
-  background: #212121;
+	background-image: url(http://json-stat.org/i/bg.png);
+	background-repeat: no-repeat;
+	background-color: #1b1b1b;
 }
 
 /*******************************************************************************

@@ -7,4 +7,4 @@ redcarpet:
     - autolink
     - strikethrough
     - fenced_code_blocks
-baseurl: /JSON-stat
+baseurl: http://badosa.github.io/JSON-stat
