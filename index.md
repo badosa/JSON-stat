@@ -13,7 +13,7 @@ The JSON-stat format is documented at http://json-stat.org/format/.
 
 The goal of the **JSON-stat Javascript Toolkit (JJT)** is to help dealing with JSON-stat responses in Javascript.
 
-[Test Suite](/test/) available.
+[Test Suite](test/) available.
 
 ## Design principles
 
