@@ -1,10 +1,10 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.6.1
+JSON-stat Javascript Toolkit v. 0.6.2
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
-Copyright 2013 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2014 Xavier Badosa (http://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.6.1";
+JSONstat.version="0.6.2";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -287,7 +287,7 @@ function JSONstat(resp,f){
 
 	jsonstat.prototype.Dimension=function(dim){
 		function role(otd,dim){
-			var otdd=otd[dim], otdr=otd.role;
+			var otdr=otd.role;
 			if(typeof otdr!="undefined"){
 				for(var prop in otdr){
 					for(var p=otdr[prop].length;p--;){
@@ -410,7 +410,16 @@ function JSONstat(resp,f){
 		//Data By Position in original array
 		if(typeof e==="number"){
 			var num=this.value[e];
-			return (typeof num!=="undefined") ? {"value" : num, "status": this.status[e]} : null; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
+			return (typeof num!=="undefined") ? 
+				{"value" : num, "status": 
+					(this.status) ? 
+					this.status[e]
+					:
+					null
+				} 
+				: 
+				null
+			; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
 		}
 
 		var tree=this.__tree__, n=tree.dimension.size, dims=n.length //same as this.length;
@@ -467,7 +476,7 @@ function JSONstat(resp,f){
 			}
 
 			//miss.length===0 (use previously computed res) //simplified in 0.4.3
-			return {"value" : this.value[res], "status": this.status[res]/*, "length" : 1*/};
+			return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null/*, "length" : 1*/};
 		}
 
 		var id=dimObj2Array(tree, e);
