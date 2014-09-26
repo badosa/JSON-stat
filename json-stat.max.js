@@ -74,7 +74,9 @@ function JSONstat(resp,f){
 		}
 		//sparse cube (value or status)
 		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
-		function normalize(cube,s,dataField,len){
+
+        // need reference to cube
+        function normalize(s, len, cube, dataField){
 			var ret=[];
 
 			if(typeof s==="string"){
@@ -93,8 +95,10 @@ function JSONstat(resp,f){
 			}
 
 			//It's an object (sparse cube) or an incomplete array that must be filled with nulls
-            cube["sparse"+dataField] = true;
-            return s;
+
+            //making and filling a sparse array with nulls completely overwhelmed memory, here just return the object itself, and add a flag
+            //saying the field (value / status) is sparsely populated. Works as the object properties are all numbers anyways, a missing index in the object
+            //just returns as undefined
             /*
 			for(var l=0; l<len; l++){
 				var e=(typeof s[l]==="undefined") ? null: s[l];
@@ -102,6 +106,9 @@ function JSONstat(resp,f){
 			}
 			return ret;
 			*/
+
+            cube["sparse"+dataField] = true;
+            return s;
 		}
 
 		this.length=0;
@@ -170,8 +177,8 @@ function JSONstat(resp,f){
 					}
 				}
 
- 				this.value=normalize (this, ot.value, "value", dsize);
-				this.status=(!(ot.hasOwnProperty("status"))) ? null : normalize (this, ot.status, "status", dsize);
+ 				this.value=normalize (ot.value, dsize, this, "value");
+				this.status=(!(ot.hasOwnProperty("status"))) ? null : normalize (ot.status, dsize, this, "status");
 				
 				// if dimensions are defined, id and size arrays are required and must have equal length
 				if (ot.hasOwnProperty("dimension")){
@@ -408,6 +415,8 @@ function JSONstat(resp,f){
 			//return {"value" : this.value, "status": this.status, "label": tree.label, "length" : this.value.length};
 			//Since 0.4.2: normalized as array of objects
             var ret = [];
+
+            // if the value object has been detected as sparse i.e. is not an array, loop through object properties the ECMA5 way
             if (this.sparsevalue) {
                 var keys = Object.keys (this.value);
                 keys.forEach (function(key) { ret.push (this.Data(+key)); }, this);
@@ -429,7 +438,7 @@ function JSONstat(resp,f){
 					this.status[e]
 					:
 					null,
-                    "index": e
+                    "index": e      // an aid for sparse objects (i.e. we can't rely on array position === index)
 				} 
 				: 
 				null
@@ -476,6 +485,10 @@ function JSONstat(resp,f){
 			if(miss.length>1){
                 var specDims = dims - miss.length;
 
+                // If more than one non-single dimension then loop through dataset and make
+                // an array of elements that do match defined dimensions
+                // probably could be more efficient, but simple works for now
+
                 var test4Match = function (key) {
                     var rkey = +key;
                     var poss = true;
@@ -520,7 +533,7 @@ function JSONstat(resp,f){
 			}
 
 			//miss.length===0 (use previously computed res) //simplified in 0.4.3
-			return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null, "index": res/*, "length" : 1*/};
+			return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null, "index": res/*, "length" : 1*/};  // index property added again
 		}
 
 		var id=dimObj2Array(tree, e);
@@ -687,6 +700,8 @@ function JSONstat(resp,f){
 		addColValue(opts.vlabel,opts.slabel,opts.status); //Global cols and table
 
 		//end of inversion: now use dim array
+
+        // this section blew up very sparse arrays - i.e 20 dimensions of 20 or so categories each butn with only a few thou entries
         /*
 		for (var d=0, len=dim.length; d<len; d++){
 			var catexp=[];
@@ -713,6 +728,9 @@ function JSONstat(resp,f){
 
         var row=[];
 
+        // instead calculate dimension values only for each actual value
+        // in the array case this is no different
+        // but in the sparse cube case makes a big difference
         function perDatum (x) {
             row=[];
             var arr = this.dimsFromIndex (x);
@@ -730,12 +748,10 @@ function JSONstat(resp,f){
             addRowValue(this.value[x]); //Global row, rows and table
         }
 
+        // differentiate full / sparse cube
         if (this.sparsevalue) {
-            for (var prop in this.value) {
-                if (this.value.hasOwnProperty(prop)) {
-                    perDatum.call (this, prop);
-                }
-            }
+            var keys = Object.keys (this.value);
+            keys.forEach (perDatum, this);
         } else {
             for (var x=0; x<total; x++){
                 perDatum.call (this, x);
@@ -762,6 +778,7 @@ function JSONstat(resp,f){
 		return this.length;
 	};
 
+    // function for grabbing dimension values from an index by iterative division
     jsonstat.prototype.dimsFromIndex = function (index) {
         var s = this.__tree__.dimension.size;
         var arr = new Array (s.length);
@@ -772,6 +789,7 @@ function JSONstat(resp,f){
         return arr;
     };
 
+    // count occurences and value totals within each dimension / category in a set of indices (keys)
     jsonstat.prototype.sparseCount = function (keys) {
         var res = [];
         if (keys) {
@@ -800,6 +818,7 @@ function JSONstat(resp,f){
         return res;
     };
 
+    // to describe
     jsonstat.prototype.groupByDim = function (keys, groupDim) {
         var res = [];
         var dimObj = this.Dimension (groupDim);
@@ -831,7 +850,7 @@ function JSONstat(resp,f){
             var invMap = [];
             sqKeys.forEach (function (sqKey) {
                 var dkey = sqKey.dkey;
-                invMap[dkey] = invMap[dkey] || [dkey] /*[this.catValsToString (dims, dkey)]*/;
+                invMap[dkey] = invMap[dkey] || [dkey];
                 var obj = invMap[dkey];
                 obj[sqKey.q + 1] = this.value[sqKey.key] ? +this.value[sqKey.key] : null;  // change nulls, empty strings, undefineds to null, everything else turn to number
             }, this);
