@@ -1,6 +1,6 @@
 /* 
 
-JSON-stat Javascript Toolkit v. 0.6.2
+JSON-stat Javascript Toolkit v. 0.6.2 (Node.js module)
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -25,9 +25,7 @@ var JSONstat = JSONstat || {};
 JSONstat.version="0.6.2";
 
 function JSONstat(resp,f){
-	if(window===this){
-		return new JSONstat.jsonstat(resp,f);
-	}
+    return new JSONstat.jsonstat(resp,f); //nodejs
 }
 
 (function(){
@@ -36,42 +34,7 @@ function JSONstat(resp,f){
 		return Object.prototype.toString.call(o) === "[object Array]";
 	}
 	function jsonstat(o,f){
-		var xhr=function(uri, func){
-			var json, async=(func!==false);
-			if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to same domain won't be specified using an absolute address). Not integrated because it'll will be removed someday...
-				if(!async){ //JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).
-					return;
-				}
-				var req=new XDomainRequest();
-				/*
-				req.onerror=function(){
-					return;  //JSONstat: Can't access "+uri;
-				}
-				*/
-				req.onload=function(){
-					json=JSON.parse(req.responseText);
-					func.call(JSONstat(json));
-				}
-				req.open("GET", uri);
-				req.send();
-			}else{ //Standard xhr
-				var req=new XMLHttpRequest();
-				req.onreadystatechange=function(){
-					if(req.readyState===4){
-						var s=req.status;
-						json=(s && req.responseText && (s>=200 && s<300 || s===304)) ? JSON.parse(req.responseText) : null;
-						if(async){
-							func.call(JSONstat(json));
-						}
-					}
-				}
-				req.open("GET",uri,async);
-				req.send(null);
-				if(!async){
-					return json;
-				}
-			}
-		}
+		//nodejs xhr gone
 		//sparse cube (value or status)
 		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
 		function normalize(cube,s,dataField,len){
@@ -116,8 +79,9 @@ function JSONstat(resp,f){
 				var i=[], ds=0;
 
 				//URI assumed
-				if (typeof o==="string" && o.length>0){
-					o=xhr(o, typeof f==="function"? f : false);//If second argument is function then async
+				if (typeof o==="string"){
+                    console.log("Module does not accept a URI string, must be an object."); //nodejs
+                    return;
 				}
 
 				// Wrong input object or wrong URI o connection problem
@@ -502,8 +466,8 @@ function JSONstat(resp,f){
                 }
 
                 //console.log ("ret", ret);
-				return ret; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
-			}
+                return ret; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
+            }
 			if(miss.length===1){
 				for(var c=0, clen=nmiss[0]; c<clen; c++){
 					var na=[]; //new array
@@ -688,28 +652,28 @@ function JSONstat(resp,f){
 
 		//end of inversion: now use dim array
         /*
-		for (var d=0, len=dim.length; d<len; d++){
-			var catexp=[];
-			for (var c=0, len2=dim[d].length; c<len2; c++){
-				//get the label repetitions
-				for (var n=0; n<total/mult[d]; n++){
-					catexp.push(dim[d][c]);
-				}
-			}
-			dimexp.push(catexp);
-		}
-		for (var d=0, len=dimexp.length; d<len; d++){
-			var l=[], e=0;
-			for (var x=0; x<total; x++){
-				l.push(dimexp[d][e]);
-				e++;
-				if (e===dimexp[d].length){
-					e=0;
-				}
-			}
-			label.push(l);
-		}
-		*/
+         for (var d=0, len=dim.length; d<len; d++){
+         var catexp=[];
+         for (var c=0, len2=dim[d].length; c<len2; c++){
+         //get the label repetitions
+         for (var n=0; n<total/mult[d]; n++){
+         catexp.push(dim[d][c]);
+         }
+         }
+         dimexp.push(catexp);
+         }
+         for (var d=0, len=dimexp.length; d<len; d++){
+         var l=[], e=0;
+         for (var x=0; x<total; x++){
+         l.push(dimexp[d][e]);
+         e++;
+         if (e===dimexp[d].length){
+         e=0;
+         }
+         }
+         label.push(l);
+         }
+         */
 
         var row=[];
 
@@ -744,7 +708,7 @@ function JSONstat(resp,f){
 
 
 
-		if(opts.type==="object"){
+        if(opts.type==="object"){
 			return {cols: cols, rows: rows};
 		}else{
 			return table;
@@ -847,3 +811,6 @@ function JSONstat(resp,f){
 
 	JSONstat.jsonstat=jsonstat;
 })();
+
+//nodejs
+module.exports=JSONstat;
