@@ -818,7 +818,16 @@ function JSONstat(resp,f){
         return res;
     };
 
-    // to describe
+    // collate values for entries that have the same indices in all dimensions except for one (the grouping dimension)
+    // e.g. in a 3d cube of place/quarter/item, grouping by quarter would pull time series data out for each combination of place/item.
+    // The first entry in each array is a key to the combination of values in that array
+    // example return object: ["1-1-?", 23, 69, 64, 32] - hats, russia, q1-q4 (4 values)
+    //                        ["2-1-?", 23, 69, 64, 32] - shirts, russia, q1-q4 (4 values)
+    // 
+    // In practice this is the same as returning an array of values when we have one missing dimension (as in the jsonstat.Data() func)
+    // but we return such an array for every combination of the other dimensions, all gethered withing an object
+    //
+    // keys are an array of indices, groupDim is the name of the dimension to "group" by
     jsonstat.prototype.groupByDim = function (keys, groupDim) {
         var res = [];
         var dimObj = this.Dimension (groupDim);
