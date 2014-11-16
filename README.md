@@ -35,7 +35,7 @@ These methods (except JSONstat, which is not actually a method) accept a selecti
 
 #### JSONstat
 
-Reads a JSON-stat response and creates an internal *jsonstat* object.
+It reads a JSON-stat response and creates an internal *jsonstat* object.
 
 ```js
 JSONstat( { ... } ).length
@@ -54,7 +54,7 @@ JSONstat( "http://json-stat.org/samples/oecd-canada.json",
 
 #### Dataset
 
-Selects a particular dataset in the JSON-stat response.
+It selects a particular dataset in the JSON-stat response.
 
 ```js
 JSONstat( j ).Dataset( 0 ).id //IDs of the dimensions in the first dataset
@@ -62,7 +62,7 @@ JSONstat( j ).Dataset( 0 ).id //IDs of the dimensions in the first dataset
 
 #### Dimension
 
-Selects a particular dimension in a dataset in the JSON-stat response.
+It selects a particular dimension in a dataset in the JSON-stat response.
 
 ```js
 JSONstat( j ).Dataset( 0 ).Dimension( "time" ).label
@@ -74,7 +74,7 @@ JSONstat( j ).Dataset( 0 ).Dimension( "country" ).role
 
 #### Category
 
-Selects a particular category in a dimension in a dataset in the JSON-stat response.
+It selects a particular category in a dimension in a dataset in the JSON-stat response.
 
 ```js
 JSONstat( j ).Dataset( 0 ).Dimension( "time" ).Category( 0 ).label
@@ -83,7 +83,7 @@ JSONstat( j ).Dataset( 0 ).Dimension( "time" ).Category( 0 ).label
 
 #### Data
 
-When an argument is passed, selects a single cell of the data cube in the JSON-stat response. If no argument is passed, returns all the cells. In the future this method might be able to select slices (subsets of cells).
+When an argument is passed, selects a single cell of the data cube in the JSON-stat response. If no argument is passed, returns all the cells.
 
 This method accepts the property "value" to get the value of a cell and "status" to get its status.
 
@@ -91,7 +91,7 @@ This method accepts the property "value" to get the value of a cell and "status"
 JSONstat( j ).Dataset( 0 ).Data( 0 ).value
 //Value of the first cell (usually a number, but values can be of any type).
 
-JSONstat( j ).Dataset( 0 ).Data( [ 0,0,0 ] ).value
+JSONstat( j ).Dataset( 0 ).Data( [ 0, 0, 0 ] ).value
 //Value of the first cell in a dataset with 3 dimensions (usually a number).
 
 JSONstat( j ).Dataset( 0 ).Data( { "metric" : "UNR", "geo" : "GR", "time" : "2014" } ).value
@@ -100,6 +100,8 @@ JSONstat( j ).Dataset( 0 ).Data( { "metric" : "UNR", "geo" : "GR", "time" : "201
 JSONstat( j ).Dataset( 0 ).Data( { "metric" : "UNR", "geo" : "GR", "time" : "2014" } ).status
 //Status of unemployment rate in Greece in 2014.
 ```
+
+In object arguments, single category dimensions (&ldquo;constant dimensions&rdquo;) can be skipped. If one and only one non-constant dimension is not specified, the result will an array with as many elements as categories in the unspecified dimension.
 
 ### Transformation methods
 
