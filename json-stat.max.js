@@ -74,7 +74,9 @@ function JSONstat(resp,f){
 		}
 		//sparse cube (value or status)
 		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
-		function normalize(s,len){
+
+        // need reference to cube
+        function normalize(s, len, cube, dataField){
 			var ret=[];
 
 			if(typeof s==="string"){
@@ -93,11 +95,20 @@ function JSONstat(resp,f){
 			}
 
 			//It's an object (sparse cube) or an incomplete array that must be filled with nulls
+
+            //making and filling a sparse array with nulls completely overwhelmed memory, here just return the object itself, and add a flag
+            //saying the field (value / status) is sparsely populated. Works as the object properties are all numbers anyways, a missing index in the object
+            //just returns as undefined
+            /*
 			for(var l=0; l<len; l++){
 				var e=(typeof s[l]==="undefined") ? null: s[l];
 				ret.push(e);
 			}
 			return ret;
+			*/
+
+            cube["sparse"+dataField] = true;
+            return s;
 		}
 
 		this.length=0;
@@ -130,6 +141,7 @@ function JSONstat(resp,f){
 					*/
 					i.push(prop);
 				}
+                //console.log ("o", o);
 				this.__tree__=o;
 				this.length=ds;
 				this.id=i;
@@ -160,12 +172,13 @@ function JSONstat(resp,f){
 								length*=size[s];
 							}
 							dsize=length;
+                            //console.log ("s", dsize);
 						}
 					}
 				}
 
-				this.value=normalize(ot.value,dsize);
-				this.status=(!(ot.hasOwnProperty("status"))) ? null : normalize(ot.status,dsize);
+ 				this.value=normalize (ot.value, dsize, this, "value");
+				this.status=(!(ot.hasOwnProperty("status"))) ? null : normalize (ot.status, dsize, this, "status");
 				
 				// if dimensions are defined, id and size arrays are required and must have equal length
 				if (ot.hasOwnProperty("dimension")){
@@ -401,9 +414,18 @@ function JSONstat(resp,f){
 			//Before 0.4.2
 			//return {"value" : this.value, "status": this.status, "label": tree.label, "length" : this.value.length};
 			//Since 0.4.2: normalized as array of objects
-			for(var i=0, ret=[], len=this.value.length; i<len; i++){
-				ret.push(this.Data(i));
-			}
+            var ret = [];
+
+            // if the value object has been detected as sparse i.e. is not an array, loop through object properties the ECMA5 way
+            if (this.sparsevalue) {
+                var keys = Object.keys (this.value);
+                keys.forEach (function(key) { ret.push (this.Data(+key)); }, this);
+            }
+            else {
+                for(var i=0, len=this.value.length; i<len; i++){
+                    ret.push(this.Data(i));
+                }
+            }
 			return ret;
 		}
 
@@ -415,7 +437,8 @@ function JSONstat(resp,f){
 					(this.status) ? 
 					this.status[e]
 					:
-					null
+					null,
+                    "index": e      // an aid for sparse objects (i.e. we can't rely on array position === index)
 				} 
 				: 
 				null
@@ -454,11 +477,45 @@ function JSONstat(resp,f){
 				}
 			}
 
+            //console.log ("miss", miss, nmiss, e, n, dims);
+
 			//If all dims are specified, go ahead as usual.
 			//If one non-single dimension is missing create array of results
 			//If more than one non-single dimension is missing, WARNING
 			if(miss.length>1){
-				return null; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
+                var specDims = dims - miss.length;
+
+                // If more than one non-single dimension then loop through dataset and make
+                // an array of elements that do match defined dimensions
+                // probably could be more efficient, but simple works for now
+
+                var test4Match = function (key) {
+                    var rkey = +key;
+                    var poss = true;
+                    for(var i=dims, sd = specDims; --i >= 0 && poss && sd > 0;) {
+                        if (e[i] !== null && e[i] !== undefined) {
+                            poss = (rkey % n[i] === e[i]);
+                            sd--;
+                        }
+                        rkey = Math.floor (rkey / n[i]);
+                    }
+                    if (poss) {
+                        //console.log ("add", key);
+                        ret.push(this.Data(+key));
+                    }
+                };
+
+                if (this.sparsevalue) {
+                    var keys = Object.keys (this.value);
+                    keys.forEach (test4Match, this);
+                } else {
+                    for (var key = 0; key < this.value.length; key++) {
+                        test4Match.call (this, key);
+                    }
+                }
+
+                //console.log ("ret", ret);
+				return ret; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
 			}
 			if(miss.length===1){
 				for(var c=0, clen=nmiss[0]; c<clen; c++){
@@ -476,11 +533,12 @@ function JSONstat(resp,f){
 			}
 
 			//miss.length===0 (use previously computed res) //simplified in 0.4.3
-			return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null/*, "length" : 1*/};
+			return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null, "index": res/*, "length" : 1*/};  // index property added again
 		}
 
 		var id=dimObj2Array(tree, e);
 		var pos=[], otd=tree.dimension;
+        //console.log ("od", id, otd);
 		for(var i=0, len=id.length; i<len; i++){
 			pos.push(otd[otd.id[i]].category.index[id[i]]);
 		}
@@ -642,6 +700,9 @@ function JSONstat(resp,f){
 		addColValue(opts.vlabel,opts.slabel,opts.status); //Global cols and table
 
 		//end of inversion: now use dim array
+
+        // this section blew up very sparse arrays - i.e 20 dimensions of 20 or so categories each butn with only a few thou entries
+        /*
 		for (var d=0, len=dim.length; d<len; d++){
 			var catexp=[];
 			for (var c=0, len2=dim[d].length; c<len2; c++){
@@ -663,16 +724,41 @@ function JSONstat(resp,f){
 			}
 			label.push(l);
 		}
-		for (var x=0; x<total; x++){
-			var row=[];
-			for (var d=0, len=dimexp.length; d<len; d++){
-				addRow(label[d][x]); //Global row
-			}
-			if(opts.status){
-				addRow(this.status[x]);
-			}
-			addRowValue(this.value[x]); //Global row, rows and table
-		}
+		*/
+
+        var row=[];
+
+        // instead calculate dimension values only for each actual value
+        // in the array case this is no different
+        // but in the sparse cube case makes a big difference
+        function perDatum (x) {
+            row=[];
+            var arr = this.dimsFromIndex (x);
+            for (var d=0, len=arr.length; d<len; d++){
+                addRow(dim[d][arr[d]]); //Global row
+            }
+            /*
+             for (var d=0, len=dimexp.length; d<len; d++){
+             addRow(label[d][x]); //Global row
+             }
+             */
+            if(opts.status){
+                addRow(this.status[x]);
+            }
+            addRowValue(this.value[x]); //Global row, rows and table
+        }
+
+        // differentiate full / sparse cube
+        if (this.sparsevalue) {
+            var keys = Object.keys (this.value);
+            keys.forEach (perDatum, this);
+        } else {
+            for (var x=0; x<total; x++){
+                perDatum.call (this, x);
+            }
+        }
+
+
 
 		if(opts.type==="object"){
 			return {cols: cols, rows: rows};
@@ -683,14 +769,110 @@ function JSONstat(resp,f){
 
 	jsonstat.prototype.node=function(){
 		return this.__tree__;
-	}
+	};
 
 	jsonstat.prototype.toString=function(){
 		return this.type; //improve?
-	}
+	};
 	jsonstat.prototype.toValue=function(){
 		return this.length;
-	}
+	};
+
+    // function for grabbing dimension values from an index by iterative division
+    jsonstat.prototype.dimsFromIndex = function (index) {
+        var s = this.__tree__.dimension.size;
+        var arr = new Array (s.length);
+        for (var i = s.length; --i >= 0;) {
+            arr[i] = index % s[i];
+            index = Math.floor (index / s[i]);
+        }
+        return arr;
+    };
+
+    // count occurences and value totals within each dimension / category in a set of indices (keys)
+    jsonstat.prototype.sparseCount = function (keys) {
+        var res = [];
+        if (keys) {
+            var s = this.__tree__.dimension.size;
+            var v = this.id.map (function(dimId) {
+                var dimjs = this.Dimension (dimId);
+                return {
+                    "dim": dimId,
+                    "counts": dimjs.id.map (function(catId) { return {"cat": catId, "count": 0, "vTot": 0}; })
+                };
+            }, this);
+
+            keys.forEach (function(key) {
+                var rkey = +key;
+                for (var i = s.length; --i >= 0;) {
+                    var cat = v[i].counts[rkey % s[i]];
+                    cat.count++;
+                    cat.vTot += +this.value[key];
+                    rkey = Math.floor (rkey / s[i]);
+                }
+            }, this);
+            res = v;
+        }
+
+        //console.log ("res", res);
+        return res;
+    };
+
+    
+    // collate values for entries that have the same indices in all dimensions except for one (the grouping dimension)
+    // e.g. in a 3d cube of place/quarter/item, grouping by quarter would pull time series data out for each combination of place/item.
+    // The first entry in each array is a key to the combination of values in that array
+    // example return object: ["1-1-?", 23, 69, 64, 32] - hats, russia, q1-q4 (4 values)
+    //                        ["2-1-?", 23, 69, 64, 32] - shirts, russia, q1-q4 (4 values)
+    // 
+    // In practice this is the same as returning an array of values when we have one missing dimension (as in the jsonstat.Data() func)
+    // but we return such an array for every combination of the other dimensions, all gethered withing an object
+    //
+    // keys are an array of indices, groupDim is the name of the dimension to "group" by
+    jsonstat.prototype.groupByDim = function (keys, groupDim) {
+        var res = [];
+        var dimObj = this.Dimension (groupDim);
+        //var dims = this.id.map (function(id) { return this.Dimension(id).id; }, this);
+
+        var dimIndex = this.id.indexOf (groupDim);
+        if (keys && dimObj) {
+
+            var s = this.__tree__.dimension.size;
+            var sqKeys = keys.map (function(key) {
+                var rkey = +key;
+                var arr = [];
+                var q;
+                for (var i = s.length; --i >= 0;) {
+                    if (i !== dimIndex) {
+                        arr[i] = rkey % s[i];
+                    } else {
+                        arr[i] = "?";
+                        q = rkey % s[i];
+                    }
+                    rkey = Math.floor (rkey / s[i]);
+                }
+                return {q: q, dkey: arr.join("-"), key: key};
+                //return {q: q, dkey: str.slice(0, str.length-1), key: key};
+            }, this);
+
+            //console.log ("sqKeys", dimIndex, sqKeys);
+
+            var invMap = [];
+            sqKeys.forEach (function (sqKey) {
+                var dkey = sqKey.dkey;
+                invMap[dkey] = invMap[dkey] || [dkey];
+                var obj = invMap[dkey];
+                obj[sqKey.q + 1] = this.value[sqKey.key] ? +this.value[sqKey.key] : null;  // change nulls, empty strings, undefineds to null, everything else turn to number
+            }, this);
+            //console.log ("invMap", invMap);
+
+            res = invMap;
+        }
+
+        //console.log ("res", res);
+        return res;
+    };
+
 
 	JSONstat.jsonstat=jsonstat;
 })();

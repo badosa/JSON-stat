@@ -13,7 +13,11 @@
 		"test": "node nodejs.js"
 	},
 	"dependencies": {},
-	"devDependencies": {},
+	"devDependencies": {
+        "gulp": "~3.5.2",
+        "gulp-rename": "~1.1.0",
+        "gulp-uglify": "~0.2.1"
+    },
 	"version"       : "0.6.2",
 	"license"       : "Apache",
 	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js"]
