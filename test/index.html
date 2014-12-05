@@ -2,7 +2,7 @@
 layout: default
 title: JSON-stat Javascript Toolkit
 description: Test Suite
-parent: <a href="..">JJT</a> / 
+parent: <a href="..">JJT</a> /
 ---
 
 		<script src="http://json-stat.org/lib/json-stat.js"></script>
@@ -14,12 +14,12 @@ parent: <a href="..">JJT</a> /
 		<![endif]-->
 
 		<script>
-			var 
+			var
 				oldie=oldie||false,
 				test=[
 					{
 						title: 'Assign a JSON-stat response to variable J',
-						exp: "root",
+						exp: "",
 						code: 'J=JSONstat("oecd-canada.json")',
 						text: 'JSONstat() accepts a JSON-stat response (object) or a URI (string). It returns an object of class jsonstat. You can try this same sample from your own domain as JSON-stat.org is <a href="http://enable-cors.org/">CORS-enabled</a> (you will need to use a modern browser). In this page, result is "root" because this is the content of the type property. This property is returned when toString is invoked. When a URI is specified, the connection will be sync unless a callback function is passed as a second argument: JSONstat("http://json-stat.org/samples/oecd-canada.json", function(){ console.log(this.length); })'
 					},
@@ -377,14 +377,19 @@ parent: <a href="..">JJT</a> /
 				],
 				d=document,
 				ver=d.getElementsByTagName('h2')[0],
-				dl=d.getElementsByTagName('dl')[0]
+				dl=d.getElementsByTagName('dl')[0],
+				version=JSONstat.version,
+				varr=version.split('.')
 			;
 
-			ver.innerHTML+=' (v. '+JSONstat.version+')';
+			ver.innerHTML+=' (v. ' + version + ')';
 
 			if(!oldie){
+				// v<0.7, 'root' instead of 'bundle'
+				test[0].exp=(varr[0] + '.' + varr[1]==='0.6') ? 'root' : 'bundle';
+
 				for(var t=0, len=test.length; t<len; t++){
-					var 
+					var
 						r=eval(test[t].code),
 						ok=(r==test[t].exp) ? '<span class="label label-success">Passed</span>' : '<span class="label label-important">Not passed</span>',
 						n=t+1,
