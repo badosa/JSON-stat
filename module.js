@@ -1,28 +1,28 @@
-/* 
+/*
 
-JSON-stat Javascript Toolkit v. 0.6.2 (Node.js module)
+JSON-stat Javascript Toolkit v. 0.7.0 (Node.js module)
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
 Copyright 2014 Xavier Badosa (http://xavierbadosa.com)
 
-Licensed under the Apache License, Version 2.0 (the "License"); 
-you may not use this file except in compliance with the License. 
-You may obtain a copy of the License at 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-	http://www.apache.org/licenses/LICENSE-2.0 
+	http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software 
-distributed under the License is distributed on an "AS IS" BASIS, 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express 
-or implied. See the License for the specific language governing 
-permissions and limitations under the License. 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License.
 
 */
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.6.2";
+JSONstat.version="0.7.0";
 
 function JSONstat(resp,f){
 	return new JSONstat.jsonstat(resp,f); //nodejs
@@ -68,20 +68,27 @@ function JSONstat(resp,f){
 		if (o===null || typeof o==="undefined"){
 			return;
 		}
-		var type=o.type || "root";
-		switch(type){
-			case "root" :
-				this.type="root";
+
+		this.class=o.class || "bundle";
+		switch(this.class){
+			case "bundle" :
 				var i=[], ds=0;
+				this.error=null;
+				this.length=0;
 
 				//URI assumed
-				if (typeof o==="string"){
+				if(typeof o==="string"){
 					console.log("Module does not accept a URI string, must be an object."); //nodejs
+				}
+
+				// Wrong input object or wrong URI or connection problem
+				if(o===null || typeof o!=="object"){
 					return;
 				}
 
-				// Wrong input object or wrong URI o connection problem
-				if(o===null || typeof o!=="object"){
+				// Explicit error
+				if(o.hasOwnProperty("error")){
+					this.error=o.error;
 					return;
 				}
 
@@ -98,16 +105,23 @@ function JSONstat(resp,f){
 				this.length=ds;
 				this.id=i;
 			break;
-			case "ds" :
-				this.type="ds";
+
+			case "dataset" :
+				//It's a native response of class "dataset"
 				if (!o.hasOwnProperty("__tree__")){
-					return;
+					delete o.class; //class shouldn't go inside __tree__
+					o={ "__tree__": o }; //remove all elements from o (native response "dataset"), put everything inside __tree__  (native response "bundle")
 				}
+
 				var ot=o.__tree__;
 				this.__tree__=ot;
 				this.label=ot.label || null;
+				this.note=ot.note || null; //v.0.7.0
+				this.link=ot.link || null; //v.0.7.0
+				this.href=ot.href || null; //v.0.7.0
 				this.updated=ot.updated || null;
 				this.source=ot.source || null; //v.0.5.0
+				this.extension=ot.extension || null; //v.0.7.0
 
 				//Sparse cube (If toTable() removed, this logic can be moved inside Data()
 				//which is more efficient when retrieving a single value/status.
@@ -119,7 +133,7 @@ function JSONstat(resp,f){
 						dsize=ot.status.length;
 					}else{
 						if(ot.hasOwnProperty("dimension")) {
-							var size=this.__tree__.dimension.size, length=1;
+							var size=ot.dimension.size, length=1;
 							for(var s=size.length; s--;){
 								length*=size[s];
 							}
@@ -130,11 +144,11 @@ function JSONstat(resp,f){
 
 				this.value=normalize(ot.value,dsize);
 				this.status=(!(ot.hasOwnProperty("status"))) ? null : normalize(ot.status,dsize);
-				
+
 				// if dimensions are defined, id and size arrays are required and must have equal length
 				if (ot.hasOwnProperty("dimension")){
 					if (
-						!(isArray(ot.dimension.id)) || 
+						!(isArray(ot.dimension.id)) ||
 						!(isArray(ot.dimension.size)) ||
 						ot.dimension.id.length!=ot.dimension.size.length
 						){
@@ -149,7 +163,7 @@ function JSONstat(resp,f){
 					//If only one category, no need of index according to the spec
 					//This actually will recreate an index even if there are more than one category and no index is provided
 					//but because there's no guarantee that properties are retrieved in a particular order (even though it worked in Ch,FF,IE,Sa,Op)
-					//(Main problem in fact is that you don't have to WRITE them in a particular order) the original order of categories could 
+					//(Main problem in fact is that you don't have to WRITE them in a particular order) the original order of categories could
 					//theoretically be changed. That's why the procedure will only be valid when there's only one category.
 					//Note: If toTable() is removed it would make more sense to move this loop inside Dimension() as it is not needed for Data().
 					for(var d=0, len=this.length; d<len; d++){
@@ -177,10 +191,9 @@ function JSONstat(resp,f){
 					this.length=0;
 				}
 			break;
-			case "dim" :
-				this.type="dim";
+			case "dimension" :
 				var cats=[], ot=o.__tree__, otc=ot.category;
-				if (
+				if(
 					!o.hasOwnProperty("__tree__") ||
 					!ot.hasOwnProperty("category") //Already tested in the Dimension() / Category() ? method
 					){
@@ -204,21 +217,26 @@ function JSONstat(resp,f){
 				//When no dimension label, undefined is returned.
 				//Discarded options: null / dim
 				this.label=ot.label || null;
+				this.note=ot.note || null; //v.0.7.0
+				this.link=ot.link || null; //v.0.7.0
+				this.href=ot.href || null; //v.0.7.0
 				this.id=cats;
 				this.length=cats.length;
 				this.role=o.role;
 				this.hierarchy=otc.hasOwnProperty("child"); //0.6.0
+				this.extension=ot.extension || null; //v.0.7.0
 			break;
-			case "cat" :
+			case "category" :
 				var par=o.child;
-				this.type="cat";
 
 				//0.5.0 changed. It was autoreference: id. And length was 0 always
-				this.id=par; 
+				this.id=par;
 				this.length=(par===null) ? 0 : par.length;
 
 				this.index=o.index;
 				this.label=o.label;
+				this.note=o.note || null; //v.0.7.0
+
 				this.unit=o.unit; //v.0.5.0
 				this.coordinates=o.coord; //v.0.5.0
 			break;
@@ -226,7 +244,7 @@ function JSONstat(resp,f){
 	}
 
 	jsonstat.prototype.Dataset=function(ds){
-		if (this===null || this.type!=="root"){
+		if (this===null || this.class!=="bundle"){
 			return null;
 		}
 		if(typeof ds==="undefined"){
@@ -246,7 +264,7 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		return new jsonstat({"type" : "ds", "__tree__": tds});
+		return new jsonstat({"class" : "dataset", "__tree__": tds});
 	}
 
 	jsonstat.prototype.Dimension=function(dim){
@@ -264,7 +282,7 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		if (this===null || this.type!=="ds"){
+		if (this===null || this.class!=="dataset"){
 			return null;
 		}
 		if(typeof dim==="undefined"){
@@ -305,11 +323,11 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		return new jsonstat({"type" : "dim", "__tree__": otdd, "role": role(otd,dim)});
+		return new jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otd,dim)});
 	}
 
 	jsonstat.prototype.Category=function(cat){
-		if (this===null || this.type!=="dim"){
+		if (this===null || this.class!=="dimension"){
 			return null;
 		}
 		if(typeof cat==="undefined"){
@@ -333,10 +351,13 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		var unit=(oc["unit"] && oc["unit"][cat]) || null;
-		var coord=(oc["coordinates"] && oc["coordinates"][cat]) || null;
-		var child=(oc["child"] && oc["child"][cat]) || null;
-		return new jsonstat({"type" : "cat", "index": index, "label": oc.label[cat], "child" : child, "unit" : unit, "coord" : coord});
+		var
+			unit=(oc["unit"] && oc["unit"][cat]) || null,
+			coord=(oc["coordinates"] && oc["coordinates"][cat]) || null,
+			child=(oc["child"] && oc["child"][cat]) || null,
+			note=(oc["note"] && oc["note"][cat]) || null
+		;
+		return new jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
 	}
 
 	jsonstat.prototype.Data=function(e){
@@ -357,7 +378,7 @@ function JSONstat(resp,f){
 			return a;
 		}
 
-		if(this===null || this.type!=="ds"){
+		if(this===null || this.class!=="dataset"){
 			return null;
 		}
 
@@ -374,14 +395,14 @@ function JSONstat(resp,f){
 		//Data By Position in original array
 		if(typeof e==="number"){
 			var num=this.value[e];
-			return (typeof num!=="undefined") ? 
-				{"value" : num, "status": 
-					(this.status) ? 
+			return (typeof num!=="undefined") ?
+				{"value" : num, "status":
+					(this.status) ?
 					this.status[e]
 					:
 					null
-				} 
-				: 
+				}
+				:
 				null
 			; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
 		}
@@ -452,14 +473,14 @@ function JSONstat(resp,f){
 		return this.Data(pos);
 	}
 
-	/* 
+	/*
 		Transformation method: output in DataTable format (array or object)
 		Setup: opts={status: false, slabel: "Status", vlabel: "Value", field: "label", content: "label", type: "array"} (type values: "array" / "object" / "arrobj")
 
 		PENDING: use metric or any dim cat IDs instead of "value" and assign as many fields as metrics (pivot "by").
 	*/
 	jsonstat.prototype.toTable=function(opts, func){
-		if(this===null || this.type!=="ds"){
+		if(this===null || this.class!=="dataset"){
 			return null;
 		}
 
@@ -472,10 +493,10 @@ function JSONstat(resp,f){
 		;
 
 		if(typeof func==="function"){
-			var 
+			var
 				totbl=this.toTable(opts),
 				ret=[],
-				i=(opts.type!=='array') ? 0 : 1 //first row is header in array and object 
+				i=(opts.type!=='array') ? 0 : 1 //first row is header in array and object
 			;
 
 			if(opts.type!=='object'){
@@ -505,7 +526,7 @@ function JSONstat(resp,f){
 
 		//For example, as D3 input
 		if(opts.type==="arrobj"){
-			var 
+			var
 				totbl=this.toTable({field: "id", content: opts.content, status: opts.status}),// At the moment, options besides "type" are not passed
 				tbl=[],
 				head=totbl.shift()
@@ -525,7 +546,7 @@ function JSONstat(resp,f){
 
 		if(opts.type==="object"){
 			//Object
-			var 
+			var
 				valuetype=(typeof this.value[0]==="number" || this.value[0]===null) ? "number" : "string", //cell type inferred from first cell. If null, number is assumed (naif)
 				addCol=function(dimid,dimlabel){
 					var label=(useid && dimid) || dimlabel || dimid; //if userid then id; else label; then id if not label
@@ -595,7 +616,7 @@ function JSONstat(resp,f){
 			for (var j=0; j<dds[i]; j++){
 				for (var catid in dd[ddi[i]].category.index){
 					if (dd[ddi[i]].category.index[catid]===j){
-						var rowid=(opts.content!=="id" && dd[ddi[i]].category.label) ? dd[ddi[i]].category.label[catid] : catid; //id if not label (Maybe move label normalization from "dim" to "ds"?)
+						var rowid=(opts.content!=="id" && dd[ddi[i]].category.label) ? dd[ddi[i]].category.label[catid] : catid; //id if not label (Maybe move label normalization from "dimension" to "dataset"?)
 						cat.push(rowid);
 					}
 				}
@@ -650,7 +671,7 @@ function JSONstat(resp,f){
 	}
 
 	jsonstat.prototype.toString=function(){
-		return this.type; //improve?
+		return this.class; //improve?
 	}
 	jsonstat.prototype.toValue=function(){
 		return this.length;
