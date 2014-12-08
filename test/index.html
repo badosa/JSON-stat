@@ -20,7 +20,7 @@ parent: <a href="..">JJT</a> /
 			{
 				title: 'Assign a JSON-stat response to variable J',
 				exp: "bundle",
-				code: 'J=JSONstat("http://json-stat.org/samples/oecd-canada.json")',
+				code: 'J=JSONstat("oecd-canada.json")',
 				text: 'JSONstat() accepts a JSON-stat response (object) or a URI (string). It returns an object of class jsonstat. You can try this same sample from your own domain as JSON-stat.org is <a href="http://enable-cors.org/">CORS-enabled</a> (you will need to use a modern browser). In this page, result is "bundle" because this is the content of the "class" property. This property is returned when toString is invoked. When a URI is specified, the connection will be sync unless a callback function is passed as a second argument: JSONstat("http://json-stat.org/samples/oecd-canada.json", function(){ console.log(this.length); })'
 			},
 
