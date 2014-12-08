@@ -22,16 +22,16 @@
 				test=[
 					{
 						title: 'Assign a JSON-stat response to variable J',
-						exp: "",
+						exp: "bundle",
 						code: 'J=JSONstat(response)',
-						text: 'JSONstat() accepts a JSON-stat response (object) or a URI (string). It returns an object of class jsonstat. You can try this same sample from your own domain as JSON-stat.org is <a href="http://enable-cors.org/">CORS-enabled</a> (you will need to use a modern browser). In this page, result is "root" because this is the content of the type property. This property is returned when toString is invoked. When a URI is specified, the connection will be sync unless a callback function is passed as a second argument: JSONstat("http://json-stat.org/samples/oecd-canada.json", function(){ console.log(this.length); })'
+						text: 'JSONstat() accepts a JSON-stat response (object) or a URI (string). It returns an object of class jsonstat. You can try this same sample from your own domain as JSON-stat.org is <a href="http://enable-cors.org/">CORS-enabled</a> (you will need to use a modern browser). In this page, result is "bundle" because this is the content of the "class" property. This property is returned when toString is invoked. When a URI is specified, the connection will be sync unless a callback function is passed as a second argument: JSONstat("http://json-stat.org/samples/oecd-canada.json", function(){ console.log(this.length); })'
 					},
 
 					{
 						title: 'Get the number of datasets in a JSON-stat response',
 						exp: 2,
 						code: 'J.length',
-						text: 'The JSON-stat OECD-CANADA sample has two datasets. Always check for J.length>0 before processing the response.'
+						text: 'The JSON-stat OECD-CANADA sample has two datasets. Always check for J.length&gt;0 before processing the response. If J.length is zero, the response is not valid JSON-stat or an error ocurred. When J.length is zero, if the data provider has decided to offer error information, it will be available at J.error.'
 					},
 
 					{
@@ -63,28 +63,49 @@
 					},
 
 					{
-						title: 'Number of observations in the OECD dataset',
+						title: 'Number of observations in dataset "oecd"',
 						exp: 432,
 						code: 'J.Dataset("oecd").n',
 						text: 'The number of cells in the cube (even if they are empty).'
 					},
 
 					{
-						title: 'Get the date of the OECD dataset',
+						title: 'Get the date of dataset "oecd"',
 						exp: '2012-11-27',
 						code: 'J.Dataset("oecd").updated',
 						text: 'A string is returned that can be converted into a date: new Date(J.Dataset("oecd").updated).'
 					},
 
 					{
-						title: 'Get the source of the OECD dataset',
+						title: 'Get the source of dataset "oecd"',
 						exp: 'Economic Outlook No 92 - December 2012 - OECD Annual Projections',
 						code: 'J.Dataset("oecd").source',
 						text: 'A string is returned explaining where the dataset comes from.'
 					},
 
 					{
-						title: 'Get the number of dimensions of the dataset "oecd"',
+						title: 'Get the first note assigned to "oecd"',
+						exp: 'Most of the data in this dataset are taken from the individual contributions of national correspondents appointed by the OECD Secretariat with the approval of the authorities of Member countries. Consequently, these data have not necessarily been harmonised at international level.',
+						code: 'J.Dataset("oecd").note[0]',
+						text: 'Providers can include an array of notes for each dataset.'
+					},
+
+					{
+						title: 'Get the contact information of "oecd"',
+						exp: 'EcoOutlook@oecd.org',
+						code: 'J.Dataset("oecd").extension.contact',
+						text: 'The data provider decided to extend the JSON-stat format with a "contact" property at the dataset level. It can be retrieved using "extension".'
+					},
+
+					{
+						title: 'Get the address of the first metadata file of "oecd"',
+						exp: 'http://www.oecd.org/eco/economicoutlookanalysisandforecasts/EO92macroeconomicsituation.pdf',
+						code: 'J.Dataset("oecd").extension.metadata[0].href',
+						text: 'The data provider decided to extend the JSON-stat format with a "metadata" property at the dataset level. It can be retrieved using "extension".'
+					},
+
+					{
+						title: 'Get the number of dimensions of "oecd"',
 						exp: 3,
 						code: 'J.Dataset("oecd").length',
 						text: 'The "oecd" dataset has 3 dimensions.'
@@ -112,7 +133,7 @@
 					},
 
 					{
-						title: 'Get the IDs of the dimensions of the "canada" dataset',
+						title: 'Get the IDs of the dimensions of dataset "canada"',
 						exp: 'country,year,age,concept,sex',
 						code: 'J.Dataset("canada").id',
 						text: 'Actually, an array of IDs is returned.'
@@ -196,6 +217,34 @@
 					},
 
 					{
+						title: 'Get the first note assigned to dimension "area" in "oecd"',
+						exp: 'Except where otherwise indicated, data refer to the actual territory of the country considered.',
+						code: 'J.Dataset("oecd").Dimension("area").note[0]',
+						text: 'Providers can include an array of notes for each dimension.'
+					},
+
+					{
+						title: 'Get the type of the first link with an "alternate" relation of dimension "sex" in "canada"',
+						exp: 'text/html',
+						code: 'J.Dataset("canada").Dimension("sex").link.alternate[0].type',
+						text: 'Providers can include links to alternate resources.'
+					},
+
+					{
+						title: 'Get the address of the first link with an "alternate" relation of dimension "sex" in "canada"',
+						exp: 'http://www.statcan.gc.ca/concepts/definitions/class-sex-eng.htm',
+						code: 'J.Dataset("canada").Dimension("sex").link.alternate[0].href',
+						text: 'In this example, a link to a web page explaining the meaning of the values of "sex" is provided.'
+					},
+
+					{
+						title: 'Get the definition of the unemployment rate (UNR concept) in "oecd"',
+						exp: 'The OECD harmonised unemployment rate gives the number of unemployed persons as a percentage of the labour force (the total number of people employed plus unemployed).',
+						code: 'J.Dataset("oecd").Dimension("concept").extension.definition.UNR',
+						text: 'The data provider decided to extend the JSON-stat format with a "definition" property for the "concept" dimension. It can be retrieved using "extension".'
+					},
+
+					{
 						title: 'Get the number of categories in dimension "area" in "oecd"',
 						exp: 36,
 						code: 'J.Dataset("oecd").Dimension("area").length',
@@ -245,33 +294,39 @@
 					},
 
 					{
-						title: 'Get the number of children of the "EU15" category in the "area" dimension',
+						title: 'Get the number of children of category "EU15" in dimension "area"',
 						exp: 15,
 						code: 'J.Dataset(0).Dimension("area").Category("EU15").length',
 						text: 'When a dimension is hierchical, use length to check if a category has children.'
 					},
 
 					{
-						title: 'Get the IDs of of the children of the "EU15" category in the "area" dimension',
+						title: 'Get the IDs of of the children of category "EU15" in dimension "area"',
 						exp: 'AT,BE,DE,DK,ES,FI,FR,GR,IE,IT,LU,NL,PT,SE,UK',
 						code: 'J.Dataset(0).Dimension("area").Category("EU15").id',
 						text: 'An array is returned.'
 					},
 
 					{
-						title: 'Get the coordinates of the "AU" category in the "area" dimension, if available',
+						title: 'Get the coordinates of category "AU" in dimension "area", if available',
 						exp: null,
 						code: 'J.Dataset(0).Dimension("area").Category("AU").coordinates',
 						text: 'A [long, lat] array is returned, or null if coordinates information is not available.'
 					},
 
 					{
-						title: 'Get the unit information of the "UNR" category in the "concept" dimension, if available',
+						title: 'Get the unit information of category "UNR" in dimension "concept", if available',
 						exp: '[object Object]',
 						code: 'J.Dataset(0).Dimension("concept").Category("UNR").unit',
 						text: 'An object is returned with all the properties included by the data provider inside "unit".'
 					},
 
+					{
+						title: 'Get the first note assigned to category "DE" of dimension "area" in "oecd"',
+						exp: 'Germany (code DE) was created 3 October 1990 by the accession of the Democratic Republic of Germany (code DDR) to the then Federal Republic of Germany (code DEW).',
+						code: 'J.Dataset("oecd").Dimension("area").Category("DE").note[0]',
+						text: 'Providers can include an array of notes for each category in a dimension.'
+					},
 
 					{
 						title: 'Get the first value in the first dataset',
@@ -284,7 +339,7 @@
 						title: 'Get the value of the cell of the first dataset where the three dimensions are in their first category',
 						exp: 5.943826289,
 						code: 'J.Dataset(0).Data([0,0,0]).value',
-						text: 'The Data() method can select a value using an array of category indexes (one for each dimension). This code returns a number (if the value is not missing): unemployment (first concept) in Australia (first area) in 2003 (first year). In the future, this method might allow to select a slice of the data cube.'
+						text: 'The Data() method can select a value using an array of category indexes (one for each dimension). This code returns a number (if the value is not missing): unemployment (first concept) in Australia (first area) in 2003 (first year). In the future, this method should allow to select a slice of the data cube.'
 					},
 
 					{
@@ -377,17 +432,15 @@
 						code: 'J.Dataset(0).toTable({type: "arrobj", content: "id"})',
 						text: 'This code returns an array of objects with a value property plus a property for each dimension. In the example, ids will be used for content ({content: "id"} but also for fields because when type is "arrobj", field is always "id".'
 					}
+
 				],
 				d=document,
 				ver=d.getElementById('version'),
 				dl=d.getElementsByTagName('dl')[0],
-				version=JSONstat.version,
-				varr=version.split('.')
+				version=JSONstat.version
 			;
 
 			ver.innerHTML+=' (v. ' + version + ')';
-
-			test[0].exp=(varr[0] + '.' + varr[1]==='0.6') ? 'root' : 'bundle';
 
 			for(var t=0, len=test.length; t<len; t++){
 				var
@@ -417,6 +470,6 @@
 			}
 		</script>
 		<noscript>Errrrr... This is embarassing... This page needs Javascript to work.</noscript>
-		<address><a href="http://json-stat.org">JSON-stat.org</a> | <a href="http://badosa.github.io/JSON-stat/">GitHub</a> | Last update: 2014-12-06 &copy; <a href="http://xavierbadosa.com">Xavier Badosa</a></address>
+		<address><a href="http://json-stat.org">JSON-stat.org</a> | <a href="http://badosa.github.io/JSON-stat/">GitHub</a> | Last update: 2014-12-07 &copy; <a href="http://xavierbadosa.com">Xavier Badosa</a></address>
 	</body>
 </html>
