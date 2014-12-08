@@ -53,11 +53,11 @@ Nevis font
 
 @font-face {
 	font-family: 'nevis';
-	src: url('../fonts/nevis-webfont.eot');
-	src: url('../fonts/nevis-webfont.eot?#iefix') format('embedded-opentype'),
-		url('../fonts/nevis-webfont.woff') format('woff'),
-		url('../fonts/nevis-webfont.ttf') format('truetype'),
-		url('../fonts/nevis-webfont.svg#nevis') format('svg');
+	src: url('http://json-stat.com/fonts/nevis-webfont.eot');
+	src: url('http://json-stat.com/fonts/nevis-webfont.eot?#iefix') format('embedded-opentype'),
+		url('http://json-stat.com/fonts/nevis-webfont.woff') format('woff'),
+		url('http://json-stat.com/fonts/nevis-webfont.ttf') format('truetype'),
+		url('http://json-stat.com/fonts/nevis-webfont.svg#nevis') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -326,7 +326,7 @@ footer.inner {
 	letter-spacing: 0;
 
 	margin: 0;
-/*  color: #fff; 
+/*  color: #fff;
   font-size: 42px;
   font-weight: 700;
   text-shadow: #111 0px 0px 10px; */
