@@ -41,7 +41,7 @@ http.get(uri, function(res) {
 						exp: "year"
 					},
 					{
-						text: "Number of categorie in dimension 'area'",
+						text: "Number of categories in dimension 'area'",
 						real: J.Dataset("oecd").Dimension("area").length,
 						exp: 36
 					},
