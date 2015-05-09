@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.7.0 (Node.js module)
+JSON-stat Javascript Toolkit v. 0.7.1 (Node.js module)
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
-Copyright 2014 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2015 Xavier Badosa (http://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.7.0";
+JSONstat.version="0.7.1";
 
 function JSONstat(resp,f){
 	return new JSONstat.jsonstat(resp,f); //nodejs
@@ -154,10 +154,43 @@ function JSONstat(resp,f){
 						){
 						return;
 					}
-					var otd=ot.dimension;
-					this.length=otd.size.length;
-					this.id=otd.id;
-					this.role=otd.role; //0.3.5 Role added
+					var 
+						otd=ot.dimension,
+						otr=otd.role,
+						otdi=otd.id,
+						otdl=otd.size.length
+					;
+
+					this.length=otdl;
+					this.id=otdi;
+					this.role=otr;
+
+					//If role not null, leave it as it is but add a classification role if it does not exist. Added in 0.7.1
+					if (otr!==null && !otr.hasOwnProperty("classification")){
+						var 
+							d=[],
+							gmt=otr.time.concat(otr.geo).concat(otr.metric),
+							//Replace with polyfill of Array.indefOf at some point?
+							inArray=function(e,a){
+								for(var i=a.length;i--;){
+									if(e===a[i]){
+										return true;
+									}
+								}
+								return false;
+							}
+						;
+
+						this.role.classification=[];
+
+						//not inverse looping to preserve dim order
+						for(var s=0; s<otdl; s++){
+							if(!inArray(otdi[s], gmt)){
+								this.role.classification.push(otdi[s]);
+							}
+						}
+					}
+
 					this.n=dsize; //number of obs added in 0.4.2
 
 					//If only one category, no need of index according to the spec
@@ -654,7 +687,9 @@ function JSONstat(resp,f){
 				addRow(label[d][x]); //Global row
 			}
 			if(opts.status){
-				addRow(this.status[x]);
+				addRow(
+					(this.status) ? this.status[x] : null
+				);
 			}
 			addRowValue(this.value[x]); //Global row, rows and table
 		}
