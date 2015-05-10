@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.7.1
+JSON-stat Javascript Toolkit v. 0.7.2
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -21,7 +21,7 @@ permissions and limitations under the License.
 */
 
 function JSONstat(t,e){return window===this?new JSONstat.jsonstat(t,e):void 0}var JSONstat=JSONstat||{}
-JSONstat.version="0.7.1",function(){"use strict"
+JSONstat.version="0.7.2",function(){"use strict"
 function t(t){return"[object Array]"===Object.prototype.toString.call(t)}function e(e,n){function r(e,n){var r=[]
 if("string"==typeof e&&(e=[e]),t(e)){if(e.length===n)return e
 if(1===e.length){for(var i=0;n>i;i++)r.push(e[0])
@@ -46,8 +46,8 @@ if(o.hasOwnProperty("value")&&t(o.value))u=o.value.length
 else if(o.hasOwnProperty("status")&&t(o.status))u=o.status.length
 else if(o.hasOwnProperty("dimension")){for(var h=o.dimension.size,f=1,v=h.length;v--;)f*=h[v]
 u=f}if(this.value=r(o.value,u),this.status=o.hasOwnProperty("status")?r(o.status,u):null,o.hasOwnProperty("dimension")){if(!t(o.dimension.id)||!t(o.dimension.size)||o.dimension.id.length!=o.dimension.size.length)return
-var d=o.dimension,c=d.role,p=d.id,g=d.size.length
-if(this.length=g,this.id=p,this.role=c,null!==c&&!c.hasOwnProperty("classification")){var y=[],_=c.time.concat(c.geo).concat(c.metric),b=function(t,e){for(var n=e.length;n--;)if(t===e[n])return!0
+var d=o.dimension,c=d.role||null,p=d.id,g=d.size.length
+if(this.length=g,this.id=p,this.role=c,c&&!c.hasOwnProperty("classification")){var y=[],_=c.time.concat(c.geo).concat(c.metric),b=function(t,e){for(var n=e.length;n--;)if(t===e[n])return!0
 return!1}
 this.role.classification=[]
 for(var v=0;g>v;v++)b(p[v],_)||this.role.classification.push(p[v])}this.n=u

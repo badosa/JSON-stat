@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.7.1
+JSON-stat Javascript Toolkit v. 0.7.2
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.7.1";
+JSONstat.version="0.7.2";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -193,7 +193,7 @@ function JSONstat(resp,f){
 					}
 					var 
 						otd=ot.dimension,
-						otr=otd.role,
+						otr=otd.role || null,
 						otdi=otd.id,
 						otdl=otd.size.length
 					;
@@ -203,7 +203,7 @@ function JSONstat(resp,f){
 					this.role=otr;
 
 					//If role not null, leave it as it is but add a classification role if it does not exist. Added in 0.7.1
-					if (otr!==null && !otr.hasOwnProperty("classification")){
+					if (otr && !otr.hasOwnProperty("classification")){
 						var 
 							d=[],
 							gmt=otr.time.concat(otr.geo).concat(otr.metric),
