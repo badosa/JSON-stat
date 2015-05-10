@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.7.2
+JSON-stat Javascript Toolkit v. 0.7.3
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.7.2";
+JSONstat.version="0.7.3";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -195,17 +195,27 @@ function JSONstat(resp,f){
 						otd=ot.dimension,
 						otr=otd.role || null,
 						otdi=otd.id,
-						otdl=otd.size.length
+						otdl=otd.size.length,
+						createRole=function(s){
+							if(!otr.hasOwnProperty(s)){
+								otr[s]=null;
+							}
+						}
 					;
 
 					this.length=otdl;
 					this.id=otdi;
-					this.role=otr;
 
-					//If role not null, leave it as it is but add a classification role if it does not exist. Added in 0.7.1
-					if (otr && !otr.hasOwnProperty("classification")){
+					if(otr){
+						createRole("time");
+						createRole("geo");
+						createRole("metric");
+						createRole("classification");
+					}
+
+					//If role not null, leave it as it is but add a classification role if it's null. Added in 0.7.1
+					if (otr && otr.classification===null){
 						var 
-							d=[],
 							gmt=otr.time.concat(otr.geo).concat(otr.metric),
 							//Replace with polyfill of Array.indefOf at some point?
 							inArray=function(e, a){
@@ -218,15 +228,21 @@ function JSONstat(resp,f){
 							}
 						;
 
-						this.role.classification=[];
+						otr.classification=[];
 
 						//not inverse looping to preserve dim order
 						for(var s=0; s<otdl; s++){
 							if(!inArray(otdi[s], gmt)){
-								this.role.classification.push(otdi[s]);
+								otr.classification.push(otdi[s]);
 							}
 						}
+
+						if(otr.classification.length===0){
+							otr.classification=null;
+						}
 					}
+
+					this.role=otr;
 
 					this.n=dsize; //number of obs added in 0.4.2
 
@@ -340,9 +356,9 @@ function JSONstat(resp,f){
 	jsonstat.prototype.Dimension=function(dim){
 		function role(otd,dim){
 			var otdr=otd.role;
-			if(typeof otdr!="undefined"){
+			if(otdr!==null){
 				for(var prop in otdr){
-					for(var p=otdr[prop].length;p--;){
+					for(var p=(otdr[prop]!==null ? otdr[prop].length : 0); p--;){
 						if(otdr[prop][p]===dim){
 							return prop;
 						}
