@@ -5,7 +5,7 @@ http://json-stat.org
 https://github.com/badosa/JSON-stat
 
 Copyright 2015 Xavier Badosa (http://xavierbadosa.com)
-
+ 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
