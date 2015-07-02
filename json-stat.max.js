@@ -1,11 +1,11 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.7.4
+JSON-stat Javascript Toolkit v. 0.7.5
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
 Copyright 2015 Xavier Badosa (http://xavierbadosa.com)
- 
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.7.4";
+JSONstat.version="0.7.5";
 
 function JSONstat(resp,f){
 	if(window===this){
@@ -51,7 +51,7 @@ function JSONstat(resp,f){
 				req.onload=function(){
 					json=JSON.parse(req.responseText);
 					func.call(JSONstat(json));
-				}
+				};
 				req.open("GET", uri);
 				req.send();
 			}else{ //Standard xhr
@@ -64,14 +64,14 @@ function JSONstat(resp,f){
 							func.call(JSONstat(json));
 						}
 					}
-				}
+				};
 				req.open("GET",uri,async);
 				req.send(null);
 				if(!async){
 					return json;
 				}
 			}
-		}
+		};
 		//sparse cube (value or status)
 		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
 		function normalize(s,len){
@@ -121,6 +121,13 @@ function JSONstat(resp,f){
 				// Wrong input object or wrong URI or connection problem
 				if(o===null || typeof o!=="object"){
 					return;
+				}
+
+				//When o is a URI, class won't be set before the request
+				//and it will enter the bundle case: once we have a response
+				//if class is dataset we redirect to case "dataset". 0.7.5
+				if(o.class==="dataset"){
+					return JSONstat(o);
 				}
 
 				// Explicit error
@@ -191,7 +198,7 @@ function JSONstat(resp,f){
 						){
 						return;
 					}
-					var 
+					var
 						otd=ot.dimension,
 						otr=otd.role || null,
 						otdi=otd.id,
@@ -215,7 +222,7 @@ function JSONstat(resp,f){
 
 					//If role not null, leave it as it is but add a classification role if it's null. Added in 0.7.1
 					if (otr && otr.classification===null){
-						var 
+						var
 							gmt=[],
 							//Replace with polyfill of Array.indefOf at some point?
 							inArray=function(e, a){

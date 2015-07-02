@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.7.4 (Node.js module)
+JSON-stat Javascript Toolkit v. 0.7.5 (Node.js module)
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.7.4";
+JSONstat.version="0.7.5"; //equal to 0.7.4: Changes didn't affect the node.js module
 
 function JSONstat(resp,f){
 	return new JSONstat.jsonstat(resp,f); //nodejs
@@ -154,7 +154,7 @@ function JSONstat(resp,f){
 						){
 						return;
 					}
-					var 
+					var
 						otd=ot.dimension,
 						otr=otd.role || null,
 						otdi=otd.id,
@@ -178,7 +178,7 @@ function JSONstat(resp,f){
 
 					//If role not null, leave it as it is but add a classification role if it's null. Added in 0.7.1
 					if (otr && otr.classification===null){
-						var 
+						var
 							gmt=[],
 							//Replace with polyfill of Array.indefOf at some point?
 							inArray=function(e, a){
