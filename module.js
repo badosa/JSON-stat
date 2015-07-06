@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.7.5 (Node.js module)
+JSON-stat Javascript Toolkit v. 0.8.0 (Node.js module)
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,10 +22,10 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.7.5"; //equal to 0.7.4: Changes didn't affect the node.js module
+JSONstat.version="0.8.0";
 
 function JSONstat(resp,f){
-	return new JSONstat.jsonstat(resp,f); //nodejs
+	return new JSONstat.jsonstat(resp,f);//nodejs
 }
 
 (function(){
@@ -71,7 +71,7 @@ function JSONstat(resp,f){
 
 		this.class=o.class || "bundle";
 		switch(this.class){
-			case "bundle" :
+			case "bundle" : //Real bundle, or URL (bundle, dataset, collection [dimension, pending]), or error
 				var i=[], ds=0;
 				this.error=null;
 				this.length=0;
@@ -90,6 +90,13 @@ function JSONstat(resp,f){
 				if(o.hasOwnProperty("error")){
 					this.error=o.error;
 					return;
+				}
+
+				//When o is a URI, class won't be set before the request
+				//and it will enter the bundle case: once we have a response
+				//if class if dataset we redirect to case "dataset". 0.7.5
+				if(o.class==="dataset" || o.class==="collection"){
+					return JSONstat(o);
 				}
 
 				for (var prop in o){
@@ -296,7 +303,69 @@ function JSONstat(resp,f){
 				this.unit=o.unit; //v.0.5.0
 				this.coordinates=o.coord; //v.0.5.0
 			break;
+			case "collection" : //0.8.0
+				this.length=0;
+				this.label=o.label || null;
+				this.note=o.note || null;
+				this.link=o.link || null;
+				this.href=o.href || null;
+				this.updated=o.updated || null;
+				this.source=o.source || null;
+				this.extension=o.extension || null;
+
+				if(this.link!==null && o.link.item){
+					var item=o.link.item;
+
+					this.length=( isArray(item) ) ? item.length : 0;
+					if(this.length){
+						for(var i=0; i<this.length; i++){
+							this.id[i]=item[i].href;
+						}
+					}
+				}
+			break;
 		}
+	}
+
+	jsonstat.prototype.Item=function(o){ //0.8.0
+		if (this===null || this.class!=="collection" || !this.length){
+			return null;
+		}
+
+		if(typeof o==="number"){
+			if(o>this.length || o<0){
+				return null;
+			}
+			return this.link.item[o];
+		}
+
+		var ret=[], func;
+
+		if(typeof o==="object"){
+			if(o.class){
+				func=function(t,i,c){
+					if(c.class===t.link.item[i].class){
+						ret.push(t.link.item[i]);
+					}
+				}
+			}else{
+				//{follow: true} not documented because sync xhr are deprecated outside of workers. Use only for testing and demoing. That's why it's been defined as incompatible with {class: ...}
+				if(o.follow){
+					func=function(t,i){
+						ret.push(JSONstat(t.id[i]));
+					}
+				}
+			}
+		}else{ //not object, not number: void or string (ignore)
+			func=function(t,i){
+				ret.push(t.link.item[i]);
+			}
+		}
+
+		for(var i=0; i<this.length; i++){
+			func(this,i,o);
+		}
+		return ret;
 	}
 
 	jsonstat.prototype.Dataset=function(ds){
