@@ -21,15 +21,44 @@ JSON-stat is based on a data cube information structure. The JSON-stat Javascrip
 
 ### The JSON-stat tree
 
+#### Bundles
+
+Bundles are packages of unordered arbitrary datasets.
+
+ * *Bundle*
+  * *Dataset*
+    * *Dimension*
+      * *Category*
+    * *Data*
+
+#### Datasets
+
+Datasets are organized in dimensions and data.
+
  * *Dataset*
    * *Dimension*
      * *Category*
    * *Data*
 
-For instance, to retrieve information about the first category of the first dimension of the first dataset in a JSON-stat response *j*, the JSON-stat Javascript Toolkit allows you to traverse the JSON-stat tree like this:
+#### Collections
+
+Collections are sets of items. Items can be bundles, datasets, dimensions and collections.
+
+ * *Dataset*
+   * *Item*
+
+For instance, to retrieve information about the first category of the first dimension of the first dataset in a JSON-stat bundle response *j*, the JSON-stat Javascript Toolkit allows you to traverse the JSON-stat tree like this:
 
 ```js
 JSONstat( j ).Dataset( 0 ).Dimension( 0 ).Category( 0 )
+```
+
+The class of the response can be checked using the *class* property:
+
+```js
+if(JSONstat( j ).class==="dataset"){
+   var cat0=JSONstat( j ).Dimension( 0 ).Category( 0 );
+}
 ```
 
 ### General properties
@@ -53,7 +82,7 @@ JSONstat( { ... } ).length
 JSONstat( "http://json-stat.org/samples/oecd-canada.json" ).length
 //number of datasets in oecd-canada.json. Sync connection.
 
-JSONstat( "http://json-stat.org/samples/oecd-canada.json", 
+JSONstat( "http://json-stat.org/samples/oecd-canada.json",
    function(){
       console.log( this.length );
    }
@@ -103,13 +132,13 @@ JSONstat( j ).Dataset( 0 ).Data( 0 ).value
 JSONstat( j ).Dataset( 0 ).Data( [ 0, 0, 0 ] ).value
 //Value of the first cell in a dataset with 3 dimensions (usually a number).
 
-JSONstat( j ).Dataset( 0 ).Data( 
-   { "metric" : "UNR", "geo" : "GR", "time" : "2014" } 
+JSONstat( j ).Dataset( 0 ).Data(
+   { "metric" : "UNR", "geo" : "GR", "time" : "2014" }
 ).value
 //Unemployment rate in Greece in 2014 (usually a number).
 
-JSONstat( j ).Dataset( 0 ).Data( 
-   { "metric" : "UNR", "geo" : "GR", "time" : "2014" } 
+JSONstat( j ).Dataset( 0 ).Data(
+   { "metric" : "UNR", "geo" : "GR", "time" : "2014" }
 ).status
 //Status of unemployment rate in Greece in 2014.
 ```
@@ -159,11 +188,10 @@ JSONstat( j ).Dataset( "canada" ).toTable(
       }
    }
 )
-//Get only the female population by age of Canada 
+//Get only the female population by age of Canada
 //and convert values from thousands to persons.
 ```
 
 ## Further information
 
 For **installation** instructions, code **samples**, the **API reference**, etc., see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**.
-
