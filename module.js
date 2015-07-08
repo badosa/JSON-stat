@@ -36,9 +36,10 @@ function JSONstat(resp,f){
 		return Object.prototype.toString.call(o) === "[object Array]";
 	}
 	function Jsonstat(o,f){
-      //nodejs xhr gone
-  		//sparse cube (value or status)
-  		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
+    //nodejs xhr gone
+		//sparse cube (value or status)
+		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
+		var
 			normalize=function(s,len){
 				var ret=[], l;
 
