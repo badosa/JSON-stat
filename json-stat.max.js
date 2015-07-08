@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.8.0
+JSON-stat Javascript Toolkit v. 0.8.1
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,8 +22,9 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.8.0";
+JSONstat.version="0.8.1";
 
+/* jshint newcap:false */
 function JSONstat(resp,f){
 	if(window===this){
 		return new JSONstat.jsonstat(resp,f);
@@ -32,73 +33,77 @@ function JSONstat(resp,f){
 
 (function(){
 	"use strict";
+
 	function isArray(o) {
 		return Object.prototype.toString.call(o) === "[object Array]";
 	}
-	function jsonstat(o,f){
-		var xhr=function(uri, func){
-			var json, async=(func!==false);
-			if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to same domain won't be specified using an absolute address). Not integrated because it will be removed someday...
-				if(!async){ //JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).
-					return;
-				}
-				var req=new XDomainRequest();
-				/*
-				req.onerror=function(){
-					return;  //JSONstat: Can't access "+uri;
-				}
-				*/
-				req.onload=function(){
-					json=JSON.parse(req.responseText);
-					func.call(JSONstat(json));
-				};
-				req.open("GET", uri);
-				req.send();
-			}else{ //Standard xhr
-				var req=new XMLHttpRequest();
-				req.onreadystatechange=function(){
-					if(req.readyState===4){
-						var s=req.status;
-						json=(s && req.responseText && (s>=200 && s<300 || s===304)) ? JSON.parse(req.responseText) : null;
-						if(async){
-							func.call(JSONstat(json));
+	function Jsonstat(o,f){
+		var
+			xhr=function(uri, func){
+				var json, async=(func!==false), req;
+				if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to same domain won't be specified using an absolute address). Not integrated because it will be removed someday...
+					if(!async){ //JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).
+						return;
+					}
+					req=new XDomainRequest();
+					/*
+					req.onerror=function(){
+						return;  //JSONstat: Can't access "+uri;
+					}
+					*/
+					req.onload=function(){
+						json=JSON.parse(req.responseText);
+						func.call(JSONstat(json));
+					};
+					req.open("GET", uri);
+					req.send();
+				}else{ //Standard xhr
+					req=new XMLHttpRequest();
+					req.onreadystatechange=function(){
+						if(req.readyState===4){
+							var s=req.status;
+							json=(s && req.responseText && (s>=200 && s<300 || s===304)) ? JSON.parse(req.responseText) : null;
+							if(async){
+								func.call(JSONstat(json));
+							}
 						}
+					};
+					req.open("GET",uri,async);
+					req.send(null);
+					if(!async){
+						return json;
 					}
-				};
-				req.open("GET",uri,async);
-				req.send(null);
-				if(!async){
-					return json;
 				}
-			}
-		};
-		//sparse cube (value or status)
-		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
-		function normalize(s,len){
-			var ret=[];
+			},
+			//sparse cube (value or status)
+			//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
+			normalize=function(s,len){
+				var ret=[], l;
 
-			if(typeof s==="string"){
-				s=[s];
-			}
-			if(isArray(s)){
-				if(s.length===len){ //normal case
-					return s;
+				if(typeof s==="string"){
+					s=[s];
 				}
-				if(s.length===1){ //all obs same status
-					for(var l=0; l<len; l++){
-						ret.push(s[0]);
+				if(isArray(s)){
+					if(s.length===len){ //normal case
+						return s;
 					}
-					return ret;
+					if(s.length===1){ //all obs same status
+						for(l=0; l<len; l++){
+							ret.push(s[0]);
+						}
+						return ret;
+					}
 				}
-			}
 
-			//It's an object (sparse cube) or an incomplete array that must be filled with nulls
-			for(var l=0; l<len; l++){
-				var e=(typeof s[l]==="undefined") ? null: s[l];
-				ret.push(e);
-			}
-			return ret;
-		}
+				//It's an object (sparse cube) or an incomplete array that must be filled with nulls
+				for(l=0; l<len; l++){
+					var e=(typeof s[l]==="undefined") ? null: s[l];
+					ret.push(e);
+				}
+				return ret;
+			},
+			ot, prop, ilen
+		;
 
 		this.length=0;
 		this.id=[];
@@ -109,7 +114,7 @@ function JSONstat(resp,f){
 		this.class=o.class || "bundle";
 		switch(this.class){
 			case "bundle" : //Real bundle, or URL (bundle, dataset, collection [dimension, pending]), or error
-				var i=[], ds=0;
+				var arr=[], ds=0;
 				this.error=null;
 				this.length=0;
 
@@ -136,18 +141,18 @@ function JSONstat(resp,f){
 					return JSONstat(o);
 				}
 
-				for (var prop in o){
+				for (prop in o){
 					ds++;
 					/* If sparse cube, we can't rely on value to check size
 					if (isArray(o[prop].value)){
 						a++;
 					}
 					*/
-					i.push(prop);
+					arr.push(prop);
 				}
 				this.__tree__=o;
 				this.length=ds;
-				this.id=i;
+				this.id=arr;
 			break;
 
 			case "dataset" :
@@ -157,8 +162,7 @@ function JSONstat(resp,f){
 					o={ "__tree__": o }; //remove all elements from o (native response "dataset"), put everything inside __tree__  (native response "bundle")
 				}
 
-				var ot=o.__tree__;
-				this.__tree__=ot;
+				this.__tree__=ot=o.__tree__;
 				this.label=ot.label || null;
 				this.note=ot.note || null; //v.0.7.0
 				this.link=ot.link || null; //v.0.7.0
@@ -169,7 +173,7 @@ function JSONstat(resp,f){
 
 				//Sparse cube (If toTable() removed, this logic can be moved inside Data()
 				//which is more efficient when retrieving a single value/status.
-				var dsize=0; //data size
+				var s, dsize=0; //data size
 				if (ot.hasOwnProperty("value") && isArray(ot.value)){
 					dsize=ot.value.length;
 				}else{
@@ -178,7 +182,7 @@ function JSONstat(resp,f){
 					}else{
 						if(ot.hasOwnProperty("dimension")) {
 							var size=ot.dimension.size, length=1;
-							for(var s=size.length; s--;){
+							for(s=size.length; s--;){
 								length*=size[s];
 							}
 							dsize=length;
@@ -224,6 +228,7 @@ function JSONstat(resp,f){
 					if (otr && otr.classification===null){
 						var
 							gmt=[],
+							roles=["time","geo","metric"],
 							//Replace with polyfill of Array.indefOf at some point?
 							inArray=function(e, a){
 								for(var i=a.length;i--;){
@@ -235,7 +240,7 @@ function JSONstat(resp,f){
 							}
 						;
 
-						for(var s=0, roles=["time","geo","metric"]; s<3; s++){
+						for(s=0; s<3; s++){
 							var rr=otr[roles[s]];
 							if(rr!==null){
 								gmt=gmt.concat(rr);
@@ -245,7 +250,7 @@ function JSONstat(resp,f){
 						otr.classification=[];
 
 						//not inverse looping to preserve dim order
-						for(var s=0; s<otdl; s++){
+						for(s=0; s<otdl; s++){
 							if(!inArray(otdi[s], gmt)){
 								otr.classification.push(otdi[s]);
 							}
@@ -270,7 +275,7 @@ function JSONstat(resp,f){
 						if (!(otd[otd.id[d]].category.hasOwnProperty("index"))){
 							var c=0;
 							otd[otd.id[d]].category.index={};
-							for (var prop in otd[otd.id[d]].category.label){
+							for (prop in otd[otd.id[d]].category.label){
 								otd[otd.id[d]].category.index[prop]=c++;
 							}
 						}else{
@@ -280,7 +285,9 @@ function JSONstat(resp,f){
 							// assumed for all browsers and default is array instead of object-)
 							if(isArray(otd[otd.id[d]].category.index)){
 								var oindex={}, index=otd[otd.id[d]].category.index;
-								for (var i=0, ilen=index.length; i<ilen; i++){
+
+								ilen=index.length;
+								for (i=0; i<ilen; i++){
 									oindex[index[i]]=i;
 								}
 								otd[otd.id[d]].category.index=oindex;
@@ -292,7 +299,8 @@ function JSONstat(resp,f){
 				}
 			break;
 			case "dimension" :
-				var cats=[], ot=o.__tree__, otc=ot.category;
+				ot=o.__tree__;
+				var cats=[], otc=ot.category;
 				if(
 					!o.hasOwnProperty("__tree__") ||
 					!ot.hasOwnProperty("category") //Already tested in the Dimension() / Category() ? method
@@ -303,13 +311,13 @@ function JSONstat(resp,f){
 				//If no category label, use IDs
 				if(!otc.hasOwnProperty("label")){
 					otc.label={};
-					for (var prop in otc.index){
+					for (prop in otc.index){
 						otc.label[prop]=prop;
 					}
 				}
 
 				//Array conversion
-				for (var prop in otc.index){
+				for (prop in otc.index){
 					cats[otc.index[prop]]=prop; //0.4.3 cats.push(prop) won't do because order not in control when index was originally an array and was converted to object by the Toolkit.
 				}
 
@@ -364,7 +372,7 @@ function JSONstat(resp,f){
 		}
 	}
 
-	jsonstat.prototype.Item=function(o){ //0.8.0
+	Jsonstat.prototype.Item=function(o){ //0.8.0
 		if (this===null || this.class!=="collection" || !this.length){
 			return null;
 		}
@@ -384,31 +392,41 @@ function JSONstat(resp,f){
 					if(c.class===t.link.item[i].class){
 						ret.push(t.link.item[i]);
 					}
-				}
+				};
 			}else{
 				//{follow: true} not documented because sync xhr are deprecated outside of workers. Use only for testing and demoing. That's why it's been defined as incompatible with {class: ...}
 				if(o.follow){
 					func=function(t,i){
 						ret.push(JSONstat(t.id[i]));
-					}
+					};
 				}
 			}
 		}else{ //not object, not number: void or string (ignore)
 			func=function(t,i){
 				ret.push(t.link.item[i]);
-			}
+			};
 		}
 
 		for(var i=0; i<this.length; i++){
 			func(this,i,o);
 		}
 		return ret;
-	}
+	};
 
-	jsonstat.prototype.Dataset=function(ds){
-		if (this===null || this.class!=="bundle"){
+	Jsonstat.prototype.Dataset=function(ds){
+		if (this===null){
 			return null;
 		}
+
+		//0.8.1 Dataset responses can be treated as bundle ones
+		if(this.class==="dataset"){
+			return (typeof ds!=="undefined") ? this : [this];
+		}
+
+		if(this.class!=="bundle"){
+			return null;
+		}
+
 		if(typeof ds==="undefined"){
 			var ar=[];
 			for(var c=0, len=this.id.length; c<len; c++){
@@ -426,30 +444,34 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		return new jsonstat({"class" : "dataset", "__tree__": tds});
-	}
+		return new Jsonstat({"class" : "dataset", "__tree__": tds});
+	};
 
-	jsonstat.prototype.Dimension=function(dim){
-		function role(otd,dim){
-			var otdr=otd.role;
-			if(otdr!==null){
-				for(var prop in otdr){
-					for(var p=(otdr[prop]!==null ? otdr[prop].length : 0); p--;){
-						if(otdr[prop][p]===dim){
-							return prop;
+	Jsonstat.prototype.Dimension=function(dim){
+		var
+			ar=[],
+			c,
+			len=this.id.length,
+			role=function(otd,dim){
+				var otdr=otd.role;
+				if(otdr!==null){
+					for(var prop in otdr){
+						for(var p=(otdr[prop]!==null ? otdr[prop].length : 0); p--;){
+							if(otdr[prop][p]===dim){
+								return prop;
+							}
 						}
 					}
 				}
+				return null;
 			}
-			return null;
-		}
+		;
 
 		if (this===null || this.class!=="dataset"){
 			return null;
 		}
 		if(typeof dim==="undefined"){
-			var ar=[];
-			for(var c=0, len=this.id.length; c<len; c++){
+			for(c=0; c<len; c++){
 				ar.push(this.Dimension(this.id[c]));
 			}
 			return ar;
@@ -467,8 +489,7 @@ function JSONstat(resp,f){
 		//currently only "role" is supported as filter criterion
 		if(typeof dim==="object"){
 			if(dim.hasOwnProperty("role")){
-				var ar=[];
-				for(var c=0, len=this.id.length; c<len; c++){
+				for(c=0; c<len; c++){
 					var oid=this.id[c];
 					if(role(otd,oid)===dim.role){
 						ar.push(this.Dimension(oid));
@@ -485,10 +506,10 @@ function JSONstat(resp,f){
 			return null;
 		}
 
-		return new jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otd,dim)});
-	}
+		return new Jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otd,dim)});
+	};
 
-	jsonstat.prototype.Category=function(cat){
+	Jsonstat.prototype.Category=function(cat){
 		if (this===null || this.class!=="dimension"){
 			return null;
 		}
@@ -514,31 +535,35 @@ function JSONstat(resp,f){
 		}
 
 		var
-			unit=(oc["unit"] && oc["unit"][cat]) || null,
-			coord=(oc["coordinates"] && oc["coordinates"][cat]) || null,
-			child=(oc["child"] && oc["child"][cat]) || null,
-			note=(oc["note"] && oc["note"][cat]) || null
+			unit=(oc.unit && oc.unit[cat]) || null,
+			coord=(oc.coordinates && oc.coordinates[cat]) || null,
+			child=(oc.child && oc.child[cat]) || null,
+			note=(oc.note && oc.note[cat]) || null
 		;
-		return new jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
-	}
+		return new Jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
+	};
 
-	jsonstat.prototype.Data=function(e){
-		function firstprop(o){
-			for (var p in o) {
-				if(o.hasOwnProperty(p)){
-					return p;
+	Jsonstat.prototype.Data=function(e){
+		var
+			i,
+			ret=[], len,
+			firstprop=function(o){
+				for (var p in o) {
+					if(o.hasOwnProperty(p)){
+						return p;
+					}
 				}
+			},
+			dimObj2Array=function(thisds, obj){
+				var a=[], dim=thisds.dimension, di=dim.id;
+				for (var d=0, len=di.length; d<len; d++){
+					var id=di[d], cat=obj[id];
+					//If dimension not defined and dim size=1, take first category (user not forced to specify single cat dimensions)
+					a.push(typeof cat==="string" ? cat : dim.size[d]===1 ? firstprop(dim[id].category.index) : null);
+				}
+				return a;
 			}
-		}
-		function dimObj2Array(thisds, obj){
-			var a=[], dim=thisds.dimension, di=dim.id;
-			for (var d=0, len=di.length; d<len; d++){
-				var id=di[d], cat=obj[id];
-				//If dimension not defined and dim size=1, take first category (user not forced to specify single cat dimensions)
-				a.push(typeof cat==="string" ? cat : dim.size[d]===1 ? firstprop(dim[id].category.index) : null);
-			}
-			return a;
-		}
+		;
 
 		if(this===null || this.class!=="dataset"){
 			return null;
@@ -548,7 +573,8 @@ function JSONstat(resp,f){
 			//Before 0.4.2
 			//return {"value" : this.value, "status": this.status, "label": tree.label, "length" : this.value.length};
 			//Since 0.4.2: normalized as array of objects
-			for(var i=0, ret=[], len=this.value.length; i<len; i++){
+			len=this.value.length;
+			for(i=0; i<len; i++){
 				ret.push(this.Data(i));
 			}
 			return ret;
@@ -569,7 +595,7 @@ function JSONstat(resp,f){
 			; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
 		}
 
-		var tree=this.__tree__, n=tree.dimension.size, dims=n.length //same as this.length;
+		var tree=this.__tree__, n=tree.dimension.size, dims=n.length;//same as this.length
 
 		//DataByPosition in every dim
 		//If more positions than needed are provided, they will be ignored.
@@ -578,15 +604,15 @@ function JSONstat(resp,f){
 			if(this.length!==e.length){ //0.5.2.2
 				return null;
 			}
-			var mult=1,
-				  res=0,
-				  miss=[],
-				  nmiss=[],
-				  ret=[]
+			var
+				mult=1,
+				res=0,
+				miss=[],
+				nmiss=[]
 			;
 			//Validate dim index
 			//And loop to find missing dimensions
-			for(var i=0; i<dims; i++){
+			for(i=0; i<dims; i++){
 				if(typeof e[i]!=="undefined"){
 					if(typeof e[i]!=="number" || e[i]>=n[i]){
 						return null; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
@@ -610,7 +636,7 @@ function JSONstat(resp,f){
 			if(miss.length===1){
 				for(var c=0, clen=nmiss[0]; c<clen; c++){
 					var na=[]; //new array
-					for(var i=0; i<dims; i++){
+					for(i=0; i<dims; i++){
 						if(i!==miss[0]){
 							na.push(e[i]);
 						}else{
@@ -628,12 +654,13 @@ function JSONstat(resp,f){
 
 		var id=dimObj2Array(tree, e);
 		var pos=[], otd=tree.dimension;
-		for(var i=0, len=id.length; i<len; i++){
+		len=id.length;
+		for(i=0; i<len; i++){
 			pos.push(otd[otd.id[i]].category.index[id[i]]);
 		}
 		//Dimension cat undefined means a loop (by position) is necessary
 		return this.Data(pos);
-	}
+	};
 
 	/*
 		Transformation method: output in DataTable format (array or object)
@@ -641,37 +668,40 @@ function JSONstat(resp,f){
 
 		PENDING: use metric or any dim cat IDs instead of "value" and assign as many fields as metrics (pivot "by").
 	*/
-	jsonstat.prototype.toTable=function(opts, func){
+	Jsonstat.prototype.toTable=function(opts, func){
 		if(this===null || this.class!=="dataset"){
 			return null;
 		}
 
 		if(arguments.length==1 && typeof opts==="function"){
-			func=opts, opts=null;
+			func=opts;
+			opts=null;
 		}
+
 		var
+			totbl,
 			dataset=this.__tree__,
-			opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false} //default: use label for field names and content instead of "id"
+			i, j, x,
+			len
+		;
+
+		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false} //default: use label for field names and content instead of "id"
 		;
 
 		if(typeof func==="function"){
+			totbl=this.toTable(opts);
 			var
-				totbl=this.toTable(opts),
 				ret=[],
-				i=(opts.type!=='array') ? 0 : 1 //first row is header in array and object
+				start=(opts.type!=="array") ? 0 : 1, //first row is header in array and object
+				arr=(opts.type!=="object") ? totbl.slice(start) : totbl.rows.slice(0)
 			;
 
-			if(opts.type!=='object'){
-				var arr=totbl.slice(i);
-			}else{
-				var arr=totbl.rows.slice(0);
-			}
-
-			for(var r=0, len=arr.length; r<len; r++){
+			len=arr.length;
+			for(i=0; i<len; i++){
 				var a=func.call(
 					this, //0.5.3
-					arr[r], //Discarded for efficiency: (opts.type!=='object') ? arr[r] : arr[r].c,
-					r
+					arr[i], //Discarded for efficiency: (opts.type!=='object') ? arr[i] : arr[i].c,
+					i
 				);
 				if (typeof a!=="undefined"){
 					ret.push(a);
@@ -688,15 +718,17 @@ function JSONstat(resp,f){
 
 		//For example, as D3 input
 		if(opts.type==="arrobj"){
+			totbl=this.toTable({field: "id", content: opts.content, status: opts.status});// At the moment, options besides "type" are not passed
+
 			var
-				totbl=this.toTable({field: "id", content: opts.content, status: opts.status}),// At the moment, options besides "type" are not passed
 				tbl=[],
 				head=totbl.shift()
 			;
 
-			for(var i=0, len=totbl.length; i<len; i++){ //Can't be done with i-- as we want to keep the original order
+			len=totbl.length;
+			for(i=0; i<len; i++){ //Can't be done with i-- as we want to keep the original order
 				var tblr={};
-				for(var j=totbl[i].length;j--;){
+				for(j=totbl[i].length;j--;){
 					tblr[head[j]]=totbl[i][j];
 				}
 				tbl.push(tblr);
@@ -704,69 +736,86 @@ function JSONstat(resp,f){
 			return tbl;
 		}
 
-		var useid=(opts.field==="id");
+		var
+			addCol,
+			addColValue,
+			addRow,
+			addRowValue,
+			useid=(opts.field==="id")
+		;
 
 		if(opts.type==="object"){
 			//Object
-			var
-				valuetype=(typeof this.value[0]==="number" || this.value[0]===null) ? "number" : "string", //cell type inferred from first cell. If null, number is assumed (naif)
-				addCol=function(dimid,dimlabel){
-					var label=(useid && dimid) || dimlabel || dimid; //if userid then id; else label; then id if not label
-					cols.push({id: dimid, label: label, type: "string"}); //currently not using datetime Google type (requires a Date object)
-				},
-				addColValue=function(str1,str2,status){
-					var
-						vlabel=(useid && "value") || str1|| "Value",
-						slabel=(useid && "status") || str2|| "Status"
-					;
-					if(status){
-						cols.push({id: "status", label: slabel, type: "string"});
-					}
-					cols.push({id: "value", label: vlabel, type: valuetype});
-				},
-				addRow=function(r){
-					row.push({v: r});
-				},
-				addRowValue=function(r){
-					//At the moment, no support for formatted values (f: formatted)
-					row.push({v: r});
-					rows.push({c: row});
+			var valuetype=(typeof this.value[0]==="number" || this.value[0]===null) ? "number" : "string"; //cell type inferred from first cell. If null, number is assumed (naif)
+
+			addCol=function(dimid,dimlabel){
+				var label=(useid && dimid) || dimlabel || dimid; //if userid then id; else label; then id if not label
+				cols.push({id: dimid, label: label, type: "string"}); //currently not using datetime Google type (requires a Date object)
+			};
+
+			addColValue=function(str1,str2,status){
+				var
+					vlabel=(useid && "value") || str1|| "Value",
+					slabel=(useid && "status") || str2|| "Status"
+				;
+				if(status){
+					cols.push({id: "status", label: slabel, type: "string"});
 				}
-			;
+				cols.push({id: "value", label: vlabel, type: valuetype});
+			};
+
+			addRow=function(r){
+				row.push({v: r});
+			};
+
+			addRowValue=function(r){
+				//At the moment, no support for formatted values (f: formatted)
+				row.push({v: r});
+				rows.push({c: row});
+			};
+
 		}else{
 			//Array
-			var
-				addCol=function(dimid,dimlabel){
-					var colid=(useid && dimid) || dimlabel || dimid; //if userid then id; else label; then id if not label
-					cols.push(colid);
-				},
-				addColValue=function(str1,str2,status){
-					var
-						vlabel=(useid && "value") || str1 || "Value",
-						slabel=(useid && "status") || str2 || "Status"
-					;
-					if(status){
-						cols.push(slabel);
-					}
-					cols.push(vlabel);
-					table.push(cols);
-				},
-				addRow=function(r){
-					row.push(r);
-				},
-				addRowValue=function(r){
-					row.push(r);
-					table.push(row);
+			addCol=function(dimid,dimlabel){
+				var colid=(useid && dimid) || dimlabel || dimid; //if userid then id; else label; then id if not label
+				cols.push(colid);
+			};
+
+			addColValue=function(str1,str2,status){
+				var
+					vlabel=(useid && "value") || str1 || "Value",
+					slabel=(useid && "status") || str2 || "Status"
+				;
+				if(status){
+					cols.push(slabel);
 				}
-			;
+				cols.push(vlabel);
+				table.push(cols);
+			};
+
+			addRow=function(r){
+				row.push(r);
+			};
+
+			addRowValue=function(r){
+				row.push(r);
+				table.push(row);
+			};
 		}
 
-		var dd=dataset.dimension, ddi=dd.id, ddil=ddi.length, dds=dd.size;
+		var
+			dd=dataset.dimension,
+			ddi=dd.id, ddil=ddi.length,
+			dds=dd.size
+		;
+
 		if (ddil!=dds.length){
 			return false;
 		}
+
 		var dim=[], total=1, m=1, mult=[], dimexp=[], label=[], table=[], cols=[], rows=[];
-		for (var i=0; i<ddil; i++){
+
+		for (i=0; i<ddil; i++){
 			var	dimid=ddi[i],
 					dimlabel=dd[dimid].label
 			;
@@ -775,7 +824,7 @@ function JSONstat(resp,f){
 			total*=dds[i];
 			m*=dds[i];
 			var cat=[];
-			for (var j=0; j<dds[i]; j++){
+			for (j=0; j<dds[i]; j++){
 				for (var catid in dd[ddi[i]].category.index){
 					if (dd[ddi[i]].category.index[catid]===j){
 						var rowid=(opts.content!=="id" && dd[ddi[i]].category.label) ? dd[ddi[i]].category.label[catid] : catid; //id if not label (Maybe move label normalization from "dimension" to "dataset"?)
@@ -789,30 +838,32 @@ function JSONstat(resp,f){
 		addColValue(opts.vlabel,opts.slabel,opts.status); //Global cols and table
 
 		//end of inversion: now use dim array
-		for (var d=0, len=dim.length; d<len; d++){
+		len=dim.length;
+		for (i=0; i<len; i++){
 			var catexp=[];
-			for (var c=0, len2=dim[d].length; c<len2; c++){
+			for (var c=0, len2=dim[i].length; c<len2; c++){
 				//get the label repetitions
-				for (var n=0; n<total/mult[d]; n++){
-					catexp.push(dim[d][c]);
+				for (var n=0; n<total/mult[i]; n++){
+					catexp.push(dim[i][c]);
 				}
 			}
 			dimexp.push(catexp);
 		}
-		for (var d=0, len=dimexp.length; d<len; d++){
+		for (i=0, len=dimexp.length; i<len; i++){
 			var l=[], e=0;
-			for (var x=0; x<total; x++){
-				l.push(dimexp[d][e]);
+			for (x=0; x<total; x++){
+				l.push(dimexp[i][e]);
 				e++;
-				if (e===dimexp[d].length){
+				if (e===dimexp[i].length){
 					e=0;
 				}
 			}
 			label.push(l);
 		}
-		for (var x=0; x<total; x++){
+		for (x=0; x<total; x++){
 			var row=[];
-			for (var d=0, len=dimexp.length; d<len; d++){
+			len=dimexp.length;
+			for (var d=0; d<len; d++){
 				addRow(label[d][x]); //Global row
 			}
 			if(opts.status){
@@ -828,18 +879,17 @@ function JSONstat(resp,f){
 		}else{
 			return table;
 		}
-	}
+	};
 
-	jsonstat.prototype.node=function(){
+	Jsonstat.prototype.node=function(){
 		return this.__tree__;
-	}
-
-	jsonstat.prototype.toString=function(){
+	};
+	Jsonstat.prototype.toString=function(){
 		return this.class; //improve?
-	}
-	jsonstat.prototype.toValue=function(){
+	};
+	Jsonstat.prototype.toValue=function(){
 		return this.length;
-	}
+	};
 
-	JSONstat.jsonstat=jsonstat;
+	JSONstat.jsonstat=Jsonstat;
 })();
