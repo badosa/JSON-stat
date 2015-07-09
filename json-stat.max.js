@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.8.1
+JSON-stat Javascript Toolkit v. 0.8.2
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.8.1";
+JSONstat.version="0.8.2";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -102,7 +102,7 @@ function JSONstat(resp,f){
 				}
 				return ret;
 			},
-			ot, prop, ilen
+			ot, prop, ilen, i
 		;
 
 		this.length=0;
@@ -363,7 +363,7 @@ function JSONstat(resp,f){
 
 					this.length=( isArray(item) ) ? item.length : 0;
 					if(this.length){
-						for(var i=0; i<this.length; i++){
+						for(i=0; i<this.length; i++){
 							this.id[i]=item[i].href;
 						}
 					}
@@ -849,7 +849,8 @@ function JSONstat(resp,f){
 			}
 			dimexp.push(catexp);
 		}
-		for (i=0, len=dimexp.length; i<len; i++){
+		len=dimexp.length;
+		for (i=0; i<len; i++){
 			var l=[], e=0;
 			for (x=0; x<total; x++){
 				l.push(dimexp[i][e]);
