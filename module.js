@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.8.2 (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.8.3 (Nodejs module)
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.8.2";
+JSONstat.version="0.8.3";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -86,8 +86,9 @@ function JSONstat(resp,f){
 					console.log("Module does not accept a URI string, must be an object."); //nodejs
 				}
 
-				// Wrong input object or wrong URI or connection problem
+				// Wrong input object (nodejs)
 				if(o===null || typeof o!=="object"){
+          this.class=null;
 					return;
 				}
 
@@ -350,6 +351,10 @@ function JSONstat(resp,f){
 		var ret=[], func;
 
 		if(typeof o==="object"){
+      //Do not accept invalid objects (0.8.3)
+      if(!o.class && !o.follow){
+        return null;
+      }
 			if(o.class){
 				func=function(t,i,c){
 					if(c.class===t.link.item[i].class){
