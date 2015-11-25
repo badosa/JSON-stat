@@ -1,5 +1,6 @@
 //Polyfills forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored)
 
+/* global JSONstat */
 /* jshint newcap:false */
 var JSONstatUtils=function(){
 	"use strict";
@@ -27,7 +28,8 @@ var JSONstatUtils=function(){
 					"source": "Source",
 					"filters": "Filters",
 					"constants": "Constants",
-					"rc": "Rows &amp; Columns"
+					"rc": "Rows &amp; Columns",
+					"na": "n/a"
 				}
 				:
 				obj.i18n.msgs,
@@ -285,7 +287,7 @@ var JSONstatUtils=function(){
 								:
 								//Metric dimension in columns
 								dec( cols.Category(i) ),
-							val=(col.value!==null) ? format(col.value, decimals) : col.status
+							val=(col.value!==null) ? format(col.value, decimals) : (col.status || msgs.na)
 						;
 						body+="<td>"+val+"</td>";
 					}
