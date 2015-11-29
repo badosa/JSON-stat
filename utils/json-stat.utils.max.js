@@ -362,6 +362,7 @@ var JSONstatUtils=function(){
 	};
 
 	return {
-		tbrowser: tbrowser
+		tbrowser: tbrowser,
+		version: "1.0.1"
 	};
 }();
