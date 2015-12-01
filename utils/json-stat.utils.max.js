@@ -38,7 +38,6 @@ var JSONstatUtils=function(){
 			jsonstat
 		;
 
-
 		if(typeof obj.selector==="undefined"){
 			msg("selerror");
 			return;
@@ -116,23 +115,52 @@ var JSONstatUtils=function(){
 		}
 
 		// Build a default setup
-		function setup(ds){
-			var
-				ids=ds.id,
-				rows=ids[0],
-				cols=ids[1],
-				filter={}
+		function setup(ds, preset){
+			var 
+				filter={}, arr=[], rows, cols,
+				ids=ds.id
 			;
 
-			//"Smart" selection of rows/cols (smarter: avoid constant dimensions)
-			if( ds.Dimension(0).length<ds.Dimension(1).length ){
-				rows=ids[1];
-				cols=ids[0];
+			if(preset){
+				var order=(preset==="bigger") ? 
+					function(a,b){
+						if(a.len < b.len){
+							return 1;
+						}
+						return -1;
+					}
+					: //smaller
+					function(a,b){
+						if(a.len > b.len){
+							return 1;
+						}
+						return -1;
+					}
+				;					
+
+				ds.Dimension().forEach(function(e,i){
+					arr.push({ id: ids[i], len : e.length });
+				});
+
+				arr.sort(order);
+				rows=arr[0].id;
+				cols=arr[1].id;
+			}else{ //Default: simpler
+				rows=ids[0];
+				cols=ids[1];
 			}
 
-			for(var i=2, len=ids.length; i<len; i++){
-				filter[ ids[i] ]=ds.Dimension(i).id[0];
+
+			//Swap rows<->cols if needed
+			if( ds.Dimension(rows).length<ds.Dimension(cols).length ){
+				rows=cols+(cols=rows, ""); //http://jsperf.com/swap-array-vs-variable/33
 			}
+
+			ids.forEach(function(e){
+				if(e!==rows && e!==cols){
+					filter[e]=ds.Dimension(e).id[0];
+				}
+			});
 
 			return { rows: rows, cols: cols, filter: filter };
 		}
@@ -165,15 +193,15 @@ var JSONstatUtils=function(){
 				id
 			;
 
-			//if val is array, then it's a row/col select; otherwise, it's a filter select
-			if( v[1]!==null ){
+			if( v[1]!==null ){ //row/col select
 				id=ds.id;
 				arr=ds.Dimension();
+
 				//More than two dims are needed to display row/col select
 				if(id.length===2){
-					return arr[0].label;
+					return (ds.Dimension(v[0]).label || v[0]).capitalize();
 				}
-			}else{
+			}else{ //Filter select
 				var dim=ds.Dimension(name);
 				id=dim.id;
 				arr=dim.Category();
@@ -354,8 +382,10 @@ var JSONstatUtils=function(){
 		}
 
 		//Create table with default setup
-		HTMLtable( obj.selector, ds, setup(ds) );
+		HTMLtable( obj.selector, ds, setup(ds, obj.preset) );
 	}
+
+	//Private
 
 	String.prototype.capitalize=function() {
 		return this.charAt(0).toUpperCase() + this.slice(1);
@@ -363,6 +393,6 @@ var JSONstatUtils=function(){
 
 	return {
 		tbrowser: tbrowser,
-		version: "1.0.1"
+		version: "1.1.1"
 	};
 }();
