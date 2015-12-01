@@ -116,13 +116,13 @@ var JSONstatUtils=function(){
 
 		// Build a default setup
 		function setup(ds, preset){
-			var 
+			var
 				filter={}, arr=[], rows, cols,
 				ids=ds.id
 			;
 
 			if(preset){
-				var order=(preset==="bigger") ? 
+				var order=(preset==="bigger") ?
 					function(a,b){
 						if(a.len < b.len){
 							return 1;
@@ -136,7 +136,7 @@ var JSONstatUtils=function(){
 						}
 						return -1;
 					}
-				;					
+				;
 
 				ds.Dimension().forEach(function(e,i){
 					arr.push({ id: ids[i], len : e.length });
@@ -385,14 +385,225 @@ var JSONstatUtils=function(){
 		HTMLtable( obj.selector, ds, setup(ds, obj.preset) );
 	}
 
+	function fromTable(o){
+		var
+			vfield=o.vfield || "Value",
+			sfield=o.sfield || "Status",
+			type=o.type || "array", //obj.type default is array as in .toTable()
+			tbl=o.table,
+
+			id=[],
+			size=[],
+			value=[],
+			status=[],
+			odims={},
+			dimension={},
+			getPos=function(e,size){
+				var
+					mult=1,
+					res=0
+				;
+				for(var i=0; i<dims; i++){
+					mult*=(i>0) ? size[(dims-i)] : 1;
+					res+=mult*e[dims-i-1];
+				}
+				return res;
+			},
+			valuestatus=function(){
+				value[getPos(pos, size)]=tbl[dd][vfield];
+			}
+		;
+
+		//Convert to "arrobj". Not efficient but simple.
+		switch(type){
+			case "array":
+				//From array to arrobj
+				tbl=(function(tbl){
+					var
+						head=tbl[0],
+						arr=tbl.slice(1)
+					;
+
+					var arrobj=[];
+					for(var d=0, dlen=arr.length; d<dlen; d++){
+						for(var f=0, flen=head.length, o={}; f<flen; f++){
+							o[head[f]]=arr[d][f];
+						}
+						arrobj.push(o);
+					}
+					return arrobj;
+				})(tbl);
+			break;
+
+			case "object":
+				//From object to arrobj
+				tbl=(function(tbl){
+					var
+						head=tbl.cols.map(function(e) {return e.id;}),
+						//Pending: retrieve labels
+						arr=tbl.rows
+					;
+
+					var arrobj=[];
+					for(var d=0, dlen=arr.length; d<dlen; d++){
+						for(var f=0, flen=head.length, o={}; f<flen; f++){
+							o[head[f]]=arr[d].c[f].v;
+						}
+						arrobj.push(o);
+					}
+					return arrobj;
+				})(tbl);
+			break;
+		}
+
+		var obs=tbl.length;
+
+		//Dimensions are taken from first observation
+		for(var field in tbl[0]){
+			if(field!==vfield){
+				if(field!==sfield){
+					id.push(field);
+
+					odims[field]=[];
+					for(var j=0; j<obs; j++){
+						var e=tbl[j][field];
+
+						if(odims[field].indexOf(e)===-1){
+							odims[field].push(e);
+						}
+					}
+
+					size.push(odims[field].length);
+
+					dimension[field]={
+						"label": field,
+						"category": {
+							"index": odims[field]
+						}
+					};
+				}else{ //status field is present
+					valuestatus=function(){
+						value[getPos(pos, size)]=tbl[dd][vfield];
+						status[getPos(pos, size)]=tbl[dd][sfield];
+					};
+				}
+			}
+		}
+
+		var dims=id.length;
+
+		for(var dd=0; dd<obs; dd++){
+			var pos=[];
+			for(var i=0; i<dims; i++){
+				var d=id[i];
+				pos.push( odims[d].indexOf(tbl[dd][d]) );
+			}
+			valuestatus();
+		}
+
+		dimension.id=id;
+		dimension.size=size;
+
+		return {
+			"class": "dataset",
+			"value": value,
+			"status": status,
+			"dimension": dimension
+		};
+	}
+
+	function fromCSV(o){
+		return fromTable({
+			table: CSVToArray( o.csv, o.delimiter ),
+			vfield: o.vfield || "Value", //Same default values as .toTable()
+			sfield: o.sfield || "Status",
+			type: "array"
+		});
+	}
+
+
 	//Private
 
 	String.prototype.capitalize=function() {
 		return this.charAt(0).toUpperCase() + this.slice(1);
 	};
 
+	//CSVToArray by Ben Nadel: http://www.bennadel.com/blog/1504-Ask-Ben-Parsing-CSV-Strings-With-Javascript-Exec-Regular-Expression-Command.htm
+	function CSVToArray( strData, strDelimiter ){
+		// Check to see if the delimiter is defined. If not,
+		// then default to comma.
+		strDelimiter = (strDelimiter || ",");
+
+		// Create a regular expression to parse the CSV values.
+		var
+			objPattern = new RegExp(
+				(
+				// Delimiters.
+				"(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+				// Quoted fields.
+				"(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+				// Standard fields.
+				"([^\"\\" + strDelimiter + "\\r\\n]*))"
+				),
+				"gi"
+			),
+			// Create an array to hold our data. Give the array
+			// a default empty first row.
+			arrData = [[]],
+			// Create an array to hold our individual pattern
+			// matching groups.
+			arrMatches = null,
+			strMatchedValue,
+			strMatchedDelimiter
+		;
+
+		// Keep looping over the regular expression matches
+		// until we can no longer find a match.
+		while (arrMatches = objPattern.exec( strData )){
+			// Get the delimiter that was found.
+			strMatchedDelimiter = arrMatches[ 1 ];
+
+			// Check to see if the given delimiter has a length
+			// (is not the start of string) and if it matches
+			// field delimiter. If id does not, then we know
+			// that this delimiter is a row delimiter.
+			if (
+				strMatchedDelimiter.length &&
+				(strMatchedDelimiter != strDelimiter)
+				){
+				// Since we have reached a new row of data,
+				// add an empty row to our data array.
+				arrData.push( [] );
+			}
+
+			// Now that we have our delimiter out of the way,
+			// let's check to see which kind of value we
+			// captured (quoted or unquoted).
+			if (arrMatches[ 2 ]){
+				// We found a quoted value. When we capture
+				// this value, unescape any double quotes.
+				strMatchedValue = arrMatches[ 2 ].replace(
+					new RegExp( "\"\"", "g" ),
+					"\""
+				);
+			}else{
+				// We found a non-quoted value.
+				strMatchedValue = arrMatches[ 3 ];
+			}
+
+			// Now that we have our value string, let's add
+			// it to the data array.
+			arrData[ arrData.length - 1 ].push( strMatchedValue );
+		}
+
+		// Return the parsed data.
+		return( arrData );
+	}
+
 	return {
 		tbrowser: tbrowser,
-		version: "1.1.1"
+		fromTable: fromTable,
+		fromCSV: fromCSV,
+		version: "1.2.0"
 	};
 }();
