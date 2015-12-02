@@ -404,6 +404,7 @@ var JSONstatUtils=function(){
 			sfield=o.sfield || "Status",
 			type=o.type || "array", //obj.type default is array as in .toTable()
 			tbl=o.table,
+			label=o.label || "",
 
 			id=[],
 			size=[],
@@ -519,6 +520,7 @@ var JSONstatUtils=function(){
 
 		return {
 			"class": "dataset",
+			"label": label, //added in 1.2.2
 			"value": value,
 			"status": status,
 			"dimension": dimension
@@ -530,7 +532,8 @@ var JSONstatUtils=function(){
 			table: CSVToArray( o.csv, o.delimiter ),
 			vfield: o.vfield || "Value", //Same default values as .toTable()
 			sfield: o.sfield || "Status",
-			type: "array"
+			type: "array",
+			label: o.label //added in 1.2.2
 		});
 	}
 
@@ -617,6 +620,6 @@ var JSONstatUtils=function(){
 		tbrowser: tbrowser,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
-		version: "1.2.1"
+		version: "1.2.2"
 	};
 }();
