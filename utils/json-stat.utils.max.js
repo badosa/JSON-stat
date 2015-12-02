@@ -8,15 +8,6 @@ var JSONstatUtils=function(){
 	//////////////////////////////////////////////////////
 	function tbrowser(obj){
 		var
-			checksize=function(ds){
-				for(var i=ds.length, len=1; i--;){
-					len*=ds.Dimension(i).length;
-				}
-				if(len!==ds.n){
-					return false;
-				}
-				return true;
-			},
 			msgs=(typeof obj.i18n==="undefined" || typeof obj.i18n.msgs==="undefined") ?
 				{
 					"selerror": 'tbrowser: "selector" property is required!',
@@ -35,6 +26,7 @@ var JSONstatUtils=function(){
 				obj.i18n.msgs,
 			locale=(typeof obj.i18n==="undefined" || typeof obj.i18n.locale==="undefined") ? "en-US" : obj.i18n.locale,
 			dsid=obj.dsid || 0,
+			shstatus=obj.status || false, //added in 1.2.1
 			jsonstat
 		;
 
@@ -81,6 +73,16 @@ var JSONstatUtils=function(){
 		if( ds.length===1 ){
 			msg("dimerror");
 			return;
+		}
+
+		function checksize(ds){
+			for(var i=ds.length, len=1; i--;){
+				len*=ds.Dimension(i).length;
+			}
+			if(len!==ds.n){
+				return false;
+			}
+			return true;
 		}
 
 		function msg(s){
@@ -309,14 +311,25 @@ var JSONstatUtils=function(){
 					data=ds.Data(cell),
 					td=function(col, i){
 						var
+							val,
 							decimals=(c!==metricname) ?
 								//Metric is not in cols or no metric at all
 								( (metric===null) ? null : dec( metric.Category( cell[metricname] ) ) )
 								:
 								//Metric dimension in columns
-								dec( cols.Category(i) ),
-							val=(col.value!==null) ? format(col.value, decimals) : (col.status || msgs.na)
+								dec( cols.Category(i) )
 						;
+
+						if(col.value!==null){
+							val=format(col.value, decimals);
+
+							if(shstatus && col.status!==null){
+								val+=" ("+col.status+")";
+							}
+						}else{
+							val=col.status || msgs.na;
+						}
+
 						body+="<td>"+val+"</td>";
 					}
 				;
@@ -604,6 +617,6 @@ var JSONstatUtils=function(){
 		tbrowser: tbrowser,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
-		version: "1.2.0"
+		version: "1.2.1"
 	};
 }();
