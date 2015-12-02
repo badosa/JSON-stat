@@ -528,10 +528,43 @@ var JSONstatUtils=function(){
 	}
 
 	function fromCSV(o){
+		//input
+		var 
+			vcol=null,
+			vfield=o.vfield || "Value", //Same default as .toTable()
+			delimiter=o.delimiter || ",",
+			decimal=(delimiter===";") 
+				? 
+				","
+				:
+				(delimiter==="\t" ? (o.decimal || ".") : ".") 
+			,
+			table=CSVToArray(o.csv, delimiter),
+			//header=table.splice(0,1)[0],
+			ncols=table[0].length,
+			i=ncols,
+			nrows=table.length
+		;
+
+		if(decimal===","){
+			for(;i--;){
+				if(table[0][i]===vfield){
+					vcol=i;
+					break;
+				}
+			}
+
+			if(vcol!==null){
+				for(i=1; i<nrows; i++){
+					table[i][vcol]=table[i][vcol].replace(",", ".");
+				}				
+			}
+		}
+
 		return fromTable({
-			table: CSVToArray( o.csv, o.delimiter ),
-			vfield: o.vfield || "Value", //Same default values as .toTable()
-			sfield: o.sfield || "Status",
+			table: table,
+			vfield: vfield,
+			sfield: o.sfield || "Status", //Same default as .toTable()
 			type: "array",
 			label: o.label //added in 1.2.2
 		});
@@ -620,6 +653,6 @@ var JSONstatUtils=function(){
 		tbrowser: tbrowser,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
-		version: "1.2.2"
+		version: "1.2.3"
 	};
 }();
