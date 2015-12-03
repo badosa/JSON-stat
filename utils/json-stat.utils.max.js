@@ -152,7 +152,6 @@ var JSONstatUtils=function(){
 				cols=ids[1];
 			}
 
-
 			//Swap rows<->cols if needed
 			if( ds.Dimension(rows).length<ds.Dimension(cols).length ){
 				rows=cols+(cols=rows, ""); //http://jsperf.com/swap-array-vs-variable/33
@@ -527,26 +526,32 @@ var JSONstatUtils=function(){
 		};
 	}
 
+	//{csv/table, (delimiter, decimal) if csv, vfield, sfield, type}
+	//Accepts a CSV (string) or a table array
+	//Returns JSONstat or table array
 	function fromCSV(o){
-		//input
 		var 
-			vcol=null,
 			vfield=o.vfield || "Value", //Same default as .toTable()
-			delimiter=o.delimiter || ",",
-			decimal=(delimiter===";") 
-				? 
-				","
-				:
-				(delimiter==="\t" ? (o.decimal || ".") : ".") 
-			,
-			table=CSVToArray(o.csv, delimiter),
-			//header=table.splice(0,1)[0],
-			ncols=table[0].length,
-			i=ncols,
-			nrows=table.length
+			type=o.type || "jsonstat" //vs "table" (array)
 		;
 
-		if(decimal===","){
+		if(o.table){
+			table=o.table;
+		}else{ //o.csv (file) used as input instead of o.table
+			var 
+				vcol=null,
+				delimiter=o.delimiter || ",",
+				decimal=(delimiter===";") 
+					? 
+					","
+					:
+					(delimiter==="\t" ? (o.decimal || ".") : ".") 
+				,
+				table=CSVToArray(o.csv, delimiter),
+				i=table[0].length,
+				nrows=table.length
+			;
+
 			for(;i--;){
 				if(table[0][i]===vfield){
 					vcol=i;
@@ -554,20 +559,32 @@ var JSONstatUtils=function(){
 				}
 			}
 
-			if(vcol!==null){
+			if(vcol===null){
+				return null; //vfield not found in the CSV
+			}
+
+			if(decimal===","){
 				for(i=1; i<nrows; i++){
-					table[i][vcol]=table[i][vcol].replace(",", ".");
+					table[i][vcol]=Number(table[i][vcol].replace(",", "."));
 				}				
+			}else{
+				for(i=1; i<nrows; i++){
+					table[i][vcol]=Number(table[i][vcol]);
+				}
 			}
 		}
 
-		return fromTable({
-			table: table,
-			vfield: vfield,
-			sfield: o.sfield || "Status", //Same default as .toTable()
-			type: "array",
-			label: o.label //added in 1.2.2
-		});
+		if(type==="table"){
+			return table;
+		}else{
+			return fromTable({
+				table: table,
+				vfield: vfield,
+				sfield: o.sfield || "Status", //Same default as .toTable()
+				type: "array",
+				label: o.label //added in 1.2.2
+			});
+		}
 	}
 
 
@@ -653,6 +670,6 @@ var JSONstatUtils=function(){
 		tbrowser: tbrowser,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
-		version: "1.2.3"
+		version: "1.2.4"
 	};
 }();
