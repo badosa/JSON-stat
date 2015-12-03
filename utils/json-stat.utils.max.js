@@ -526,7 +526,7 @@ var JSONstatUtils=function(){
 		};
 	}
 
-	//{csv/table, (delimiter, decimal) if csv, vfield, sfield, type}
+	//{csv/table, (delimiter, decimal) if csv, vfield, sfield, type, vlast}
 	//Accepts a CSV (string) or a table array
 	//Returns JSONstat or table array
 	function fromCSV(o){
@@ -539,6 +539,7 @@ var JSONstatUtils=function(){
 			table=o.table;
 		}else{ //o.csv (file) used as input instead of o.table
 			var 
+				i,
 				vcol=null,
 				delimiter=o.delimiter || ",",
 				decimal=(delimiter===";") 
@@ -548,19 +549,23 @@ var JSONstatUtils=function(){
 					(delimiter==="\t" ? (o.decimal || ".") : ".") 
 				,
 				table=CSVToArray(o.csv, delimiter),
-				i=table[0].length,
-				nrows=table.length
+				nrows=table.length,
+				i=table[0].length
 			;
 
-			for(;i--;){
-				if(table[0][i]===vfield){
-					vcol=i;
-					break;
+			if(o.vlast){ //simple standard CSV without status: value is last column
+				vcol=i-1;
+				vfield=table[0][vcol];
+			}else{ //if no vlast, vfield is required
+				for(;i--;){
+					if(table[0][i]===vfield){
+						vcol=i;
+						break;
+					}
+				}				
+				if(vcol===null){
+					return null; //vfield not found in the CSV
 				}
-			}
-
-			if(vcol===null){
-				return null; //vfield not found in the CSV
 			}
 
 			if(decimal===","){
@@ -670,6 +675,6 @@ var JSONstatUtils=function(){
 		tbrowser: tbrowser,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
-		version: "1.2.4"
+		version: "1.2.5"
 	};
 }();
