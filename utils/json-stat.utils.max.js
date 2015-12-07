@@ -423,7 +423,8 @@ var JSONstatUtils=function(){
 				return res;
 			},
 			valuestatus=function(){
-				value[getPos(pos, size)]=tbl[dd][vfield];
+				var v=tbl[dd][vfield];
+				value[getPos(pos, size)]=( isNaN(v) ) ? null : v;
 			}
 		;
 
@@ -496,7 +497,8 @@ var JSONstatUtils=function(){
 					};
 				}else{ //status field is present
 					valuestatus=function(){
-						value[getPos(pos, size)]=tbl[dd][vfield];
+						var v=tbl[dd][vfield];
+						value[getPos(pos, size)]=( isNaN(v) ) ? null : v;
 						status[getPos(pos, size)]=tbl[dd][sfield];
 					};
 				}
@@ -675,6 +677,6 @@ var JSONstatUtils=function(){
 		tbrowser: tbrowser,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
-		version: "1.2.5"
+		version: "1.2.6"
 	};
 }();
