@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.8.3
+JSON-stat Javascript Toolkit v. 0.8.4
 http://json-stat.org
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.8.3";
+JSONstat.version="0.8.4";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -145,7 +145,7 @@ function JSONstat(resp,f){
 
         //When o is a URI, class won't be set before the request
         //and it will enter the bundle case: once we have a response
-        //if class if dataset we redirect to case "dataset". 0.7.5
+        //if class is dataset we redirect to case "dataset". 0.7.5
         if(o.class==="dataset" || o.class==="collection"){
           return JSONstat(o);
         }
@@ -167,11 +167,11 @@ function JSONstat(resp,f){
       case "dataset" :
         //It's a native response of class "dataset"
         if (!o.hasOwnProperty("__tree__")){
-          delete o.class; //class shouldn't go inside __tree__
-          o={ "__tree__": o }; //remove all elements from o (native response "dataset"), put everything inside __tree__  (native response "bundle")
+          this.__tree__=ot=o;
+        }else{
+          this.__tree__=ot=o.__tree__;
         }
 
-        this.__tree__=ot=o.__tree__;
         this.label=ot.label || null;
         this.note=ot.note || null; //v.0.7.0
         this.link=ot.link || null; //v.0.7.0
