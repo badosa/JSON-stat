@@ -6,6 +6,7 @@ var JSONstatUtils=function(){
 	"use strict";
 
 	//////////////////////////////////////////////////////
+	//{i18n: {msgs: {}, locale: ""}, dsid: 0, status: false, selector: , jsonstat: , preset: ""}
 	function tbrowser(obj){
 		var
 			msgs=(typeof obj.i18n==="undefined" || typeof obj.i18n.msgs==="undefined") ?
@@ -73,16 +74,6 @@ var JSONstatUtils=function(){
 		if( ds.length===1 ){
 			msg("dimerror");
 			return;
-		}
-
-		function checksize(ds){
-			for(var i=ds.length, len=1; i--;){
-				len*=ds.Dimension(i).length;
-			}
-			if(len!==ds.n){
-				return false;
-			}
-			return true;
 		}
 
 		function msg(s){
@@ -397,6 +388,65 @@ var JSONstatUtils=function(){
 		HTMLtable( obj.selector, ds, setup(ds, obj.preset) );
 	}
 
+	//on error returns null; on success, html table string
+	//{jsonstat: , dsid: , na:, caption:}
+	function datalist(obj){
+		var 
+			na=obj.na || "n/a",
+			dsid=obj.dsid || 0,
+
+			trs="",
+			colvalue=0,
+			table,
+			ds,
+			jsonstat
+		;
+
+		if(typeof obj.jsonstat==="undefined"){
+			return null;
+		}
+
+		if(typeof obj.jsonstat==="string"){
+			//uri
+			jsonstat=JSONstat(obj.jsonstat);
+		}else{
+			if(typeof obj.jsonstat.length==="undefined"){
+				//JSON-stat response
+				jsonstat=JSONstat(obj.jsonstat);
+			}else{
+				//JSON-stat response already processed by JSONstat()
+				jsonstat=obj.jsonstat;
+			}
+		}
+
+		if( jsonstat.length===0 ){
+			return null;
+		}
+
+		ds=(jsonstat.class==="dataset") ? jsonstat : jsonstat.Dataset(dsid);
+		if( ds===null || !checksize(ds) ){
+			return null;
+		}
+
+		table=ds.toTable();
+		colvalue=table[0].length-1;
+
+		table.forEach(function(r,i){
+			trs+=(i) ? '<tr><td class="value">'+i+'</td>' : '<tr><th class="value">#</th>';
+ 			r.forEach(function(e,c){
+				var 
+					cls=(colvalue===c) ? ' class="value"' : '',
+					val=(e===null) ? na : e
+				;
+				
+				trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
+ 			});
+			trs+="</tr>";
+		});
+
+		return '<table><caption>'+(obj.caption || ds.label)+'</caption><tbody>'+trs+"</tbody></table>";
+	}
+
 	function fromTable(o){
 		var
 			vfield=o.vfield || "Value",
@@ -597,6 +647,16 @@ var JSONstatUtils=function(){
 
 	//Private
 
+	function checksize(ds){
+		for(var i=ds.length, len=1; i--;){
+			len*=ds.Dimension(i).length;
+		}
+		if(len!==ds.n){
+			return false;
+		}
+		return true;
+	}
+
 	String.prototype.capitalize=function() {
 		return this.charAt(0).toUpperCase() + this.slice(1);
 	};
@@ -675,8 +735,9 @@ var JSONstatUtils=function(){
 
 	return {
 		tbrowser: tbrowser,
+		datalist: datalist,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
-		version: "1.2.6"
+		version: "1.3.0"
 	};
 }();
