@@ -13,7 +13,7 @@ var JSONstatUtils=function(){
 				{
 					"selerror": 'tbrowser: "selector" property is required!',
 					"urierror": 'tbrowser: "jsonstat" property is required!',
-					"jsonerror": "Document is not valid JSON-stat.",
+					"jsonerror": "Document is not a valid JSON-stat dataset.",
 					"dserror": "Dataset ID is not correct.",
 					"dimerror": "Only one dimension was found in the dataset. At least two are required.",
 					"dataerror": "Selection returned no data!",
@@ -41,37 +41,35 @@ var JSONstatUtils=function(){
 			return;
 		}
 
-		if(typeof obj.jsonstat==="string"){
-			//uri
+		if(
+			typeof obj.jsonstat==="string" //uri
+			||
+			typeof obj.jsonstat.length==="undefined" //JSON-stat response
+			){
 			jsonstat=JSONstat(obj.jsonstat);
 		}else{
-			if(typeof obj.jsonstat.length==="undefined"){
-				//JSON-stat response
-				jsonstat=JSONstat(obj.jsonstat);
-			}else{
-				//JSON-stat response already processed by JSONstat()
-				jsonstat=obj.jsonstat;
-			}
+			//JSON-stat response already processed by JSONstat()
+			jsonstat=obj.jsonstat;
 		}
 
-		if( jsonstat.length===0 ){
+		if(jsonstat.length===0 || (jsonstat.class!=="dataset" && jsonstat.class!=="bundle")){
 			msg("jsonerror");
 			return;
 		}
 
 		var ds=(jsonstat.class==="dataset") ? jsonstat : jsonstat.Dataset(dsid);
 
-		if( !checksize(ds) ){
+		if(!checksize(ds)){
 			msg("jsonerror");
 			return;
 		}
 
-		if( ds===null ){
+		if(ds===null){
 			msg("dserror");
 			return;
 		}
 
-		if( ds.length===1 ){
+		if(ds.length===1){
 			msg("dimerror");
 			return;
 		}
@@ -391,14 +389,12 @@ var JSONstatUtils=function(){
 	//on error returns null; on success, html table string
 	//{jsonstat: , dsid: , na:, caption:}
 	function datalist(obj){
-		var 
+		var
 			na=obj.na || "n/a",
 			dsid=obj.dsid || 0,
 
 			trs="",
 			colvalue=0,
-			table,
-			ds,
 			jsonstat
 		;
 
@@ -406,39 +402,38 @@ var JSONstatUtils=function(){
 			return null;
 		}
 
-		if(typeof obj.jsonstat==="string"){
-			//uri
+		if(
+			typeof obj.jsonstat==="string" //uri
+			||
+			typeof obj.jsonstat.length==="undefined" //JSON-stat response
+			){
 			jsonstat=JSONstat(obj.jsonstat);
 		}else{
-			if(typeof obj.jsonstat.length==="undefined"){
-				//JSON-stat response
-				jsonstat=JSONstat(obj.jsonstat);
-			}else{
-				//JSON-stat response already processed by JSONstat()
-				jsonstat=obj.jsonstat;
-			}
+			//JSON-stat response already processed by JSONstat()
+			jsonstat=obj.jsonstat;
 		}
 
-		if( jsonstat.length===0 ){
+		if(jsonstat.length===0 || (jsonstat.class!=="dataset" && jsonstat.class!=="bundle")){
 			return null;
 		}
 
-		ds=(jsonstat.class==="dataset") ? jsonstat : jsonstat.Dataset(dsid);
-		if( ds===null || !checksize(ds) ){
+		var ds=(jsonstat.class==="dataset") ? jsonstat : jsonstat.Dataset(dsid);
+		if(ds===null || !checksize(ds)){
 			return null;
 		}
 
-		table=ds.toTable();
+		var table=ds.toTable();
+
 		colvalue=table[0].length-1;
 
 		table.forEach(function(r,i){
 			trs+=(i) ? '<tr><td class="value">'+i+'</td>' : '<tr><th class="value">#</th>';
  			r.forEach(function(e,c){
-				var 
+				var
 					cls=(colvalue===c) ? ' class="value"' : '',
 					val=(e===null) ? na : e
 				;
-				
+
 				trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
  			});
 			trs+="</tr>";
@@ -449,8 +444,8 @@ var JSONstatUtils=function(){
 
 	function fromTable(o){
 		var
-			vfield=o.vfield || "Value",
-			sfield=o.sfield || "Status",
+			vlabel=o.vlabel || "Value",
+			slabel=o.slabel || "Status",
 			type=o.type || "array", //obj.type default is array as in .toTable()
 			tbl=o.table,
 			label=o.label || "",
@@ -473,7 +468,7 @@ var JSONstatUtils=function(){
 				return res;
 			},
 			valuestatus=function(){
-				var v=tbl[dd][vfield];
+				var v=tbl[dd][vlabel];
 				value[getPos(pos, size)]=( isNaN(v) ) ? null : v;
 			}
 		;
@@ -524,8 +519,8 @@ var JSONstatUtils=function(){
 
 		//Dimensions are taken from first observation
 		for(var field in tbl[0]){
-			if(field!==vfield){
-				if(field!==sfield){
+			if(field!==vlabel){
+				if(field!==slabel){
 					id.push(field);
 
 					odims[field]=[];
@@ -547,9 +542,9 @@ var JSONstatUtils=function(){
 					};
 				}else{ //status field is present
 					valuestatus=function(){
-						var v=tbl[dd][vfield];
+						var v=tbl[dd][vlabel];
 						value[getPos(pos, size)]=( isNaN(v) ) ? null : v;
-						status[getPos(pos, size)]=tbl[dd][sfield];
+						status[getPos(pos, size)]=tbl[dd][slabel];
 					};
 				}
 			}
@@ -578,27 +573,87 @@ var JSONstatUtils=function(){
 		};
 	}
 
-	//{csv/table, (delimiter, decimal) if csv, vfield, sfield, type, vlast}
+	function toCSV(o){
+		var
+			jsonstat,
+			csv=[],
+			vlabel=o.vlabel || "Value", //Same default as .toTable()
+			slabel=o.slabel || "Status", //Same default as .toTable()
+			status=o.status || false, //Same default as .toTable()
+			delimiter=o.delimiter || ",",
+			decimal=(delimiter===";")
+				?
+				(o.decimal || ",")
+				:
+				(o.decimal || ".")
+			,
+			dsid=o.dsid || 0
+		;
+
+		if(typeof o.jsonstat==="undefined"){
+			return null;
+		}
+
+		if(
+			typeof o.jsonstat==="string" //uri
+			||
+			typeof o.jsonstat.length==="undefined" //JSON-stat response
+			){
+			jsonstat=JSONstat(o.jsonstat);
+		}else{
+			//JSON-stat response already processed by JSONstat()
+			jsonstat=o.jsonstat;
+		}
+
+		if(jsonstat.length===0 || (jsonstat.class!=="dataset" && jsonstat.class!=="bundle")){
+			return null;
+		}
+
+		var ds=(jsonstat.class==="dataset") ? jsonstat : jsonstat.Dataset(dsid);
+
+		if(ds===null || !checksize(ds)){
+			return null;
+		}
+
+		var
+			table=ds.toTable({vlabel: vlabel, slabel: slabel, status: status, type: "array"}),
+			vcol=table[0].indexOf(vlabel)
+		;
+
+		if(decimal!=="."){
+			for(var i=1, len=table.length; i<len; i++){
+				table[i][vcol]=String(table[i][vcol]).replace(".", decimal);
+			}
+		}
+
+		table.forEach(function(r){
+			csv+=r.join(delimiter)+"\n";
+		});
+
+		return csv;
+	}
+
+	//{csv/table, (delimiter, decimal) if csv, vlabel, slabel, type, vlast}
 	//Accepts a CSV (string) or a table array
 	//Returns JSONstat or table array
 	function fromCSV(o){
-		var 
-			vfield=o.vfield || "Value", //Same default as .toTable()
+		var
+			vlabel=o.vlabel || "Value", //Same default as .toTable()
 			type=o.type || "jsonstat" //vs "table" (array)
 		;
 
 		if(o.table){
 			table=o.table;
 		}else{ //o.csv (file) used as input instead of o.table
-			var 
+			var
 				i,
 				vcol=null,
 				delimiter=o.delimiter || ",",
-				decimal=(delimiter===";") 
-					? 
-					","
+				decimal=(delimiter===";")
+					?
+					(o.decimal || ",")
 					:
-					(delimiter==="\t" ? (o.decimal || ".") : ".") 
+					(o.decimal || ".")
 				,
 				table=CSVToArray(o.csv, delimiter),
 				nrows=table.length,
@@ -607,23 +662,23 @@ var JSONstatUtils=function(){
 
 			if(o.vlast){ //simple standard CSV without status: value is last column
 				vcol=i-1;
-				vfield=table[0][vcol];
-			}else{ //if no vlast, vfield is required
+				vlabel=table[0][vcol];
+			}else{ //if no vlast, vlabel is required
 				for(;i--;){
-					if(table[0][i]===vfield){
+					if(table[0][i]===vlabel){
 						vcol=i;
 						break;
 					}
-				}				
+				}
 				if(vcol===null){
-					return null; //vfield not found in the CSV
+					return null; //vlabel not found in the CSV
 				}
 			}
 
 			if(decimal===","){
 				for(i=1; i<nrows; i++){
 					table[i][vcol]=Number(table[i][vcol].replace(",", "."));
-				}				
+				}
 			}else{
 				for(i=1; i<nrows; i++){
 					table[i][vcol]=Number(table[i][vcol]);
@@ -636,8 +691,8 @@ var JSONstatUtils=function(){
 		}else{
 			return fromTable({
 				table: table,
-				vfield: vfield,
-				sfield: o.sfield || "Status", //Same default as .toTable()
+				vlabel: vlabel,
+				slabel: o.slabel || "Status", //Same default as .toTable()
 				type: "array",
 				label: o.label //added in 1.2.2
 			});
@@ -738,6 +793,7 @@ var JSONstatUtils=function(){
 		datalist: datalist,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
-		version: "1.3.0"
+		toCSV: toCSV,
+		version: "1.4.0"
 	};
 }();
