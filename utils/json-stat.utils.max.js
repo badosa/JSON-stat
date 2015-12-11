@@ -580,6 +580,7 @@ var JSONstatUtils=function(){
 			vlabel=o.vlabel || "Value", //Same default as .toTable()
 			slabel=o.slabel || "Status", //Same default as .toTable()
 			status=o.status || false, //Same default as .toTable()
+			na=o.na || "n/a",
 			delimiter=o.delimiter || ",",
 			decimal=(delimiter===";")
 				?
@@ -620,9 +621,13 @@ var JSONstatUtils=function(){
 			vcol=table[0].indexOf(vlabel)
 		;
 
-		if(decimal!=="."){
-			for(var i=1, len=table.length; i<len; i++){
-				table[i][vcol]=String(table[i][vcol]).replace(".", decimal);
+		for(var i=1, len=table.length; i<len; i++){
+			if(table[i][vcol]===null){
+				table[i][vcol]=na;
+			}else{
+				if(decimal!=="."){
+					table[i][vcol]=String(table[i][vcol]).replace(".", decimal);
+				}				
 			}
 		}
 
@@ -794,6 +799,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "1.4.0"
+		version: "1.4.1"
 	};
 }();
