@@ -1,7 +1,7 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.8.4 (Nodejs module)
-http://json-stat.org
+JSON-stat Javascript Toolkit v. 0.9.0 (JSON-stat v. 2.00 ready) (Nodejs module)
+http://json-stat.com
 https://github.com/badosa/JSON-stat
 
 Copyright 2015 Xavier Badosa (http://xavierbadosa.com)
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.8.4";
+JSONstat.version="0.9.0";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -36,10 +36,10 @@ function JSONstat(resp,f){
 		return Object.prototype.toString.call(o) === "[object Array]";
 	}
 	function Jsonstat(o,f){
-    //nodejs xhr gone
-		//sparse cube (value or status)
-		//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
+	    //nodejs xhr gone
 		var
+			//sparse cube (value or status)
+			//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
 			normalize=function(s,len){
 				var ret=[], l;
 
@@ -81,14 +81,14 @@ function JSONstat(resp,f){
 				this.error=null;
 				this.length=0;
 
-        //URI assumed
+				//URI assumed
 				if(typeof o==="string"){
 					console.log("Module does not accept a URI string, must be an object."); //nodejs
 				}
 
 				// Wrong input object (nodejs)
 				if(o===null || typeof o!=="object"){
-          this.class=null;
+					this.class=null;
 					return;
 				}
 
@@ -121,14 +121,12 @@ function JSONstat(resp,f){
 
 			case "dataset" :
 				//It's a native response of class "dataset"
-        if (!o.hasOwnProperty("__tree__")){
-          this.__tree__=ot=o;
-        }else{
-          this.__tree__=ot=o.__tree__;
-        }
+				if (!o.hasOwnProperty("__tree__")){
+					this.__tree__=ot=o;
+				}else{
+					this.__tree__=ot=o.__tree__;
+				}
 
-
-				this.__tree__=ot=o.__tree__;
 				this.label=ot.label || null;
 				this.note=ot.note || null; //v.0.7.0
 				this.link=ot.link || null; //v.0.7.0
@@ -139,20 +137,23 @@ function JSONstat(resp,f){
 
 				//Sparse cube (If toTable() removed, this logic can be moved inside Data()
 				//which is more efficient when retrieving a single value/status.
-				var s, dsize=0; //data size
+				var 
+					s, 
+					dsize=0, //data size
+					size=ot.size || (ot.hasOwnProperty("dimension") && ot.dimension.size) //0.9.0 (JSON-stat 2.00)
+				;
+
 				if (ot.hasOwnProperty("value") && isArray(ot.value)){
 					dsize=ot.value.length;
 				}else{
 					if (ot.hasOwnProperty("status") && isArray(ot.status)){
 						dsize=ot.status.length;
 					}else{
-						if(ot.hasOwnProperty("dimension")) {
-							var size=ot.dimension.size, length=1;
-							for(s=size.length; s--;){
-								length*=size[s];
-							}
-							dsize=length;
+						var length=1;
+						for(s=size.length; s--;){
+							length*=size[s];
 						}
+						dsize=length;
 					}
 				}
 
@@ -161,24 +162,25 @@ function JSONstat(resp,f){
 
 				// if dimensions are defined, id and size arrays are required and must have equal length
 				if (ot.hasOwnProperty("dimension")){
-					if (
-						!(isArray(ot.dimension.id)) ||
-						!(isArray(ot.dimension.size)) ||
-						ot.dimension.id.length!=ot.dimension.size.length
-						){
-						return;
-					}
 					var
 						otd=ot.dimension,
-						otr=otd.role || null,
-						otdi=otd.id,
-						otdl=otd.size.length,
+						otr=ot.role || otd.role || null, //0.9.0 (JSON-stat 2.00)
+						otdi=ot.id || otd.id, //0.9.0 (JSON-stat 2.00)
+						otdl=size.length,
 						createRole=function(s){
 							if(!otr.hasOwnProperty(s)){
 								otr[s]=null;
 							}
 						}
 					;
+
+					if (
+						!(isArray(otdi)) ||
+						!(isArray(size)) ||
+						otdi.length!=otdl
+						){
+						return;
+					}
 
 					this.length=otdl;
 					this.id=otdi;
@@ -238,25 +240,25 @@ function JSONstat(resp,f){
 					//theoretically be changed. That's why the procedure will only be valid when there's only one category.
 					//Note: If toTable() is removed it would make more sense to move this loop inside Dimension() as it is not needed for Data().
 					for(var d=0, len=this.length; d<len; d++){
-						if (!(otd[otd.id[d]].category.hasOwnProperty("index"))){
+						if (!(otd[otdi[d]].category.hasOwnProperty("index"))){
 							var c=0;
-							otd[otd.id[d]].category.index={};
-							for (prop in otd[otd.id[d]].category.label){
-								otd[otd.id[d]].category.index[prop]=c++;
+							otd[otdi[d]].category.index={};
+							for (prop in otd[otdi[d]].category.label){
+								otd[otdi[d]].category.index[prop]=c++;
 							}
 						}else{
 							// If index is array instead of object convert into object
 							// That is: we normalize it (instead of defining a function depending on
 							// index type to read categories -maybe in the future when indexOf can be
 							// assumed for all browsers and default is array instead of object-)
-							if(isArray(otd[otd.id[d]].category.index)){
-								var oindex={}, index=otd[otd.id[d]].category.index;
+							if(isArray(otd[otdi[d]].category.index)){
+								var oindex={}, index=otd[otdi[d]].category.index;
 
 								ilen=index.length;
 								for (i=0; i<ilen; i++){
 									oindex[index[i]]=i;
 								}
-								otd[otd.id[d]].category.index=oindex;
+								otd[otdi[d]].category.index=oindex;
 							}
 						}
 					}
@@ -353,10 +355,10 @@ function JSONstat(resp,f){
 		var ret=[], func;
 
 		if(typeof o==="object"){
-      //Do not accept invalid objects (0.8.3)
-      if(!o.class && !o.follow){
-        return null;
-      }
+			//Do not accept invalid objects (0.8.3)
+			if(!o.class && !o.follow){
+				return null;
+			}
 			if(o.class){
 				func=function(t,i,c){
 					if(c.class===t.link.item[i].class){
@@ -364,7 +366,7 @@ function JSONstat(resp,f){
 					}
 				};
 			}
-      //{follow: true} not available in nodejs
+			//{follow: true} not available in nodejs
 		}else{ //not object, not number: void or string (ignore)
 			func=function(t,i){
 				ret.push(t.link.item[i]);
@@ -416,12 +418,11 @@ function JSONstat(resp,f){
 			ar=[],
 			c,
 			len=this.id.length,
-			role=function(otd,dim){
-				var otdr=otd.role;
-				if(otdr!==null){
-					for(var prop in otdr){
-						for(var p=(otdr[prop]!==null ? otdr[prop].length : 0); p--;){
-							if(otdr[prop][p]===dim){
+			role=function(otr,dim){ //0.9.0 (JSON-stat 2.00)
+				if(otr!==null){
+					for(var prop in otr){
+						for(var p=(otr[prop]!==null ? otr[prop].length : 0); p--;){
+							if(otr[prop][p]===dim){
 								return prop;
 							}
 						}
@@ -445,17 +446,14 @@ function JSONstat(resp,f){
 			return (typeof num!=="undefined") ? this.Dimension(num) : null;
 		}
 
-		var otd=this.__tree__.dimension;
-		if(typeof otd==="undefined"){
-			return null;
-		}
+		var otr=this.role;
 
 		//currently only "role" is supported as filter criterion
 		if(typeof dim==="object"){
 			if(dim.hasOwnProperty("role")){
 				for(c=0; c<len; c++){
 					var oid=this.id[c];
-					if(role(otd,oid)===dim.role){
+					if(role(otr,oid)===dim.role){
 						ar.push(this.Dimension(oid));
 					}
 				}
@@ -465,12 +463,17 @@ function JSONstat(resp,f){
 			}
 		}
 
+		var otd=this.__tree__.dimension;
+		if(typeof otd==="undefined"){
+			return null;
+		}
+
 		var otdd=otd[dim];
 		if(typeof otdd==="undefined"){
 			return null;
 		}
 
-		return new Jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otd,dim)});
+		return new Jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otr,dim)});
 	};
 
 	Jsonstat.prototype.Category=function(cat){
