@@ -1,5 +1,27 @@
-//Polyfills forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored)
+/*
 
+JSON-stat Javascript Utilities Suite v. 1.4.1 (JSON-stat v. 2.00 ready)
+http://json-stat.com
+https://github.com/badosa/JSON-stat/tree/master/utils
+
+Copyright 2015 Xavier Badosa (http://xavierbadosa.com)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License.
+
+*/
+
+
+//Polyfills forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored)
 /* global JSONstat */
 /* jshint newcap:false */
 var JSONstatUtils=function(){
@@ -561,6 +583,7 @@ var JSONstatUtils=function(){
 			valuestatus();
 		}
 
+		//For JSON-stat<2.00
 		dimension.id=id;
 		dimension.size=size;
 
@@ -569,7 +592,11 @@ var JSONstatUtils=function(){
 			"label": label, //added in 1.2.2
 			"value": value,
 			"status": status,
-			"dimension": dimension
+			"dimension": dimension,
+
+			//JSON-stat 2.00+
+			"id": id,
+			"size": size
 		};
 	}
 
@@ -799,6 +826,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "1.4.1"
+		version: "1.4.2"
 	};
 }();
