@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.9.0 (JSON-stat v. 2.00 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.9.1 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.9.0";
+JSONstat.version="0.9.1";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -140,7 +140,7 @@ function JSONstat(resp,f){
 				var 
 					s, 
 					dsize=0, //data size
-					size=ot.size || (ot.hasOwnProperty("dimension") && ot.dimension.size) //0.9.0 (JSON-stat 2.00)
+					size=ot.size || (ot.dimension && ot.dimension.size) //0.9.0 (JSON-stat 2.0)
 				;
 
 				if (ot.hasOwnProperty("value") && isArray(ot.value)){
@@ -164,8 +164,8 @@ function JSONstat(resp,f){
 				if (ot.hasOwnProperty("dimension")){
 					var
 						otd=ot.dimension,
-						otr=ot.role || otd.role || null, //0.9.0 (JSON-stat 2.00)
-						otdi=ot.id || otd.id, //0.9.0 (JSON-stat 2.00)
+						otr=ot.role || (!ot.version && otd.role) || null, //0.9.0 (JSON-stat 2.0) - Added check for version 0.9.1: role only valid on dimension if no version
+						otdi=ot.id || otd.id, //0.9.0 (JSON-stat 2.0)
 						otdl=size.length,
 						createRole=function(s){
 							if(!otr.hasOwnProperty(s)){
@@ -418,7 +418,7 @@ function JSONstat(resp,f){
 			ar=[],
 			c,
 			len=this.id.length,
-			role=function(otr,dim){ //0.9.0 (JSON-stat 2.00)
+			role=function(otr,dim){ //0.9.0 (JSON-stat 2.0)
 				if(otr!==null){
 					for(var prop in otr){
 						for(var p=(otr[prop]!==null ? otr[prop].length : 0); p--;){
