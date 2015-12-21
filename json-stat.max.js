@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.9.1 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.9.2 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.9.1";
+JSONstat.version="0.9.2";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -573,11 +573,17 @@ function JSONstat(resp,f){
 				}
 			},
 			dimObj2Array=function(thisds, obj){
-				var a=[], dim=thisds.dimension, di=dim.id;
+				var 
+					a=[],
+					dim=thisds.dimension,
+					di=thisds.id || dim.id, //0.9.2 (JSON-stat 2.0)
+					dsize=thisds.size || (dim && dim.size) //0.9.2 (JSON-stat 2.0)
+				;
+
 				for (var d=0, len=di.length; d<len; d++){
 					var id=di[d], cat=obj[id];
 					//If dimension not defined and dim size=1, take first category (user not forced to specify single cat dimensions)
-					a.push(typeof cat==="string" ? cat : dim.size[d]===1 ? firstprop(dim[id].category.index) : null);
+					a.push(typeof cat==="string" ? cat : dsize[d]===1 ? firstprop(dim[id].category.index) : null);
 				}
 				return a;
 			}
@@ -613,7 +619,11 @@ function JSONstat(resp,f){
 			; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
 		}
 
-		var tree=this.__tree__, n=tree.dimension.size, dims=n.length;//same as this.length
+		var 
+			tree=this.__tree__,
+			n=tree.size || (tree.dimension && tree.dimension.size), //0.9.2 (JSON-stat 2.0)
+			dims=n.length//same as this.length
+		;
 
 		//DataByPosition in every dim
 		//If more positions than needed are provided, they will be ignored.
@@ -670,11 +680,16 @@ function JSONstat(resp,f){
 			return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null/*, "length" : 1*/};
 		}
 
-		var id=dimObj2Array(tree, e);
-		var pos=[], otd=tree.dimension;
-		len=id.length;
+		var 
+			id=dimObj2Array(tree, e),
+			pos=[],
+			otd=tree.dimension,
+			len=id.length,
+			otdi=tree.id || otd.id //0.9.2 (JSON-stat 2.0)
+		;
+
 		for(i=0; i<len; i++){
-			pos.push(otd[otd.id[i]].category.index[id[i]]);
+			pos.push(otd[otdi[i]].category.index[id[i]]);
 		}
 		//Dimension cat undefined means a loop (by position) is necessary
 		return this.Data(pos);
