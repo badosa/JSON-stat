@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.9.2 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.9.3 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.9.2";
+JSONstat.version="0.9.3";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -143,10 +143,10 @@ function JSONstat(resp,f){
 					size=ot.size || (ot.dimension && ot.dimension.size) //0.9.0 (JSON-stat 2.0)
 				;
 
-				if (ot.hasOwnProperty("value") && isArray(ot.value)){
+				if(ot.hasOwnProperty("value") && isArray(ot.value)){
 					dsize=ot.value.length;
 				}else{
-					if (ot.hasOwnProperty("status") && isArray(ot.status)){
+					if(ot.hasOwnProperty("status") && isArray(ot.status)){
 						dsize=ot.status.length;
 					}else{
 						var length=1;
@@ -360,11 +360,23 @@ function JSONstat(resp,f){
 				return null;
 			}
 			if(o.class){
-				func=function(t,i,c){
-					if(c.class===t.link.item[i].class){
-						ret.push(t.link.item[i]);
-					}
-				};
+				if(o.class==="dataset" && o.embedded){ //0.9.3 Currently only valid with datasets (and JSON-stat 2.0)
+					func=function(t,i,c){
+						var item=t.link.item[i];
+						if(
+							c.class===item.class &&
+							item.id && item.size && item.dimension //it seems like a full embedded dataset
+						){
+							ret.push(item);
+						}
+					};
+				}else{
+					func=function(t,i,c){
+						if(c.class===t.link.item[i].class){
+							ret.push(t.link.item[i]);
+						}
+					};					
+				}
 			}
 			//{follow: true} not available in nodejs
 		}else{ //not object, not number: void or string (ignore)
@@ -380,7 +392,7 @@ function JSONstat(resp,f){
 	};
 
 	Jsonstat.prototype.Dataset=function(ds){
-		if (this===null){
+		if(this===null){
 			return null;
 		}
 
@@ -389,13 +401,37 @@ function JSONstat(resp,f){
 			return (typeof ds!=="undefined") ? this : [this];
 		}
 
+		var
+			len,
+			ar=[],
+			c=0
+		;
+
+		//0.9.3 Dataset collections can be managed as old bundles if they are embedded
+		if(this.class==="collection"){
+			var dscol=this.Item({"class": "dataset", "embedded": true});
+
+			if(typeof ds==="undefined"){
+				for(len=dscol.length; c<len; c++){
+					ar.push(JSONstat(dscol[c]));
+				}
+				return ar;
+			}
+
+			//Dataset(2) means the 3rd embedded dataset in the collection
+			if(typeof ds==="number" && ds>=0 && ds<dscol.length){
+				return JSONstat(dscol[ds]);
+			}
+
+			return null;
+		}
+
 		if(this.class!=="bundle"){
 			return null;
 		}
 
 		if(typeof ds==="undefined"){
-			var ar=[];
-			for(var c=0, len=this.id.length; c<len; c++){
+			for(len=this.id.length; c<len; c++){
 				ar.push(this.Dataset(this.id[c]));
 			}
 			return ar;
