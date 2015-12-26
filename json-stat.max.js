@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.9.3 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.9.4 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.9.3";
+JSONstat.version="0.9.4";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -405,16 +405,30 @@ function JSONstat(resp,f){
 				return null;
 			}
 			if(o.class){
-				if(o.class==="dataset" && o.embedded){ //0.9.3 Currently only valid with datasets (and JSON-stat 2.0)
-					func=function(t,i,c){
-						var item=t.link.item[i];
-						if(
-							c.class===item.class &&
-							item.id && item.size && item.dimension //it seems like a full embedded dataset
-						){
-							ret.push(item);
-						}
-					};
+				//0.9.3 Embedded currently only valid with datasets (and JSON-stat 2.0)
+				if(o.class==="dataset" && typeof o.embedded==="boolean"){
+					//0.9.4 embedded===false added
+					if(o.embedded===true){
+						func=function(t,i,c){
+							var item=t.link.item[i];
+							if(
+								c.class===item.class &&
+								item.id && item.size && item.dimension //it seems like a full embedded dataset
+							){
+								ret.push(item);
+							}
+						};
+					}else{
+						func=function(t,i,c){
+							var item=t.link.item[i];
+							if(
+								c.class===item.class &&
+								(!item.id || !item.size || !item.dimension) //dataset reference only
+							){
+								ret.push(item);
+							}
+						};
+					}
 				}else{
 					func=function(t,i,c){
 						if(c.class===t.link.item[i].class){
