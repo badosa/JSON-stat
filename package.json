@@ -14,7 +14,7 @@
 	},
 	"dependencies": {},
 	"devDependencies": {},
-	"version"       : "0.9.5",
+	"version"       : "0.9.6",
 	"license"       : "Apache",
 	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js"]
 }
