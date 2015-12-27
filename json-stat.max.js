@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.9.4 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.9.5 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.9.4";
+JSONstat.version="0.9.5";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -182,8 +182,8 @@ function JSONstat(resp,f){
 
 				//Sparse cube (If toTable() removed, this logic can be moved inside Data()
 				//which is more efficient when retrieving a single value/status.
-				var 
-					s, 
+				var
+					s,
 					dsize=0, //data size
 					size=ot.size || (ot.dimension && ot.dimension.size) //0.9.0 (JSON-stat 2.0)
 				;
@@ -434,7 +434,7 @@ function JSONstat(resp,f){
 						if(c.class===t.link.item[i].class){
 							ret.push(t.link.item[i]);
 						}
-					};					
+					};
 				}
 			}else{
 				//{follow: true} not documented because sync xhr are deprecated outside of workers. Use only for testing and demoing. That's why it's been defined as incompatible with {class: ...}
@@ -623,7 +623,7 @@ function JSONstat(resp,f){
 				}
 			},
 			dimObj2Array=function(thisds, obj){
-				var 
+				var
 					a=[],
 					dim=thisds.dimension,
 					di=thisds.id || dim.id, //0.9.2 (JSON-stat 2.0)
@@ -669,7 +669,7 @@ function JSONstat(resp,f){
 			; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
 		}
 
-		var 
+		var
 			tree=this.__tree__,
 			n=tree.size || (tree.dimension && tree.dimension.size), //0.9.2 (JSON-stat 2.0)
 			dims=n.length//same as this.length
@@ -730,15 +730,14 @@ function JSONstat(resp,f){
 			return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null/*, "length" : 1*/};
 		}
 
-		var 
+		var
 			id=dimObj2Array(tree, e),
 			pos=[],
 			otd=tree.dimension,
-			len=id.length,
 			otdi=tree.id || otd.id //0.9.2 (JSON-stat 2.0)
 		;
 
-		for(i=0; i<len; i++){
+		for(i=0, len=id.length; i<len; i++){
 			pos.push(otd[otdi[i]].category.index[id[i]]);
 		}
 		//Dimension cat undefined means a loop (by position) is necessary
@@ -888,8 +887,9 @@ function JSONstat(resp,f){
 
 		var
 			dd=dataset.dimension,
-			ddi=dd.id, ddil=ddi.length,
-			dds=dd.size
+			ddi=dataset.id || dd.id, //0.9.5 (JSON-stat 2.0)
+			dds=dataset.size || dd.size, //0.9.5 (JSON-stat 2.0)
+			ddil=ddi.length
 		;
 
 		if (ddil!=dds.length){
