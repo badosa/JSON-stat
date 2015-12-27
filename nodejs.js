@@ -1,16 +1,16 @@
 // jsonstat module for Node.js tests
 
-var 
+var
 	http=require('http'),
 	JSONstat=require('jsonstat'),
-	uri="http://json-stat.org/samples/oecd-canada.json"
+	uri="http://json-stat.org/samples/oecd-canada-col.json"
 ;
 
 console.log("\nRunning jsonstat v. "+JSONstat.version+" test...\n");
 
 http.get(uri, function(res) {
-	var 
-		str="", 
+	var
+		str="",
 		s=res.statusCode
 	;
 	if(s>=200 && s<300 || s===304){
@@ -20,15 +20,15 @@ http.get(uri, function(res) {
 			str+=chunk;
 		});
 		res.on("end", function(){
-			var 
+			var
 				json=JSON.parse(str),
 				J=JSONstat(json),
 				ok=true,
 				test=[
 					{
-						text: "First dataset ID",
+						text: "First item ID",
 						real: J.id[0],
-						exp: "oecd"
+						exp: "http://json-stat.org/samples/oecd.json"
 					},
 					{
 						text: "Second dimension ID",
@@ -37,12 +37,12 @@ http.get(uri, function(res) {
 					},
 					{
 						text: "First dimension with role 'time'",
-						real: J.Dataset("oecd").role.time[0],
+						real: J.Dataset(0).role.time[0],
 						exp: "year"
 					},
 					{
 						text: "Number of categories in dimension 'area'",
-						real: J.Dataset("oecd").Dimension("area").length,
+						real: J.Dataset(0).Dimension("area").length,
 						exp: 36
 					},
 					{
@@ -72,7 +72,7 @@ http.get(uri, function(res) {
 					}
 				]
 			;
-			
+
 			test.forEach(function(d){
 				var t=d.real===d.exp?"Passed":"Not passed!";
 				console.log(d.text+" is: "+d.real+" ("+t+")");
