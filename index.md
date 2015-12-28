@@ -44,7 +44,7 @@ Datasets are organized in dimensions and data.
 
 Collections are sets of items. Items can be bundles, datasets, dimensions and collections.
 
- * *Dataset*
+ * *Collection*
    * *Item*
 
 For instance, to retrieve information about the first category of the first dimension of the first dataset in a JSON-stat bundle response *j*, the JSON-stat Javascript Toolkit allows you to traverse the JSON-stat tree like this:
