@@ -16,5 +16,6 @@
 	"devDependencies": {},
 	"version"       : "0.9.6",
 	"license"       : "Apache",
-	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js"]
+	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js"],
+	"tonicExampleFilename": "nodejs.js"
 }
