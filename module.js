@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.9.7 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.9.8 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
-Copyright 2015 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2016 Xavier Badosa (http://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.9.7";
+JSONstat.version="0.9.8";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -146,15 +146,11 @@ function JSONstat(resp,f){
 				if(ot.hasOwnProperty("value") && isArray(ot.value)){
 					dsize=ot.value.length;
 				}else{
-					if(ot.hasOwnProperty("status") && isArray(ot.status)){
-						dsize=ot.status.length;
-					}else{
-						var length=1;
-						for(s=size.length; s--;){
-							length*=size[s];
-						}
-						dsize=length;
+					var length=1;
+					for(s=size.length; s--;){
+						length*=size[s];
 					}
+					dsize=length;
 				}
 
 				this.value=normalize(ot.value,dsize);
