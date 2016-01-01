@@ -12,16 +12,6 @@ JSON-stat is based on a data cube information structure. The JSON-stat Javascrip
 
 ### The JSON-stat tree
 
-#### Bundles
-
-Bundles are packages of unordered arbitrary datasets.
-
- * *Bundle*
-  * *Dataset*
-    * *Dimension*
-      * *Category*
-    * *Data*
-
 #### Datasets
 
 Datasets are organized in dimensions and data.
@@ -33,12 +23,26 @@ Datasets are organized in dimensions and data.
 
 #### Collections
 
-Collections are sets of items. Items can be bundles, datasets, dimensions and collections.
+Collections are sets of items. Items can be collections, datasets and dimensions (currently not supported by JJT).
 
  * *Collection*
    * *Item*
 
-For instance, to retrieve information about the first category of the first dimension of the first dataset in a JSON-stat bundle response *j*, the JSON-stat Javascript Toolkit allows you to traverse the JSON-stat tree like this:
+Generally, items in a collection contain just basic content and a pointer that allow a client to retrieve the full information about the item. But a collection can also contain the full information (embedded items).
+
+#### Bundles (JSON-stat<2.0)
+
+Bundles were packages of unordered arbitrary datasets.
+
+  * *Bundle*
+   * *Dataset*
+     * *Dimension*
+       * *Category*
+     * *Data*
+
+Even though JSON-stat currently encourages the use of collections of embedded datasets instead of bundles, JJT supports both approaches.
+
+To retrieve information about the first category of the first dimension of the first embedded dataset in a JSON-stat collection (or bundle) *j*, the JSON-stat Javascript Toolkit allows you to traverse the JSON-stat tree like this:
 
 ```js
 JSONstat( j ).Dataset( 0 ).Dimension( 0 ).Category( 0 )
@@ -60,30 +64,30 @@ if(JSONstat( j ).class==="dataset"){
 
 ### Reading and traversing methods
 
-These methods (except JSONstat, which is not actually a method) accept a selection argument (ID or index). If it is not provided, an array is returned with the information for every child of the selected element.
+These methods (except JSONstat, which is not actually a method) accept a selection argument. If it is not provided, an array is returned with the information for every child of the selected element.
 
 #### JSONstat
 
-It reads a JSON-stat response and creates an internal *jsonstat* object.
+It reads a JSON-stat response and returns an object.
 
 ```js
 JSONstat( { ... } ).length
 //number of datasets in the object
 
-JSONstat( "http://json-stat.org/samples/oecd-canada.json" ).length
-//number of datasets in oecd-canada.json. Sync connection.
+JSONstat( "http://json-stat.org/samples/oecd-canada-col.json" ).length
+//number of items in oecd-canada-col.json. Sync connection.
 
-JSONstat( "http://json-stat.org/samples/oecd-canada.json", 
+JSONstat( "http://json-stat.org/samples/oecd-canada-col.json",
    function(){
       console.log( this.length );
    }
 )
-//number of datasets in oecd-canada.json. Async connection.
+//number of items in oecd-canada-col.json. Async connection.
 ```
 
 #### Dataset
 
-It selects a particular dataset in the JSON-stat bundle response.
+It selects an embedded dataset in the JSON-stat collection (or bundle).
 
 ```js
 JSONstat( j ).Dataset( 0 ).id //IDs of the dimensions in the first dataset
@@ -103,7 +107,7 @@ JSONstat( j ).Dataset( 0 ).Dimension( "country" ).role
 
 #### Category
 
-It selects a particular category in a dimension in a dataset in the JSON-stat response.
+It selects a particular category in a dimension in a dataset.
 
 ```js
 JSONstat( j ).Dataset( 0 ).Dimension( "time" ).Category( 0 ).label
@@ -114,7 +118,7 @@ JSONstat( j ).Dataset( 0 ).Dimension( "time" ).Category( 0 ).label
 
 When an argument is passed, selects a single cell of the data cube in the JSON-stat response. If no argument is passed, returns all the cells.
 
-This method accepts the property "value" to get the value of a cell and "status" to get its status.
+The resulting object contains the property "value" (value of a cell) and "status" (its status).
 
 ```js
 JSONstat( j ).Dataset( 0 ).Data( 0 ).value
@@ -130,11 +134,11 @@ JSONstat( j ).Dataset( 0 ).Data( { "metric" : "UNR", "geo" : "GR", "time" : "201
 //Status of unemployment rate in Greece in 2014.
 ```
 
-In object arguments, single category dimensions (&ldquo;constant dimensions&rdquo;) can be skipped. If one and only one non-constant dimension is not specified, the result will an array with as many elements as categories in the unspecified dimension.
+When the argument is neither an integer nor an array, single category dimensions (&ldquo;constant dimensions&rdquo;) can be skipped. If one and only one non-constant dimension is not specified, the result will be an array with as many elements as categories in the unspecified dimension.
 
 ### Transformation methods
 
-Transformation methods get the information at a certain level of the JSON-stat tree and export it to other JSON structure for convenience.
+Transformation methods get information in the JSON-stat tree and export it to a different JSON structure for convenience.
 
 #### toTable
 
@@ -143,7 +147,7 @@ This is a dataset method. It converts the information of a particular dataset in
 ```js
 JSONstat( j ).Dataset( 0 ).toTable()
 //Returns an array of arrays that exposes a tabular structure (rows and columns).
-//Useful in many situations. For example, it can be a Google Visualization API input. 
+//Useful in many situations. For example, it can be a Google Visualization API input.
 
 JSONstat( j ).Dataset( 0 ).toTable( { field : "id" } )
 //Uses ids instead of labels as column names.
@@ -163,7 +167,7 @@ JSONstat( j ).Dataset( 0 ).toTable( { type : "arrobj" } )
 JSONstat( j ).Dataset( 0 ).toTable( { type: "arrobj", content: "id" } )
 //same but category ids ("AU") are used instead of labels ("Australia") even for content.
 
-JSONstat( j ).Dataset( "canada" ).toTable(
+JSONstat( j ).Dataset( 1 ).toTable(
    { type : "arrobj", content : "id" },
    function( d, i ){
       if ( d.sex === "F" && d.concept === "POP" ){
@@ -171,7 +175,7 @@ JSONstat( j ).Dataset( "canada" ).toTable(
       }
    }
 )
-//Get only the female population by age of Canada 
+//Get only the female population by age of Canada
 //and convert values from thousands to persons.
 ```
 
