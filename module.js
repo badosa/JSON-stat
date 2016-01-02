@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.9.8 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.9.9 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.9.8";
+JSONstat.version="0.9.9";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -431,6 +431,15 @@ function JSONstat(resp,f){
 			//Dataset(2) means the 3rd embedded dataset in the collection
 			if(typeof ds==="number" && ds>=0 && ds<dscol.length){
 				return JSONstat(dscol[ds]);
+			}
+
+			//Dataset("http://...") selection by ID (href) for generalization's sake (probably not particularly useful) 0.9.9
+			if(typeof ds==="string"){
+				for(len=dscol.length; c<len; c++){
+					if(dscol[c].href===ds){
+						return JSONstat(dscol[c]);
+					}
+				}
 			}
 
 			return null;
