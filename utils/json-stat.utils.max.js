@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 1.4.1 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 1.4.3 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
-Copyright 2015 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2016 Xavier Badosa (http://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -583,11 +583,13 @@ var JSONstatUtils=function(){
 			valuestatus();
 		}
 
-		//For JSON-stat<2.00
+		/* For JSON-stat<2.00
 		dimension.id=id;
 		dimension.size=size;
+		*/
 
 		return {
+			"version": "2.0",
 			"class": "dataset",
 			"label": label, //added in 1.2.2
 			"value": value,
@@ -826,6 +828,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "1.4.2"
+		version: "1.4.3"
 	};
 }();
