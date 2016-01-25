@@ -53,11 +53,11 @@ Nevis font
 
 @font-face {
 	font-family: 'nevis';
-	src: url('http://json-stat.com/fonts/nevis-webfont.eot');
-	src: url('http://json-stat.com/fonts/nevis-webfont.eot?#iefix') format('embedded-opentype'),
-		url('http://json-stat.com/fonts/nevis-webfont.woff') format('woff'),
-		url('http://json-stat.com/fonts/nevis-webfont.ttf') format('truetype'),
-		url('http://json-stat.com/fonts/nevis-webfont.svg#nevis') format('svg');
+	src: url('//json-stat.com/fonts/nevis-webfont.eot');
+	src: url('//json-stat.com/fonts/nevis-webfont.eot?#iefix') format('embedded-opentype'),
+		url('//json-stat.com/fonts/nevis-webfont.woff') format('woff'),
+		url('//json-stat.com/fonts/nevis-webfont.ttf') format('truetype'),
+		url('//json-stat.com/fonts/nevis-webfont.svg#nevis') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -310,7 +310,7 @@ footer.inner {
 }
 
 #header_wrap {
-	background-image: url(http://json-stat.org/i/bg.png);
+	background-image: url(//json-stat.org/i/bg.png);
 	background-repeat: no-repeat;
 	background-color: #1b1b1b;
 }
@@ -392,7 +392,7 @@ footer.inner {
 }
 
 #footer_wrap {
-	background-image: url(http://json-stat.org/i/bg.png);
+	background-image: url(//json-stat.org/i/bg.png);
 	background-repeat: no-repeat;
 	background-color: #1b1b1b;
 }
