@@ -7,7 +7,7 @@ parent: "JJT: "
 
 # What is JSON-stat?
 
-<iframe style="float:right;height:200px;width:300px;margin-left:10px" src="//www.slideshare.net/slideshow/embed_code/key/AbaAn6NXeNPEUc" allowfullscreen="allowfullscreen"> </iframe>The JSON-stat format is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
+<iframe style="float:right;height:200px;width:300px;margin-left:10px" src="//www.slideshare.net/slideshow/embed_code/key/AbaAn6NXeNPEUc" allowfullscreen="allowfullscreen">&nbsp;</iframe>The JSON-stat format is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
 
 The JSON-stat format is documented at https://json-stat.org/format/.
 
