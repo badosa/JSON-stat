@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 1.4.3 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 1.4.4 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -64,8 +64,7 @@ var JSONstatUtils=function(){
 		}
 
 		if(
-			typeof obj.jsonstat==="string" //uri
-			||
+			typeof obj.jsonstat==="string" || //uri
 			typeof obj.jsonstat.length==="undefined" //JSON-stat response
 			){
 			jsonstat=JSONstat(obj.jsonstat);
@@ -425,8 +424,7 @@ var JSONstatUtils=function(){
 		}
 
 		if(
-			typeof obj.jsonstat==="string" //uri
-			||
+			typeof obj.jsonstat==="string" || //uri
 			typeof obj.jsonstat.length==="undefined" //JSON-stat response
 			){
 			jsonstat=JSONstat(obj.jsonstat);
@@ -611,12 +609,10 @@ var JSONstatUtils=function(){
 			status=o.status || false, //Same default as .toTable()
 			na=o.na || "n/a",
 			delimiter=o.delimiter || ",",
-			decimal=(delimiter===";")
-				?
+			decimal=(delimiter===";") ?
 				(o.decimal || ",")
 				:
-				(o.decimal || ".")
-			,
+				(o.decimal || "."),
 			dsid=o.dsid || 0
 		;
 
@@ -625,8 +621,7 @@ var JSONstatUtils=function(){
 		}
 
 		if(
-			typeof o.jsonstat==="string" //uri
-			||
+			typeof o.jsonstat==="string" || //uri
 			typeof o.jsonstat.length==="undefined" //JSON-stat response
 			){
 			jsonstat=JSONstat(o.jsonstat);
@@ -656,7 +651,7 @@ var JSONstatUtils=function(){
 			}else{
 				if(decimal!=="."){
 					table[i][vcol]=String(table[i][vcol]).replace(".", decimal);
-				}				
+				}
 			}
 		}
 
@@ -672,6 +667,7 @@ var JSONstatUtils=function(){
 	//Returns JSONstat or table array
 	function fromCSV(o){
 		var
+			table,
 			vlabel=o.vlabel || "Value", //Same default as .toTable()
 			type=o.type || "jsonstat" //vs "table" (array)
 		;
@@ -680,16 +676,15 @@ var JSONstatUtils=function(){
 			table=o.table;
 		}else{ //o.csv (file) used as input instead of o.table
 			var
-				i,
 				vcol=null,
 				delimiter=o.delimiter || ",",
-				decimal=(delimiter===";")
-					?
+				decimal=(delimiter===";") ?
 					(o.decimal || ",")
 					:
 					(o.decimal || ".")
-				,
-				table=CSVToArray(o.csv, delimiter),
+			;
+			table=CSVToArray(o.csv, delimiter);
+			var
 				nrows=table.length,
 				i=table[0].length
 			;
@@ -828,6 +823,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "1.4.3"
+		version: "1.4.4"
 	};
 }();
