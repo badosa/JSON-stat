@@ -2,7 +2,7 @@
 
 JJUS is a library of high level functions built on top of the JSON-stat Javascript Toolkit (JJT).
 
-Download the latest versions of [json-stat.js](https://github.com/badosa/JSON-stat/blob/master/json-stat.js) and [json-stat.utils.js](https://github.com/badosa/JSON-stat/blob/master/utils/json-stat.utils.js). Then include the following links in your webpage to your copies of the json-stat.js and json-stat.utils.js files:
+Download the latest versions of [json-stat.js](https://github.com/badosa/JSON-stat/blob/master/json-stat.js) and [json-stat.utils.js](https://github.com/badosa/JSON-stat/blob/master/utils/json-stat.utils.js). Then in your webpage include the following links to your own copies of the json-stat.js and json-stat.utils.js files:
 
 ```html
 <script src="/your-js-dir/json-stat.js"></script>
@@ -35,7 +35,7 @@ Documentation pending.
 
 ### Description
 
-This function converts JSON-stat to the Comma Separated Values (CSV) file format. The JSON-stat input must be of class "dataset" or "collection" with some embedded dataset (or old class "bundle").
+This function converts JSON-stat to the Comma Separated Values (CSV) file format. The JSON-stat input must be of class "dataset", or of class "collection" with some embedded dataset (or of class "bundle").
 
 ### Parameters
 
@@ -94,7 +94,7 @@ It is the name of the value column. By default, "Value".
 
 #### slabel (string)
 
-It is the name of the status column. By default, "Status".
+It is the name of the status column when **status** is *true*. By default, "Status".
 
 #### na (string)
 
@@ -110,7 +110,7 @@ It is the character that will be used as the decimal mark. By default, it is "."
 
 #### dsid (positive integer or string)
 
-When the JSON-stat input is of class "collection" or "bundle", it is used to select a dataset. When a positive integer is specified, it is interpreted as an index. By default, it is 0 (first dataset).  When a string is specified, it is the id of the selected dataset.
+When the JSON-stat input is of class "collection" (or "bundle"), it is used to select a dataset. When a positive integer is specified, it is interpreted as an index. By default, it is 0 (first dataset).  When a string is specified, it is the id of the selected dataset.
 
 ### Return Value
 
