@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 1.4.5 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 1.4.6 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -73,7 +73,7 @@ var JSONstatUtils=function(){
 			jsonstat=obj.jsonstat;
 		}
 
-		if(jsonstat.length===0 || (jsonstat.class!=="dataset" && jsonstat.class!=="bundle")){
+		if(jsonstat.length===0 || (jsonstat.class!=="dataset" && jsonstat.class!=="collection" && jsonstat.class!=="bundle")){
 			msg("jsonerror");
 			return;
 		}
@@ -411,33 +411,13 @@ var JSONstatUtils=function(){
 	//{jsonstat: , dsid: , na:, caption:}
 	function datalist(obj){
 		var
-			na=obj.na || "n/a",
-			dsid=obj.dsid || 0,
-
 			trs="",
 			colvalue=0,
-			jsonstat
+			na=obj.na || "n/a",
+			dsid=obj.dsid || 0,
+			ds=dataset(obj.jsonstat, dsid)
 		;
 
-		if(typeof obj.jsonstat==="undefined"){
-			return null;
-		}
-
-		if(
-			typeof obj.jsonstat==="string" || //uri
-			typeof obj.jsonstat.length==="undefined" //JSON-stat response
-			){
-			jsonstat=JSONstat(obj.jsonstat);
-		}else{
-			//JSON-stat response already processed by JSONstat()
-			jsonstat=obj.jsonstat;
-		}
-
-		if(jsonstat.length===0 || (jsonstat.class!=="dataset" && jsonstat.class!=="bundle")){
-			return null;
-		}
-
-		var ds=(jsonstat.class==="dataset") ? jsonstat : jsonstat.Dataset(dsid);
 		if(ds===null || !checksize(ds)){
 			return null;
 		}
@@ -602,7 +582,6 @@ var JSONstatUtils=function(){
 
 	function toCSV(o){
 		var
-			jsonstat,
 			csv=[],
 			vlabel=o.vlabel || "Value", //Same default as .toTable()
 			slabel=o.slabel || "Status", //Same default as .toTable()
@@ -613,34 +592,9 @@ var JSONstatUtils=function(){
 				(o.decimal || ",")
 				:
 				(o.decimal || "."),
-			dsid=o.dsid || 0
+			dsid=o.dsid || 0,
+			ds=dataset(o.jsonstat, dsid)
 		;
-
-		if(typeof o.jsonstat==="undefined"){
-			return null;
-		}
-
-		if(
-			typeof o.jsonstat==="string" || //uri
-			typeof o.jsonstat.length==="undefined" //JSON-stat response
-			){
-			jsonstat=JSONstat(o.jsonstat);
-		}else{
-			//JSON-stat response already processed by JSONstat()
-			jsonstat=o.jsonstat;
-		}
-
-		if(jsonstat.length===0 ||
-			(
-				jsonstat.class!=="dataset" &&
-				jsonstat.class!=="collection" &&
-				jsonstat.class!=="bundle"
-			)
-		){
-			return null;
-		}
-
-		var ds=(jsonstat.class==="dataset") ? jsonstat : jsonstat.Dataset(dsid);
 
 		if(ds===null || !checksize(ds)){
 			return null;
@@ -823,12 +777,37 @@ var JSONstatUtils=function(){
 		return( arrData );
 	}
 
+	function dataset(j, dsid){
+		if(typeof j==="undefined"){
+			return null;
+		}
+
+		if(
+			typeof j==="string" || //uri
+			typeof j.length==="undefined" //JSON-stat response
+			){
+			j=JSONstat(j);
+		}
+
+		if(j.length===0 ||
+			(
+				j.class!=="dataset" &&
+				j.class!=="collection" &&
+				j.class!=="bundle"
+			)
+		){
+			return null;
+		}
+
+		return (j.class==="dataset") ? j : j.Dataset(dsid);
+	}
+
 	return {
 		tbrowser: tbrowser,
 		datalist: datalist,
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "1.4.5"
+		version: "1.4.6"
 	};
 }();
