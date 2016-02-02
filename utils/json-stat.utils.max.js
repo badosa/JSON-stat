@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 1.4.6 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 1.4.7 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -35,8 +35,7 @@ var JSONstatUtils=function(){
 				{
 					"selerror": 'tbrowser: "selector" property is required!',
 					"urierror": 'tbrowser: "jsonstat" property is required!',
-					"jsonerror": "Document is not a valid JSON-stat dataset.",
-					"dserror": "Dataset ID is not correct.",
+					"jsonerror": "Th request did not return a valid JSON-stat dataset.",
 					"dimerror": "Only one dimension was found in the dataset. At least two are required.",
 					"dataerror": "Selection returned no data!",
 					"source": "Source",
@@ -49,8 +48,7 @@ var JSONstatUtils=function(){
 				obj.i18n.msgs,
 			locale=(typeof obj.i18n==="undefined" || typeof obj.i18n.locale==="undefined") ? "en-US" : obj.i18n.locale,
 			dsid=obj.dsid || 0,
-			shstatus=obj.status || false, //added in 1.2.1
-			jsonstat
+			shstatus=obj.status || false //added in 1.2.1
 		;
 
 		if(typeof obj.selector==="undefined"){
@@ -63,30 +61,9 @@ var JSONstatUtils=function(){
 			return;
 		}
 
-		if(
-			typeof obj.jsonstat==="string" || //uri
-			typeof obj.jsonstat.length==="undefined" //JSON-stat response
-			){
-			jsonstat=JSONstat(obj.jsonstat);
-		}else{
-			//JSON-stat response already processed by JSONstat()
-			jsonstat=obj.jsonstat;
-		}
-
-		if(jsonstat.length===0 || (jsonstat.class!=="dataset" && jsonstat.class!=="collection" && jsonstat.class!=="bundle")){
+		var ds=dataset(obj.jsonstat, dsid);
+		if(ds===null || !checksize(ds)){
 			msg("jsonerror");
-			return;
-		}
-
-		var ds=(jsonstat.class==="dataset") ? jsonstat : jsonstat.Dataset(dsid);
-
-		if(!checksize(ds)){
-			msg("jsonerror");
-			return;
-		}
-
-		if(ds===null){
-			msg("dserror");
 			return;
 		}
 
@@ -408,13 +385,14 @@ var JSONstatUtils=function(){
 	}
 
 	//on error returns null; on success, html table string
-	//{jsonstat: , dsid: , na:, caption:}
+	//{jsonstat: , dsid: , na:, caption:, vlabel:, slabel:, status:}
 	function datalist(obj){
 		var
 			trs="",
-			colvalue=0,
-			na=obj.na || "n/a",
+			na=obj.na || "n/a", //for empty cells in the resulting datalist table
 			dsid=obj.dsid || 0,
+			vlabel=obj.vlabel || null, //take default value from toTable
+			slabel=obj.slabel || null, //take default value from toTable
 			ds=dataset(obj.jsonstat, dsid)
 		;
 
@@ -422,9 +400,14 @@ var JSONstatUtils=function(){
 			return null;
 		}
 
-		var table=ds.toTable();
-
-		colvalue=table[0].length-1;
+		var
+			table=ds.toTable({ 
+				status: obj.status || false,
+				vlabel: vlabel,
+				slabel: slabel
+			}),
+			colvalue=table[0].length-1
+		;
 
 		table.forEach(function(r,i){
 			trs+=(i) ? '<tr><td class="value">'+i+'</td>' : '<tr><th class="value">#</th>';
@@ -439,7 +422,7 @@ var JSONstatUtils=function(){
 			trs+="</tr>";
 		});
 
-		return '<table><caption>'+(obj.caption || ds.label)+'</caption><tbody>'+trs+"</tbody></table>";
+		return '<table><caption>'+(obj.caption || ds.label || "")+'</caption><tbody>'+trs+"</tbody></table>";
 	}
 
 	function fromTable(o){
@@ -808,6 +791,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "1.4.6"
+		version: "1.4.7"
 	};
 }();
