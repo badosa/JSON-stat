@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 1.4.7 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.0 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -28,10 +28,24 @@ var JSONstatUtils=function(){
 	"use strict";
 
 	//////////////////////////////////////////////////////
-	//{i18n: {msgs: {}, locale: ""}, dsid: 0, status: false, selector: , jsonstat: , preset: ""}
-	function tbrowser(obj){
+	//jsonstat selector {i18n: {msgs: {}, locale: ""}, dsid: 0, status: false, preset: ""}
+	function tbrowser(jsonstat, selector, options){
+		if(typeof jsonstat==="undefined"){
+			msg("urierror");
+			return;
+		}
+
+		if(typeof selector==="undefined"){
+			msg("selerror");
+			return;
+		}
+
+		if(typeof options==="undefined"){
+			options={};
+		}
+
 		var
-			msgs=(typeof obj.i18n==="undefined" || typeof obj.i18n.msgs==="undefined") ?
+			msgs=(typeof options.i18n==="undefined" || typeof options.i18n.msgs==="undefined") ?
 				{
 					"selerror": 'tbrowser: "selector" property is required!',
 					"urierror": 'tbrowser: "jsonstat" property is required!',
@@ -45,23 +59,13 @@ var JSONstatUtils=function(){
 					"na": "n/a"
 				}
 				:
-				obj.i18n.msgs,
-			locale=(typeof obj.i18n==="undefined" || typeof obj.i18n.locale==="undefined") ? "en-US" : obj.i18n.locale,
-			dsid=obj.dsid || 0,
-			shstatus=obj.status || false //added in 1.2.1
+				options.i18n.msgs,
+			locale=(typeof options.i18n==="undefined" || typeof options.i18n.locale==="undefined") ? "en-US" : options.i18n.locale,
+			dsid=options.dsid || 0,
+			shstatus=options.status || false //added in 1.2.1
 		;
 
-		if(typeof obj.selector==="undefined"){
-			msg("selerror");
-			return;
-		}
-
-		if(typeof obj.jsonstat==="undefined"){
-			msg("urierror");
-			return;
-		}
-
-		var ds=dataset(obj.jsonstat, dsid);
+		var ds=dataset(jsonstat, dsid);
 		if(ds===null || !checksize(ds)){
 			msg("jsonerror");
 			return;
@@ -73,8 +77,8 @@ var JSONstatUtils=function(){
 		}
 
 		function msg(s){
-			if(typeof obj.selector!=="undefined"){
-				obj.selector.innerHTML=msgs[s];
+			if(typeof selector!=="undefined"){
+				selector.innerHTML=msgs[s];
 			}else{
 				window.alert(msgs[s]);
 			}
@@ -381,19 +385,27 @@ var JSONstatUtils=function(){
 		}
 
 		//Create table with default setup
-		HTMLtable( obj.selector, ds, setup(ds, obj.preset) );
+		HTMLtable( selector, ds, setup(ds, options.preset) );
 	}
 
 	//on error returns null; on success, html table string
-	//{jsonstat: , dsid: , na:, caption:, vlabel:, slabel:, status:}
-	function datalist(obj){
+	//jsonstat {dsid: , na:, caption:, vlabel:, slabel:, status:}
+	function datalist(jsonstat, options){
+		if(typeof jsonstat==="undefined"){
+			return null;
+		}
+
+		if(typeof options==="undefined"){
+			options={};
+		}
+
 		var
 			trs="",
-			na=obj.na || "n/a", //for empty cells in the resulting datalist table
-			dsid=obj.dsid || 0,
-			vlabel=obj.vlabel || null, //take default value from toTable
-			slabel=obj.slabel || null, //take default value from toTable
-			ds=dataset(obj.jsonstat, dsid)
+			na=options.na || "n/a", //for empty cells in the resulting datalist table
+			dsid=options.dsid || 0,
+			vlabel=options.vlabel || null, //take default value from toTable
+			slabel=options.slabel || null, //take default value from toTable
+			ds=dataset(jsonstat, dsid)
 		;
 
 		if(ds===null || !checksize(ds)){
@@ -401,8 +413,8 @@ var JSONstatUtils=function(){
 		}
 
 		var
-			table=ds.toTable({ 
-				status: obj.status || false,
+			table=ds.toTable({
+				status: options.status || false,
 				vlabel: vlabel,
 				slabel: slabel
 			}),
@@ -422,16 +434,23 @@ var JSONstatUtils=function(){
 			trs+="</tr>";
 		});
 
-		return '<table><caption>'+(obj.caption || ds.label || "")+'</caption><tbody>'+trs+"</tbody></table>";
+		return '<table><caption>'+(options.caption || ds.label || "")+'</caption><tbody>'+trs+"</tbody></table>";
 	}
 
-	function fromTable(o){
+	function fromTable(tbl, options){
+		if(typeof tbl==="undefined"){
+			return null;
+		}
+
+		if(typeof options==="undefined"){
+			options={};
+		}
+
 		var
-			vlabel=o.vlabel || "Value",
-			slabel=o.slabel || "Status",
-			type=o.type || "array", //obj.type default is array as in .toTable()
-			tbl=o.table,
-			label=o.label || "",
+			vlabel=options.vlabel || "Value",
+			slabel=options.slabel || "Status",
+			type=options.type || "array", //default is array as in .toTable()
+			label=options.label || "",
 
 			id=[],
 			size=[],
@@ -563,20 +582,28 @@ var JSONstatUtils=function(){
 		};
 	}
 
-	function toCSV(o){
+	function toCSV(jsonstat, options){
+		if(typeof jsonstat==="undefined"){
+			return null;
+		}
+
+		if(typeof options==="undefined"){
+			options={};
+		}
+
 		var
 			csv=[],
-			vlabel=o.vlabel || "Value", //Same default as .toTable()
-			slabel=o.slabel || "Status", //Same default as .toTable()
-			status=o.status || false, //Same default as .toTable()
-			na=o.na || "n/a",
-			delimiter=o.delimiter || ",",
+			vlabel=options.vlabel || "Value", //Same default as .toTable()
+			slabel=options.slabel || "Status", //Same default as .toTable()
+			status=options.status || false, //Same default as .toTable()
+			na=options.na || "n/a",
+			delimiter=options.delimiter || ",",
 			decimal=(delimiter===";") ?
-				(o.decimal || ",")
+				(options.decimal || ",")
 				:
-				(o.decimal || "."),
-			dsid=o.dsid || 0,
-			ds=dataset(o.jsonstat, dsid)
+				(options.decimal || "."),
+			dsid=options.dsid || 0,
+			ds=dataset(jsonstat, dsid)
 		;
 
 		if(ds===null || !checksize(ds)){
@@ -605,37 +632,43 @@ var JSONstatUtils=function(){
 		return csv;
 	}
 
-	//{csv/table, (delimiter, decimal) if csv, vlabel, slabel, type, vlast}
+	//csv/table {(delimiter, decimal) if csv, vlabel, slabel, input, output, vlast}
 	//Accepts a CSV (string) or a table array
 	//Returns JSONstat or table array
-	function fromCSV(o){
+	function fromCSV(table, options){
+		if(typeof table==="undefined"){
+			return null;
+		}
+
+		if(typeof options==="undefined"){
+			options={};
+		}
+
 		var
-			table,
-			vlabel=o.vlabel || "Value", //Same default as .toTable()
-			type=o.type || "jsonstat" //vs "table" (array)
+			vlabel=options.vlabel || "Value", //Same default as .toTable()
+			input=options.input || "csv", //vs "table" (array)
+			output=options.output || "jsonstat" //vs "table" (array)
 		;
 
-		if(o.table){
-			table=o.table;
-		}else{ //o.csv (file) used as input instead of o.table
+		if(input!=="table"){ //csv (file) used as input instead of table
 			var
 				vcol=null,
-				delimiter=o.delimiter || ",",
+				delimiter=options.delimiter || ",",
 				decimal=(delimiter===";") ?
-					(o.decimal || ",")
+					(options.decimal || ",")
 					:
-					(o.decimal || ".")
+					(options.decimal || ".")
 			;
-			table=CSVToArray(o.csv, delimiter);
+			table=CSVToArray(table, delimiter);
 			var
 				nrows=table.length,
 				i=table[0].length
 			;
 
-			if(o.vlast){ //simple standard CSV without status: value is last column
+			if(options.vlast){ //simple standard CSV without status: value is last column
 				vcol=i-1;
 				vlabel=table[0][vcol];
-			}else{ //if no vlast, vlabel is required
+			}else{ //if no vlast, vlabel is required (default)
 				for(;i--;){
 					if(table[0][i]===vlabel){
 						vcol=i;
@@ -658,16 +691,17 @@ var JSONstatUtils=function(){
 			}
 		}
 
-		if(type==="table"){
+		if(output==="table"){
 			return table;
-		}else{
-			return fromTable({
-				table: table,
-				vlabel: vlabel,
-				slabel: o.slabel || "Status", //Same default as .toTable()
-				type: "array",
-				label: o.label //added in 1.2.2
-			});
+		}else{ //jsonstat
+			return fromTable(
+				table, {
+					vlabel: vlabel,
+					slabel: options.slabel || "Status", //Same default as .toTable()
+					type: "array",
+					label: options.label //added in 1.2.2
+				})
+			;
 		}
 	}
 
@@ -791,6 +825,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "1.4.7"
+		version: "2.0.0"
 	};
 }();
