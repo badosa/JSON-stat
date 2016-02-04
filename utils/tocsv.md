@@ -5,6 +5,23 @@ Converts JSON-stat to the Comma Separated Values (CSV) file format. The JSON-sta
 **<code><i>string</i> or <i>null</i> JSONstatUtils.toCSV ( <i>object</i> or <i>string</i> jsonstat [, <i>object</i> options] )
 </code>**
 
+```js
+JSONstat(
+  "http://json-stat.org/samples/oecd.json",
+  function(){
+    var csv=JSONstatUtils.toCSV(
+      this,
+      {
+        status: true,
+        slabel: "status",
+        vlabel: "value"
+      }
+    );
+    ...
+  }
+);
+```
+
 ***
 
 ## Parameters
