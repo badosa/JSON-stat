@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.0.1 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.2 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -62,7 +62,8 @@ var JSONstatUtils=function(){
 				options.i18n.msgs,
 			locale=(typeof options.i18n==="undefined" || typeof options.i18n.locale==="undefined") ? "en-US" : options.i18n.locale,
 			dsid=options.dsid || 0,
-			shstatus=options.status || false //added in 1.2.1
+			shstatus=options.status || false, //added in 1.2.1
+			tblclass=options.tblclass || "tbrowser"
 		;
 
 		var ds=dataset(jsonstat, dsid);
@@ -217,7 +218,7 @@ var JSONstatUtils=function(){
 			return html;
 		}
 
-		function HTMLtable(element, ds, o){
+		function HTMLtable(element, ds, o, tblclass){
 			var
 				head="",
 				foot="",
@@ -359,7 +360,7 @@ var JSONstatUtils=function(){
 				foot='<tfoot><tr><td colspan="'+(cid.length+1)+'">'+source+"</td></tr></tfoot>";
 			}
 
-			element.innerHTML="<table>"+caption+head+foot+body+"</table>";
+			element.innerHTML='<table class="'+tblclass+'">'+caption+head+foot+body+"</table>";
 
 			[].slice.call(element.querySelectorAll("select")).forEach(function(e){
 				e.addEventListener("change", function(event) {
@@ -371,7 +372,8 @@ var JSONstatUtils=function(){
 							ds,
 							event.target.parentElement.getAttribute("id"),
 							pairs(element)
-						)
+						),
+						tblclass
 					);
 				}, false);
 
@@ -380,16 +382,16 @@ var JSONstatUtils=function(){
 			element.querySelector("a").addEventListener("click", function() {
 				o.cols=r;
 				o.rows=c;
-				HTMLtable( element, ds, o );
+				HTMLtable( element, ds, o, tblclass );
 			}, false);
 		}
 
 		//Create table with default setup
-		HTMLtable( selector, ds, setup(ds, options.preset) );
+		HTMLtable( selector, ds, setup(ds, options.preset), tblclass );
 	}
 
 	//on error returns null; on success, html table string
-	//jsonstat {dsid: , na:, caption:, vlabel:, slabel:, status:}
+	//jsonstat {dsid: , na:, caption:, vlabel:, slabel:, status:, }
 	function datalist(jsonstat, options){
 		if(typeof jsonstat==="undefined"){
 			return null;
@@ -405,6 +407,8 @@ var JSONstatUtils=function(){
 			dsid=options.dsid || 0,
 			vlabel=options.vlabel || null, //take default value from toTable
 			slabel=options.slabel || null, //take default value from toTable
+			valclass=options.valclass || "value",
+			tblclass=options.tblclass || "datalist",
 			ds=dataset(jsonstat, dsid)
 		;
 
@@ -422,10 +426,10 @@ var JSONstatUtils=function(){
 		;
 
 		table.forEach(function(r,i){
-			trs+=(i) ? '<tr><td class="value">'+i+'</td>' : '<tr><th class="value">#</th>';
+			trs+=(i) ? '<tr><td class="'+valclass+'">'+i+'</td>' : '<tr><th class="'+valclass+'">#</th>';
  			r.forEach(function(e,c){
 				var
-					cls=(colvalue===c) ? ' class="value"' : '',
+					cls=(colvalue===c) ? ' class="'+valclass+'"' : '',
 					val=(e===null) ? na : e
 				;
 
@@ -434,7 +438,7 @@ var JSONstatUtils=function(){
 			trs+="</tr>";
 		});
 
-		return '<table><caption>'+(options.caption || ds.label || "")+'</caption><tbody>'+trs+"</tbody></table>";
+		return '<table class="'+tblclass+'"><caption>'+(options.caption || ds.label || "")+'</caption><tbody>'+trs+"</tbody></table>";
 	}
 
 	function fromTable(tbl, options){
@@ -825,6 +829,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.0.1"
+		version: "2.0.2"
 	};
 }();
