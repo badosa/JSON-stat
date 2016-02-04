@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.0.0 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.1 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -47,9 +47,9 @@ var JSONstatUtils=function(){
 		var
 			msgs=(typeof options.i18n==="undefined" || typeof options.i18n.msgs==="undefined") ?
 				{
-					"selerror": 'tbrowser: "selector" property is required!',
-					"urierror": 'tbrowser: "jsonstat" property is required!',
-					"jsonerror": "Th request did not return a valid JSON-stat dataset.",
+					"urierror": 'tbrowser: A valid JSON-stat input must be specified.',
+					"selerror": 'tbrowser: A valid selector must be specified.',
+					"jsonerror": "The request did not return a valid JSON-stat dataset.",
 					"dimerror": "Only one dimension was found in the dataset. At least two are required.",
 					"dataerror": "Selection returned no data!",
 					"source": "Source",
@@ -825,6 +825,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.0.0"
+		version: "2.0.1"
 	};
 }();
