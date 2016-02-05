@@ -57,7 +57,7 @@ var
 ;
 ```
 
-It also accepts string representing a URL.
+It also accepts a string representing a URL.
 
 ```js
 var csv=JSONstatUtils.toCSV( "http://json-stat.org/samples/canada.json" );
