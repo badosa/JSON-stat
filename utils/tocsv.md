@@ -60,9 +60,7 @@ var
 It also accepts string representing a URL.
 
 ```js
-var csv=JSONstatUtils.toCSV( {
-  jsonstat: "http://json-stat.org/samples/canada.json"
-} );
+var csv=JSONstatUtils.toCSV( "http://json-stat.org/samples/canada.json" );
 ```
 
 This is practical (for demo purposes) but not recommended because it requires the use of a synchronous XMLHttpRequest, which is deprecated.
