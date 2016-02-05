@@ -1,6 +1,6 @@
 # toCSV()
 
-Converts JSON-stat to the Comma Separated Values (CSV) file format. The JSON-stat input must be of class "dataset", of class "collection" (and have some embedded dataset) or of class "bundle".
+Converts JSON-stat to the Comma Separated Values (CSV) file format. The JSON-stat input must be of class "dataset", "collection" (and have some embedded dataset) or "bundle".
 
 **<code><i>string</i> or <i>null</i> JSONstatUtils.toCSV ( <i>object</i> or <i>string</i> jsonstat [, <i>object</i> options] )
 </code>**
@@ -12,12 +12,12 @@ JSONstat(
     var csv=JSONstatUtils.toCSV(
       this,
       {
-        status: true,
+        status: true, //Include status info
         slabel: "status",
         vlabel: "value"
       }
     );
-    ...
+    document.getElementsByTagName("body")[0].innerHTML="<pre>"+csv+"</pre>";
   }
 );
 ```
