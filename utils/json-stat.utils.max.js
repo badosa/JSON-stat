@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.0.5 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.6 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -278,8 +278,6 @@ var JSONstatUtils=function(){
 			caption+=filtfield+constfield+"</form></caption>";
 
 			//Body
-			body+="<tbody>";
-
 			//If no decimal information, analyzed all data for every metric and infer decimals? Not for the moment.
 			var format=(Number.toLocaleString) ?
 				function(v, d){
@@ -297,6 +295,8 @@ var JSONstatUtils=function(){
 					return (d===null) ? v : v.toFixed(d);
 				}
 			;
+
+			body+="<tbody>";
 
 			rid.forEach(function(e){
 				cell[r]=e;
@@ -416,8 +416,18 @@ var JSONstatUtils=function(){
 			numclass=options.numclass || "",
 			valclass=options.valclass || "",
 			shstatus=options.status || false,
+			locale=options.locale || "en-US",
 			source=options.source || "Source",
 			ds=dataset(jsonstat, dsid),
+
+			format=(Number.toLocaleString) ?
+				function(n){
+					return n.toLocaleString(locale);
+				}
+				:
+				function(n){
+					return n;
+				},
 
 			trows=(counter) ?
 				function(r,i){
@@ -425,20 +435,20 @@ var JSONstatUtils=function(){
 					r.forEach(function(e,c){
 						var
 							cls=(colvalue===c) ? ' class="'+numclass+" "+valclass+'"' : '',
-							val=(e===null) ? na : e
+							val=(e===null) ? na : format(e)
 						;
 
 						trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
 					});
 					trs+="</tr>";
 				}
-			:
+				:
 				function(r,i){
 					trs+='<tr>';
 					r.forEach(function(e,c){
 						var
 							cls=(colvalue===c) ? ' class="'+numclass+" "+valclass+'"' : '',
-							val=(e===null) ? na : e
+							val=(e===null) ? na : format(e)
 						;
 
 						trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
@@ -864,6 +874,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.0.5"
+		version: "2.0.6"
 	};
 }();
