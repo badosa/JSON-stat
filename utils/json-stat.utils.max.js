@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.0.4 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.5 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -416,7 +416,7 @@ var JSONstatUtils=function(){
 			numclass=options.numclass || "",
 			valclass=options.valclass || "",
 			shstatus=options.status || false,
-			source=options.source || "Source: ",
+			source=options.source || "Source",
 			ds=dataset(jsonstat, dsid),
 
 			trows=(counter) ?
@@ -864,6 +864,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.0.4"
+		version: "2.0.5"
 	};
 }();
