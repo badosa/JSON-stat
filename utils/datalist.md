@@ -12,7 +12,7 @@ JSONstat(
     var html=JSONstatUtils.datalist(
       this,
       {
-        na: ".." //Not available symbol
+        counter: true
       }
     );
     document.getElementsByTagName("body")[0].innerHTML=html;
@@ -91,7 +91,7 @@ It is the string that will be used as the caption of the table. If it is not pro
 
 #### source (string)
 
-When the dataset contains source information, this will be shown at the footer, by default just after the text "Source: ". You can use the source string to provide another expression instead of "Source" (the colon and white space will be added automatically after it).
+When the dataset contains source information, this will be shown at the footer, by default just after the text "Source: ". You can use the source string to provide another word/s instead of "Source" (the colon and white space will be added automatically after it).
 
 #### tblclass (string)
 
