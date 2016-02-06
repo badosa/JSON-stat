@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.0.3 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.4 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -240,9 +240,11 @@ var JSONstatUtils=function(){
 				constants=[],
 				filtfield="",
 				constfield="",
-				source=(ds.source) ? msgs.source+": "+ds.source+"." : "",
+				source=(ds.source) ? msgs.source+": "+ds.source : "",
 				title=(ds.label!==null) ? '<span class="label">'+ds.label.capitalize()+'</span>' : ''
 			;
+
+			if(source.slice(-1)!==".") source+=".";
 
 			//Caption
 			caption+="<caption>"+title;
@@ -403,6 +405,8 @@ var JSONstatUtils=function(){
 
 		var
 			trs="",
+			tfoot="",
+			ncols=0,
 			na=options.na || "n/a", //for empty cells in the resulting datalist table
 			dsid=options.dsid || 0,
 			vlabel=options.vlabel || null, //take default value from toTable
@@ -411,32 +415,34 @@ var JSONstatUtils=function(){
 			tblclass=options.tblclass || "",
 			numclass=options.numclass || "",
 			valclass=options.valclass || "",
+			shstatus=options.status || false,
+			source=options.source || "Source: ",
 			ds=dataset(jsonstat, dsid),
 
-			trows=(counter) ? 
+			trows=(counter) ?
 				function(r,i){
 					trs+=(i) ? '<tr><td class="'+numclass+'">'+i+'</td>' : '<tr><th class="'+numclass+'">#</th>';
-		 			r.forEach(function(e,c){
+					r.forEach(function(e,c){
 						var
 							cls=(colvalue===c) ? ' class="'+numclass+" "+valclass+'"' : '',
 							val=(e===null) ? na : e
 						;
 
 						trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
-		 			});
+					});
 					trs+="</tr>";
 				}
 			:
 				function(r,i){
 					trs+='<tr>';
-		 			r.forEach(function(e,c){
+					r.forEach(function(e,c){
 						var
 							cls=(colvalue===c) ? ' class="'+numclass+" "+valclass+'"' : '',
 							val=(e===null) ? na : e
 						;
 
 						trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
-		 			});
+					});
 					trs+="</tr>";
 				}
 		;
@@ -447,7 +453,7 @@ var JSONstatUtils=function(){
 
 		var
 			table=ds.toTable({
-				status: options.status || false,
+				status: shstatus,
 				vlabel: vlabel,
 				slabel: slabel
 			}),
@@ -456,7 +462,18 @@ var JSONstatUtils=function(){
 
 		table.forEach( function(r,i){ trows(r,i); } );
 
-		return '<table class="'+tblclass+'"><caption>'+(options.caption || ds.label || "")+'</caption><tbody>'+trs+"</tbody></table>";
+		if(ds.source){
+			ncols=ds.length+1;
+			if(counter) ncols++;
+			if(shstatus) ncols++;
+
+			source+=": "+ds.source;
+			if(source.slice(-1)!==".") source+=".";
+
+			tfoot='<tfoot><td colspan="'+ncols+'">'+source+'</td></tfoot>';
+		}
+
+		return '<table class="'+tblclass+'"><caption>'+(options.caption || ds.label || "")+'</caption>'+tfoot+'<tbody>'+trs+"</tbody></table>";
 	}
 
 	function fromTable(tbl, options){
@@ -847,6 +864,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.0.3"
+		version: "2.0.4"
 	};
 }();
