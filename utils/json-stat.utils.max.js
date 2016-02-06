@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.0.2 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.3 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -407,9 +407,38 @@ var JSONstatUtils=function(){
 			dsid=options.dsid || 0,
 			vlabel=options.vlabel || null, //take default value from toTable
 			slabel=options.slabel || null, //take default value from toTable
-			valclass=options.valclass || "value",
-			tblclass=options.tblclass || "datalist",
-			ds=dataset(jsonstat, dsid)
+			counter=options.counter || false,
+			tblclass=options.tblclass || "",
+			numclass=options.numclass || "",
+			valclass=options.valclass || "",
+			ds=dataset(jsonstat, dsid),
+
+			trows=(counter) ? 
+				function(r,i){
+					trs+=(i) ? '<tr><td class="'+numclass+'">'+i+'</td>' : '<tr><th class="'+numclass+'">#</th>';
+		 			r.forEach(function(e,c){
+						var
+							cls=(colvalue===c) ? ' class="'+numclass+" "+valclass+'"' : '',
+							val=(e===null) ? na : e
+						;
+
+						trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
+		 			});
+					trs+="</tr>";
+				}
+			:
+				function(r,i){
+					trs+='<tr>';
+		 			r.forEach(function(e,c){
+						var
+							cls=(colvalue===c) ? ' class="'+numclass+" "+valclass+'"' : '',
+							val=(e===null) ? na : e
+						;
+
+						trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
+		 			});
+					trs+="</tr>";
+				}
 		;
 
 		if(ds===null || !checksize(ds)){
@@ -425,18 +454,7 @@ var JSONstatUtils=function(){
 			colvalue=table[0].length-1
 		;
 
-		table.forEach(function(r,i){
-			trs+=(i) ? '<tr><td class="'+valclass+'">'+i+'</td>' : '<tr><th class="'+valclass+'">#</th>';
- 			r.forEach(function(e,c){
-				var
-					cls=(colvalue===c) ? ' class="'+valclass+'"' : '',
-					val=(e===null) ? na : e
-				;
-
-				trs+=(i) ? '<td'+cls+'>'+val+'</td>' : '<th'+cls+'>'+val+'</th>';
- 			});
-			trs+="</tr>";
-		});
+		table.forEach( function(r,i){ trows(r,i); } );
 
 		return '<table class="'+tblclass+'"><caption>'+(options.caption || ds.label || "")+'</caption><tbody>'+trs+"</tbody></table>";
 	}
@@ -829,6 +847,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.0.2"
+		version: "2.0.3"
 	};
 }();
