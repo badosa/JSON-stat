@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.0.6 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.7 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -63,7 +63,7 @@ var JSONstatUtils=function(){
 			locale=(typeof options.i18n==="undefined" || typeof options.i18n.locale==="undefined") ? "en-US" : options.i18n.locale,
 			dsid=options.dsid || 0,
 			shstatus=options.status || false, //added in 1.2.1
-			tblclass=options.tblclass || "tbrowser"
+			tblclass=options.tblclass || ""
 		;
 
 		var ds=dataset(jsonstat, dsid);
@@ -278,6 +278,8 @@ var JSONstatUtils=function(){
 			caption+=filtfield+constfield+"</form></caption>";
 
 			//Body
+			body+="<tbody>";
+
 			//If no decimal information, analyzed all data for every metric and infer decimals? Not for the moment.
 			var format=(Number.toLocaleString) ?
 				function(v, d){
@@ -295,8 +297,6 @@ var JSONstatUtils=function(){
 					return (d===null) ? v : v.toFixed(d);
 				}
 			;
-
-			body+="<tbody>";
 
 			rid.forEach(function(e){
 				cell[r]=e;
@@ -874,6 +874,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.0.6"
+		version: "2.0.7"
 	};
 }();
