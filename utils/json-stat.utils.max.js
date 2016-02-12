@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.0.7 (JSON-stat v. 2.00 ready)
+JSON-stat Javascript Utilities Suite v. 2.0.8 (JSON-stat v. 2.00 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -19,7 +19,6 @@ or implied. See the License for the specific language governing
 permissions and limitations under the License.
 
 */
-
 
 //Polyfills forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored)
 /* global JSONstat */
@@ -96,15 +95,20 @@ var JSONstatUtils=function(){
 				}
 			});
 
-			// Initialize filters
+			//Rows or cols changes affect filters
 			if(id==="rowscols"){
-				o.filter={};
 				ds.id.forEach(function(e,i){
 					if(e!==o.rows && e!==o.cols){
-						o.filter[ e ]=ds.Dimension(i).id[0];
+						//Assign only new filters (keep selected values in existing filters)
+						if(typeof o.filter[ e ]==="undefined"){
+							o.filter[ e ]=ds.Dimension(i).id[0];
+						}
+					}else{
+						delete o.filter[ e ];
 					}
 				});
 			}
+
 			return o;
 		}
 
@@ -158,14 +162,15 @@ var JSONstatUtils=function(){
 			return { rows: rows, cols: cols, filter: filter };
 		}
 
-		function pairs(e){
+		function pairs(el){
 			var
 				arr=[],
-				selects=[].slice.call(e.querySelectorAll("select, input"))
+				selects=[].slice.call(el.querySelectorAll("select, input"))
 			;
 			selects.forEach(function(e){
 				arr.push( {name: e.name, value: e.value} );
 			});
+
 			return arr;
 		}
 
@@ -874,6 +879,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.0.7"
+		version: "2.0.8"
 	};
 }();
