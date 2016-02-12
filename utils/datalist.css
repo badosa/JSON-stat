@@ -1,0 +1,36 @@
+/*
+	datalist CSS sample file
+	(assuming tblclass: "datalist")
+*/
+
+* {
+	font-family: verdana;
+	font-size: 12px;
+}
+.datalist {
+	width: 100%;
+	border-width: 0 1px 1px 1px;
+	border-color: #ccc;
+	border-style: solid;
+}
+.datalist caption, .datalist tfoot td {
+	text-align: left;
+	color: #fff;
+	background-color: #666;
+}
+.datalist caption, .datalist th, .datalist td {
+	padding: 6px;
+	text-align: left;
+}
+.datalist td {
+	background-color: #eee;
+}
+.datalist th {
+	background-color: #ccc;
+}
+.datalist tbody tr:hover td {
+	background-color: #ddd;
+}
+.datalist th.number, .datalist td.number {
+	text-align: right;
+}

@@ -1,0 +1,77 @@
+/*
+	tbrowser CSS sample file
+	(assuming tblclass: "tbrowser")
+*/
+
+* {
+	font-family: verdana;
+	font-size: 12px;
+}
+
+.tbrowser {
+	width: 100%;
+	border: 1px solid #ccc;
+	background-color: #fff;
+}
+.tbrowser caption, .tbrowser tfoot td {
+	text-align: left;
+	color: #fff;
+	background-color: #666;
+}
+.tbrowser legend {
+	color: #fff;
+}
+.tbrowser caption .label {
+	display: block;
+	padding: 3px 3px 8px 3px;
+	font-size: 14px;
+}
+.tbrowser caption form,
+.tbrowser tbody th {
+	white-space: nowrap;
+}
+.tbrowser caption strong {
+	font-weight: normal;
+	padding: 2px;
+	border: 1px solid #ddd;
+	color: #ddd;
+}
+.tbrowser select {
+	padding: 2px;
+}
+.tbrowser caption a {
+	cursor: pointer;
+	text-decoration: none;
+	color: #fff;
+	font-size: 26px;
+	font-weight: bold;
+	line-height: 0;
+	vertical-align: sub;
+}
+.tbrowser caption, .tbrowser th, .tbrowser td {
+	padding: 6px;
+}
+.tbrowser th {
+	text-align: left;
+	background-color: #ccc;
+}
+.tbrowser thead th {
+	text-align: center;
+}
+.tbrowser td {
+	text-align: right;
+	background-color: #eee;
+}
+.tbrowser fieldset {
+	padding: 10px;
+		margin-bottom: 10px;
+}
+.tbrowser p {
+	margin: 0 0 5px 4px;
+}
+.tbrowser p:last-of-type {
+	margin-bottom: 0;
+}
+.tbrowser tbody tr:hover th, .tbrowser tbody tr:hover td {
+	background-color: #bbb;
+}
