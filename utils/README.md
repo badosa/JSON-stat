@@ -9,13 +9,15 @@ Download the latest versions of [json-stat.js](https://github.com/badosa/JSON-st
 <script src="/your-js-dir/json-stat.utils.js"></script>
 ```
 
+While JJT works on any browser, JJUS requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *querySelector* and *querySelectorAll*.
+
 JJUS includes 5 functions:
 
 * tbrowser()
-* datalist()
+* [datalist()](https://github.com/badosa/JSON-stat/blob/master/utils/datalist.md)
 * fromTable()
 * fromCSV()
-* toCSV()
+* [toCSV()](https://github.com/badosa/JSON-stat/blob/master/utils/tocsv.md)
 
 In version 2.0.0, the JJUS interface was changed. The new interface is not backward compatible.
 
@@ -25,4 +27,4 @@ To check the JJUS version:
 JSONstatUtils.version
 ```
 
-The new interface will be documented soon.
+The new interface will be fully documented soon.
