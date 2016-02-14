@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.9.9 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.10.0 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.9.9";
+JSONstat.version="0.10.0";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -142,6 +142,8 @@ function JSONstat(resp,f){
 					dsize=0, //data size
 					size=ot.size || (ot.dimension && ot.dimension.size) //0.9.0 (JSON-stat 2.0)
 				;
+
+				this.size=size; //0.10.0
 
 				if(ot.hasOwnProperty("value") && isArray(ot.value)){
 					dsize=ot.value.length;
