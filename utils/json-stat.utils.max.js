@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.1.0 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.1.1 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -262,8 +262,7 @@ var JSONstatUtils=function(){
       if(source.slice(-1)!==".") source+=".";
 
       //Caption
-      caption+="<caption>"+title;
-      caption+=' <form><fieldset id="rowscols"><legend>'+msgs.rc+'</legend>'+select(ds, "rows", [r, c])+' <a>&#x2194;</a> '+select(ds, "cols", [c, r])+'</fieldset>';
+      caption+="<caption>"+title+'<form>';
 
       for(var name in filter){
         var
@@ -290,7 +289,7 @@ var JSONstatUtils=function(){
         constfield='<fieldset id="constants"><legend>'+msgs.constants+'</legend>'+constfield+'</fieldset>';
       }
 
-      caption+=filtfield+constfield+"</form></caption>";
+      caption+=constfield+filtfield+'<fieldset id="rowscols"><legend>'+msgs.rc+'</legend>'+select(ds, "rows", [r, c])+' <a>&#x2194;</a> '+select(ds, "cols", [c, r])+"</fieldset></form></caption>";
 
       //Body
       body+="<tbody>";
@@ -914,6 +913,6 @@ var JSONstatUtils=function(){
     fromTable: fromTable,
     fromCSV: fromCSV,
     toCSV: toCSV,
-    version: "2.1.0"
+    version: "2.1.1"
   };
 }();
