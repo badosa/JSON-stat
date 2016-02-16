@@ -26,7 +26,7 @@ JSONstat(
 
 ### jsonstat (object, string): required
 
-It can be an object in the JSON-stat format or a string representing a URL.
+It can be a JSON-stat object or a string representing a URL.
 
 The object can be in the JSON-stat format:
 
@@ -40,7 +40,7 @@ var html=JSONstatUtils.datalist( {
 } );
 ```
 
-Or it can be the result of an object already processed by JJT:
+Or it can be the result of a JSON-stat object processed by JJT:
 
 ```js
 var
