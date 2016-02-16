@@ -13,7 +13,7 @@ While JJT works on any browser, JJUS requires a modern one. If you need to suppo
 
 JJUS includes 5 functions:
 
-* tbrowser()(https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)
+* [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)
 * [datalist()](https://github.com/badosa/JSON-stat/blob/master/utils/datalist.md)
 * fromTable()
 * fromCSV()
