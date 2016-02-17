@@ -111,7 +111,7 @@ A string identifying a language according to [BCP 47](http://tools.ietf.org/html
 
 #### dsid (positive integer or string)
 
-When the JSON-stat input is of class "collection" (or "bundle"), it is used to select a dataset. When a positive integer is specified, it is interpreted as an index. By default, it is 0 (first dataset).  When a string is specified, it is the id of the selected dataset.
+It is used to select a dataset when the JSON-stat input is of class "collection" or "bundle". When a positive integer is specified, it is interpreted as an index. By default, it is 0 (first dataset).  When a string is specified, it is the id of the selected dataset.
 
 ### Return Value
 
