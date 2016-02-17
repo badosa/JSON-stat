@@ -110,6 +110,8 @@ Currently, any other string will be interpreted as "smaller": the two dimensions
 
 When *true*, dimensions with a single category are removed from the dataset and are used in the caption of the table (instead of the dataset label), not in the Constants section. Default is *false*.
 
+This property is ignored if the dataset does not contain any dimension with a single category.
+
 Warning: if **jsonstat** is an object already processed by JJT, it will be modified by tbrowser() when **noconst** is *true*.
 
 #### i18n (object)
