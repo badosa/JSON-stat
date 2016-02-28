@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.1.2 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.1.3 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -695,11 +695,10 @@ var JSONstatUtils=function(){
 		return csv;
 	}
 
-	//csv/table {(delimiter, decimal) if csv, vlabel, slabel, input, output, vlast}
-	//Accepts a CSV (string) or a table array
-	//Returns JSONstat or table array
-	function fromCSV(table, options){
-		if(typeof table==="undefined"){
+	//csv, {vlabel, slabel, delimiter, decimal, label}
+	//Returns JSONstat
+	function fromCSV(csv, options){
+		if(typeof csv==="undefined"){
 			return null;
 		}
 
@@ -708,64 +707,53 @@ var JSONstatUtils=function(){
 		}
 
 		var
-			vlabel=options.vlabel || "Value", //Same default as .toTable()
-			input=options.input || "csv", //vs "table" (array)
-			output=options.output || "jsonstat" //vs "table" (array)
+			vcol=null,
+			delimiter=options.delimiter || ",",
+			vlabel=options.vlabel,
+			decimal=(delimiter===";") ?
+				(options.decimal || ",")
+				:
+				(options.decimal || "."),
+			table=CSVToArray(csv, delimiter),
+			nrows=table.length,
+			i=table[0].length
 		;
 
-		if(input!=="table"){ //csv (file) used as input instead of table
-			var
-				vcol=null,
-				delimiter=options.delimiter || ",",
-				decimal=(delimiter===";") ?
-					(options.decimal || ",")
-					:
-					(options.decimal || ".")
-			;
-			table=CSVToArray(table, delimiter);
-			var
-				nrows=table.length,
-				i=table[0].length
-			;
-
-			if(options.vlast){ //simple standard CSV without status: value is last column
-				vcol=i-1;
-				vlabel=table[0][vcol];
-			}else{ //if no vlast, vlabel is required (default)
-				for(;i--;){
-					if(table[0][i]===vlabel){
-						vcol=i;
-						break;
-					}
-				}
-				if(vcol===null){
-					return null; //vlabel not found in the CSV
+		//2.1.3: If no vlabel, last column used
+		if(typeof vlabel!=="undefined"){
+			for(;i--;){
+				if(table[0][i]===vlabel){
+					vcol=i;
+					break;
 				}
 			}
+			if(vcol===null){
+				return null; //vlabel not found in the CSV
+			}
+		}else{//simple standard CSV without status: value is last column
+			vcol=i-1;
+			vlabel=table[0][vcol];
+		}
 
-			if(decimal===","){
-				for(i=1; i<nrows; i++){
-					table[i][vcol]=Number(table[i][vcol].replace(",", "."));
-				}
-			}else{
-				for(i=1; i<nrows; i++){
-					table[i][vcol]=Number(table[i][vcol]);
-				}
+		if(decimal===","){
+			for(i=1; i<nrows; i++){
+				table[i][vcol]=Number(table[i][vcol].replace(",", "."));
+			}
+		}else{
+			for(i=1; i<nrows; i++){
+				table[i][vcol]=Number(table[i][vcol]);
 			}
 		}
 
-		if(output==="table"){
-			return table;
-		}else{ //jsonstat
-			return fromTable(
-				table, {
-					vlabel: vlabel,
-					slabel: options.slabel || "Status", //Same default as .toTable()
-					type: "array",
-					label: options.label //added in 1.2.2
-				})
-			;
-		}
+
+		return fromTable(
+			table, {
+				vlabel: vlabel,
+				slabel: options.slabel || "Status", //Same default as .toTable()
+				type: "array",
+				label: options.label || ""
+			})
+		;
 	}
 
 
@@ -913,6 +901,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.1.2"
+		version: "2.1.3"
 	};
 }();
