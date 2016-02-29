@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.1.3 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.1.4 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -20,7 +20,7 @@ permissions and limitations under the License.
 
 */
 
-//Polyfills forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored)
+//Polyfills forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored), trim
 /* global JSONstat */
 /* jshint newcap:false */
 var JSONstatUtils=function(){
@@ -714,7 +714,7 @@ var JSONstatUtils=function(){
 				(options.decimal || ",")
 				:
 				(options.decimal || "."),
-			table=CSVToArray(csv, delimiter),
+			table=CSVToArray(csv.trim(), delimiter),
 			nrows=table.length,
 			i=table[0].length
 		;
@@ -901,6 +901,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.1.3"
+		version: "2.1.4"
 	};
 }();
