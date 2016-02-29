@@ -18,7 +18,7 @@ var jsonstat=JSONstatUtils.fromCSV(
 var ds=JSONstat( jsonstat );
 
 window.alert( ds.label ); //"Imported from a CSV"
-window.alert( ds.n ); //"Number of data
+window.alert( ds.n ); //Number of data
 ```
 
 ***
