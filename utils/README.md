@@ -16,7 +16,7 @@ JJUS includes 5 functions:
 * [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)
 * [datalist()](https://github.com/badosa/JSON-stat/blob/master/utils/datalist.md)
 * fromTable()
-* fromCSV()
+* [fromCSV()](https://github.com/badosa/JSON-stat/blob/master/utils/fromcsv.md)
 * [toCSV()](https://github.com/badosa/JSON-stat/blob/master/utils/tocsv.md)
 
 In version 2.0.0, the JJUS interface was changed. The new interface is not backward compatible.
