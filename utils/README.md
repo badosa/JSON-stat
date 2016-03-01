@@ -9,7 +9,7 @@ Download the latest versions of [json-stat.js](https://github.com/badosa/JSON-st
 <script src="/your-js-dir/json-stat.utils.js"></script>
 ```
 
-While JJT works on any browser, JJUS requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *querySelector* and *querySelectorAll*.
+While JJT works on any browser, JJUS requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *querySelector*, *querySelectorAll* and *trim*.
 
 JJUS includes 5 functions:
 
@@ -26,5 +26,3 @@ To check the JJUS version:
 ```js
 JSONstatUtils.version
 ```
-
-The new interface will be fully documented soon.
