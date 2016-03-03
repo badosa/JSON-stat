@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.10.0 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.10.1 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.10.0";
+JSONstat.version="0.10.1";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -618,10 +618,9 @@ function JSONstat(resp,f){
 		return new Jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
 	};
 
-	Jsonstat.prototype.Data=function(e){
+	Jsonstat.prototype.Data=function(e, include){
 		var
-			i,
-			ret=[], len,
+			i, ret=[], len,
 			firstprop=function(o){
 				for (var p in o) {
 					if(o.hasOwnProperty(p)){
@@ -661,19 +660,24 @@ function JSONstat(resp,f){
 			return ret;
 		}
 
+		//Since 0.10.1 status can be excluded. Default: true (=include status)
+		if(typeof include!=="boolean"){
+			include=true;
+		}
+
 		//Data By Position in original array
 		if(typeof e==="number"){
 			var num=this.value[e];
-			return (typeof num!=="undefined") ?
-				{"value" : num, "status":
-					(this.status) ?
-					this.status[e]
-					:
-					null
-				}
-				:
-				null
-			; /* removed in 0.5.2.2 length: 1 {"value" : undefined, "status": undefined, "length" : 0};*/
+
+			if(typeof num==="undefined"){
+				return null;
+			}
+
+			if(include){
+				return { "value" : num, "status": (this.status) ? this.status[e] : null };
+			}else{
+				return num;
+			}
 		}
 
 		var
@@ -686,7 +690,7 @@ function JSONstat(resp,f){
 		//If more positions than needed are provided, they will be ignored.
 		//Less positions than needed will return undefined
 		if(isArray(e)){
-			if(this.length!==e.length){ //0.5.2.2
+			if(this.length!==e.length){
 				return null;
 			}
 			var
@@ -700,7 +704,7 @@ function JSONstat(resp,f){
 			for(i=0; i<dims; i++){
 				if(typeof e[i]!=="undefined"){
 					if(typeof e[i]!=="number" || e[i]>=n[i]){
-						return null; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
+						return null;
 					}
 					//Used if normal case (miss.length===0)
 					mult*=(i>0) ? n[(dims-i)] : 1;
@@ -716,11 +720,11 @@ function JSONstat(resp,f){
 			//If one non-single dimension is missing create array of results
 			//If more than one non-single dimension is missing, WARNING
 			if(miss.length>1){
-				return null; /* removed in 0.5.2.2 {"value" : undefined, "status": undefined, "length" : 0};*/
+				return null;
 			}
 			if(miss.length===1){
 				for(var c=0, clen=nmiss[0]; c<clen; c++){
-					var na=[]; //new array
+					var na=[]; //New array
 					for(i=0; i<dims; i++){
 						if(i!==miss[0]){
 							na.push(e[i]);
@@ -728,13 +732,17 @@ function JSONstat(resp,f){
 							na.push(c);
 						}
 					}
-					ret.push(this.Data(na));
+					ret.push(this.Data(na, include));
 				}
 				return ret;
 			}
 
-			//miss.length===0 (use previously computed res) //simplified in 0.4.3
-			return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null/*, "length" : 1*/};
+			if(include){
+				return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null};
+			}else{
+				return this.value[res];
+			}
+
 		}
 
 		var
@@ -747,8 +755,9 @@ function JSONstat(resp,f){
 		for(i=0, len=id.length; i<len; i++){
 			pos.push(otd[otdi[i]].category.index[id[i]]);
 		}
+
 		//Dimension cat undefined means a loop (by position) is necessary
-		return this.Data(pos);
+		return this.Data(pos, include);
 	};
 
 	/*
