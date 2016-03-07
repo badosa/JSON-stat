@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.1.4 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.1.5 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -180,14 +180,17 @@ var JSONstatUtils=function(){
 			return arr;
 		}
 
-		function labelize(dim, cat){
-			var ulabel=function(d, c){
-				if(d && d.role==="metric"){
-					return (c.unit && c.unit.hasOwnProperty("label")) ? " ("+c.unit.label+")" : "";
-				}
-				return "";
-			};
-			return cat.label.capitalize()+ulabel(dim, cat);
+		function labelize(dim, cat, name){
+			var 
+				ulabel=function(d, c){
+					if(d && d.role==="metric"){
+						return (c.unit && c.unit.hasOwnProperty("label")) ? " ("+c.unit.label+")" : "";
+					}
+					return "";
+				},
+				label=cat.label || name
+			;
+			return label.capitalize()+ulabel(dim, cat);
 		}
 
 		function select(ds, name, v){
@@ -220,7 +223,7 @@ var JSONstatUtils=function(){
 
 				//If null is a filter select: all options must be included
 				if(v[1]===null || e!==v[1]) {
-					html+='<option '+selected+'value="'+e+'">'+labelize(dim, arr[i])+'</option>';
+					html+='<option '+selected+'value="'+e+'">'+labelize(dim, arr[i], e)+'</option>';
 				}
 			});
 
@@ -267,7 +270,7 @@ var JSONstatUtils=function(){
 			for(var name in filter){
 				var
 					dim=ds.Dimension(name),
-					label=dim.label.capitalize()
+					label=(dim.label) ? dim.label.capitalize() : name.capitalize()
 				;
 
 				if(dim.length>1){
@@ -901,6 +904,6 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.1.4"
+		version: "2.1.5"
 	};
 }();
