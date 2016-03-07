@@ -2,7 +2,7 @@
 
 Converts JSON-stat to an HTML table where each row contains information about a cell in the original cube. The JSON-stat input must be of class "dataset", "collection" (and have some embedded dataset) or "bundle".
 
-**<code><i>string</i> or <i>null</i> JSONstatUtils.datalist ( <i>object</i> or <i>string</i> jsonstat [, <i>object</i> options] )
+**<code><i>string</i> or <i>object</i> JSONstatUtils.datalist ( <i>object</i> or <i>string</i> jsonstat [, <i>object</i> options] )
 </code>**
 
 ```js
