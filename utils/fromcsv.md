@@ -2,7 +2,7 @@
 
 Converts a string in the Comma Separated Values (CSV) file format to the JSON-stat dataset format.
 
-**<code><i>object</i> or <i>null</i> JSONstatUtils.fromCSV ( <i>string</i> csv [, <i>object</i> options] )
+**<code><i>object</i> JSONstatUtils.fromCSV ( <i>string</i> csv [, <i>object</i> options] )
 </code>**
 
 ```js
