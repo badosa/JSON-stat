@@ -13,6 +13,8 @@ The JSON-stat format is documented at https://json-stat.org/format/.
 
 The goal of the **JSON-stat Javascript Toolkit (JJT)** is to help dealing with JSON-stat responses in Javascript.
 
+For a library of high level functions built on top of JJT, see the [JSON-stat Javascript Utilities Suite](https://github.com/badosa/JSON-stat/tree/master/utils) (JJUS).
+
 [Test Suite](test/) available.
 
 ## Design principles
