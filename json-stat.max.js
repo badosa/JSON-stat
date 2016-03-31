@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.10.1 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.10.2 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,12 +22,12 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.10.1";
+JSONstat.version="0.10.2";
 
 /* jshint newcap:false */
-function JSONstat(resp,f){
+function JSONstat(resp,f,p){
 	if(window===this){
-		return new JSONstat.jsonstat(resp,f);
+		return new JSONstat.jsonstat(resp,f,p);
 	}
 }
 
@@ -37,10 +37,12 @@ function JSONstat(resp,f){
 	function isArray(o) {
 		return Object.prototype.toString.call(o) === "[object Array]";
 	}
-	function Jsonstat(o,f){
+	function Jsonstat(o,f,p){
 		var
-			xhr=function(uri, func){
+			xhr=function(uri, func, proc){
 				var json, async=(func!==false), req;
+				proc=(!func) ? true : proc;
+
 				if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to same domain won't be specified using an absolute address). Not integrated because it will be removed someday...
 					if(!async){ //JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).
 						return;
@@ -53,7 +55,11 @@ function JSONstat(resp,f){
 					*/
 					req.onload=function(){
 						json=JSON.parse(req.responseText);
-						func.call(JSONstat(json));
+						if(proc){
+							func.call(JSONstat(json));
+						}else{
+							func.call(json);
+						}
 					};
 					req.open("GET", uri);
 					req.send();
@@ -64,7 +70,11 @@ function JSONstat(resp,f){
 							var s=req.status;
 							json=(s && req.responseText && (s>=200 && s<300 || s===304)) ? JSON.parse(req.responseText) : null;
 							if(async){
-								func.call(JSONstat(json));
+								if(proc){
+									func.call(JSONstat(json));
+								}else{
+									func.call(json);
+								}
 							}
 						}
 					};
@@ -120,7 +130,7 @@ function JSONstat(resp,f){
 
 				//URI assumed
 				if(typeof o==="string" && o.length>0){
-					o=xhr(o, typeof f==="function"? f : false);//If second argument is function then async
+					o=xhr(o, typeof f==="function"? f : false, typeof p==="undefined"? true : p);//If second argument is function then async
 				}
 
 				// Wrong input object or wrong URI or connection problem
@@ -147,7 +157,7 @@ function JSONstat(resp,f){
 				//and it will enter the bundle case: once we have a response
 				//if class is dataset we redirect to case "dataset". 0.7.5
 				if(o.class==="dataset" || o.class==="collection"){
-					return JSONstat(o);
+					return JSONstat(o); //Proc only implemented if async
 				}
 
 				for (prop in o){
