@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.1.5 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.1.6 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -20,7 +20,7 @@ permissions and limitations under the License.
 
 */
 
-//Polyfills forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored), trim
+//Polyfills forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored), trim, Array.indexOf
 /* global JSONstat */
 /* jshint newcap:false */
 var JSONstatUtils=function(){
@@ -67,7 +67,7 @@ var JSONstatUtils=function(){
 		;
 
 		var ds=dataset(jsonstat, dsid);
-		if(ds===null || !checksize(ds)){
+		if(!checkds(ds)){
 			msg("jsonerror");
 			return;
 		}
@@ -181,7 +181,7 @@ var JSONstatUtils=function(){
 		}
 
 		function labelize(dim, cat, name){
-			var 
+			var
 				ulabel=function(d, c){
 					if(d && d.role==="metric"){
 						return (c.unit && c.unit.hasOwnProperty("label")) ? " ("+c.unit.label+")" : "";
@@ -474,7 +474,7 @@ var JSONstatUtils=function(){
 				}
 		;
 
-		if(ds===null || !checksize(ds)){
+		if(!checkds(ds)){
 			return null;
 		}
 
@@ -672,7 +672,7 @@ var JSONstatUtils=function(){
 			ds=dataset(jsonstat, dsid)
 		;
 
-		if(ds===null || !checksize(ds)){
+		if(!checkds(ds)){
 			return null;
 		}
 
@@ -759,10 +759,101 @@ var JSONstatUtils=function(){
 		;
 	}
 
+	//dataset, array of [dimid,catid]
+	function subset(ds, filter){
+		if(typeof filter==="undefined"){
+			return null;
+		}
+
+		if(!checkds(ds)){
+			return null;
+		}
+
+		var
+			nfilters=filter.length,
+			totbl=ds.toTable({field: "id", content: "id" , status: true}),
+			statin=ds.status,
+			head=totbl.shift(),
+			error=false,
+			value=[], statout=[],
+			ndx=[], //dimndx, catndx
+			lbl=[] //catlbl
+		;
+
+		filter.forEach(function(e){
+			var dim=ds.Dimension( e[0] );
+
+			//Wrong dimension ID
+			if(dim===null){
+				error=true;
+				return;
+			}
+
+			var catndx=dim.id.indexOf( e[1] );
+
+			//Wrong cat ID
+			if(catndx===-1){
+				error=true;
+				return;
+			}
+
+			//e[0] dimid e[1] catid
+			ndx.push( [ ds.id.indexOf( e[0] ), catndx ] );
+			lbl.push( dim.Category( catndx ).label );
+		});
+
+		if(error){
+			return null;
+		}
+
+		totbl.forEach(function(e){
+			var
+				tblr={},
+				n=0,
+				j
+			;
+
+			//Avoidable? Use a different .toTable()?
+			for(j=e.length;j--;){
+				tblr[head[j]]=e[j];
+			}
+
+			//Filter
+			filter.forEach(function(f){
+				if(tblr[ f[0] ]===f[1]){
+					n++;
+				}
+			});
+
+			if(nfilters===n){
+				value.push(tblr.value);
+				statout.push(tblr.status);
+			}
+		});
+
+		ds.n=value.length;
+		ds.value=ds.__tree__.value=value;
+		ds.status=ds.__tree__.status=(statin!==null) ? statout : null;
+
+		filter.forEach(function(e, i){
+			ds.size[ ndx[i][0] ]=1; //dimndx
+			ds.__tree__.dimension[ e[0] ].category.index={};//dimid
+			ds.__tree__.dimension[ e[0] ].category.index[ e[1] ]=0; //dimid catid
+			ds.__tree__.dimension[ e[0] ].category.label={};//dimid
+			ds.__tree__.dimension[ e[0] ].category.label[ e[1] ]=lbl[i]; //catlbl
+		});
+
+		return ds;
+	}
+
 
 	//Private
 
-	function checksize(ds){
+	function checkds(ds){
+		if(ds===null || ds.length===0 || ds.class!=="dataset"){
+			return false;
+		}
+
 		for(var i=ds.length, len=1; i--;){
 			len*=ds.Dimension(i).length;
 		}
@@ -852,9 +943,8 @@ var JSONstatUtils=function(){
 		if(typeof j==="undefined"){
 			return null;
 		}
-
 		if(
-			typeof j==="string" || //uri
+			typeof j==="string" || //uri (synchronous!)
 			typeof j.length==="undefined" //JSON-stat response
 			){
 			j=JSONstat(j);
@@ -904,6 +994,7 @@ var JSONstatUtils=function(){
 		fromTable: fromTable,
 		fromCSV: fromCSV,
 		toCSV: toCSV,
-		version: "2.1.5"
+		subset: subset,
+		version: "2.1.6"
 	};
 }();
