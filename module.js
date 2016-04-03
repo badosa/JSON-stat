@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.10.1 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.10.3 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -566,7 +566,7 @@ function JSONstat(resp,f){
 		;
 		return new Jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
 	};
-
+	
 	Jsonstat.prototype.Data=function(e, include){
 		var
 			i, ret=[], len,
@@ -577,19 +577,28 @@ function JSONstat(resp,f){
 					}
 				}
 			},
-			dimObj2Array=function(thisds, obj){
+			dimObj2Array=function(thisds, sel, type){
 				var
-					a=[],
+					a=[], i, obj={},
 					dim=thisds.dimension,
 					di=thisds.id || dim.id, //0.9.2 (JSON-stat 2.0)
 					dsize=thisds.size || (dim && dim.size) //0.9.2 (JSON-stat 2.0)
 				;
 
+				//Convert [["gender", "T"],["birth", "T"]] into {gender: "T", birth: "T"}
+				if(type==="array"){
+					for(i=sel.length;i--;){
+						obj[sel[i][0]]=sel[i][1];
+					}
+					sel=obj;
+				}
+
 				for (var d=0, len=di.length; d<len; d++){
-					var id=di[d], cat=obj[id];
+					var id=di[d], cat=sel[id];
 					//If dimension not defined and dim size=1, take first category (user not forced to specify single cat dimensions)
 					a.push(typeof cat==="string" ? cat : dsize[d]===1 ? firstprop(dim[id].category.index) : null);
 				}
+
 				return a;
 			}
 		;
@@ -630,72 +639,80 @@ function JSONstat(resp,f){
 		}
 
 		var
+			type="object", //default. If e is an array of arrays, type="array"
 			tree=this.__tree__,
 			n=tree.size || (tree.dimension && tree.dimension.size), //0.9.2 (JSON-stat 2.0)
 			dims=n.length//same as this.length
 		;
 
-		//DataByPosition in every dim
-		//If more positions than needed are provided, they will be ignored.
-		//Less positions than needed will return undefined
 		if(isArray(e)){
-			if(this.length!==e.length){
-				return null;
-			}
-			var
-				mult=1,
-				res=0,
-				miss=[],
-				nmiss=[]
-			;
-			//Validate dim index
-			//And loop to find missing dimensions
-			for(i=0; i<dims; i++){
-				if(typeof e[i]!=="undefined"){
-					if(typeof e[i]!=="number" || e[i]>=n[i]){
-						return null;
-					}
-					//Used if normal case (miss.length===0)
-					mult*=(i>0) ? n[(dims-i)] : 1;
-					res+=mult*e[dims-i-1]; //simplified in 0.4.3
-				}else{
-					//Used if missing dimensions miss.length>0
-					miss.push(i); //missing dims
-					nmiss.push(n[i]); //missing dims size
+			//DataByPosition in every dim
+			//If more positions than needed are provided, they will be ignored.
+			//Less positions than needed will return undefined
+			if(typeof(e[0])==="number"){
+				if(this.length!==e.length){
+					return null;
 				}
-			}
-
-			//If all dims are specified, go ahead as usual.
-			//If one non-single dimension is missing create array of results
-			//If more than one non-single dimension is missing, WARNING
-			if(miss.length>1){
-				return null;
-			}
-			if(miss.length===1){
-				for(var c=0, clen=nmiss[0]; c<clen; c++){
-					var na=[]; //New array
-					for(i=0; i<dims; i++){
-						if(i!==miss[0]){
-							na.push(e[i]);
-						}else{
-							na.push(c);
+				var
+					mult=1,
+					res=0,
+					miss=[],
+					nmiss=[]
+				;
+				//Validate dim index
+				//And loop to find missing dimensions
+				for(i=0; i<dims; i++){
+					if(typeof e[i]!=="undefined"){
+						if(typeof e[i]!=="number" || e[i]>=n[i]){
+							return null;
 						}
+						//Used if normal case (miss.length===0)
+						mult*=(i>0) ? n[(dims-i)] : 1;
+						res+=mult*e[dims-i-1]; //simplified in 0.4.3
+					}else{
+						//Used if missing dimensions miss.length>0
+						miss.push(i); //missing dims
+						nmiss.push(n[i]); //missing dims size
 					}
-					ret.push(this.Data(na, include));
 				}
-				return ret;
-			}
 
-			if(include){
-				return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null};
+				//If all dims are specified, go ahead as usual.
+				//If one non-single dimension is missing create array of results
+				//If more than one non-single dimension is missing, WARNING
+				if(miss.length>1){
+					return null;
+				}
+				if(miss.length===1){
+					for(var c=0, clen=nmiss[0]; c<clen; c++){
+						var na=[]; //New array
+						for(i=0; i<dims; i++){
+							if(i!==miss[0]){
+								na.push(e[i]);
+							}else{
+								na.push(c);
+							}
+						}
+						ret.push(this.Data(na, include));
+					}
+					return ret;
+				}
+
+				if(include){
+					return {"value" : this.value[res], "status": (this.status) ? this.status[res] : null};
+				}else{
+					return this.value[res];
+				}
+
 			}else{
-				return this.value[res];
+				//If array but not array of numbers, array of arrays is assumed
+				//[ ["gender", "M"], ["year", "2011"] ]
+				type="array";
 			}
-
 		}
 
+		//Object { gender: "M", year: "2011" }
 		var
-			id=dimObj2Array(tree, e),
+			id=dimObj2Array(tree, e, type),
 			pos=[],
 			otd=tree.dimension,
 			otdi=tree.id || otd.id //0.9.2 (JSON-stat 2.0)
