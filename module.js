@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.10.3 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.10.4 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.10.1";
+JSONstat.version="0.10.4";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -566,7 +566,7 @@ function JSONstat(resp,f){
 		;
 		return new Jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
 	};
-	
+
 	Jsonstat.prototype.Data=function(e, include){
 		var
 			i, ret=[], len,
@@ -649,7 +649,7 @@ function JSONstat(resp,f){
 			//DataByPosition in every dim
 			//If more positions than needed are provided, they will be ignored.
 			//Less positions than needed will return undefined
-			if(typeof(e[0])==="number"){
+			if(!isArray(e[0])){
 				if(this.length!==e.length){
 					return null;
 				}

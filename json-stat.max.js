@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.10.3 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.10.4 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.10.3";
+JSONstat.version="0.10.4";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -710,7 +710,7 @@ function JSONstat(resp,f,p){
 			//DataByPosition in every dim
 			//If more positions than needed are provided, they will be ignored.
 			//Less positions than needed will return undefined
-			if(typeof(e[0])==="number"){
+			if(!isArray(e[0])){
 				if(this.length!==e.length){
 					return null;
 				}
