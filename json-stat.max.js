@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.10.4 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.11.0 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.10.4";
+JSONstat.version="0.11.0";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -33,6 +33,14 @@ function JSONstat(resp,f,p){
 
 (function(){
 	"use strict";
+
+	//Polyfills
+	//Array.indexOf
+	Array.prototype.indexOf||(Array.prototype.indexOf=function(r,t){var n;if(null==this)throw new TypeError('"this" is null or not defined');var e=Object(this),i=e.length>>>0;if(0===i)return-1;var a=+t||0;if(Math.abs(a)===1/0&&(a=0),a>=i)return-1;for(n=Math.max(a>=0?a:i-Math.abs(a),0);i>n;){if(n in e&&e[n]===r)return n;n++}return-1});
+	//Array.forEach
+	Array.prototype.forEach||(Array.prototype.forEach=function(r,t){var o,n;if(null==this)throw new TypeError(" this is null or not defined");var e=Object(this),i=e.length>>>0;if("function"!=typeof r)throw new TypeError(r+" is not a function");for(arguments.length>1&&(o=t),n=0;i>n;){var a;n in e&&(a=e[n],r.call(o,a,n,e)),n++}});
+
+
 
 	function isArray(o) {
 		return Object.prototype.toString.call(o) === "[object Array]";
@@ -627,6 +635,105 @@ function JSONstat(resp,f,p){
 		;
 		return new Jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
 	};
+
+	Jsonstat.prototype.Slice=function(filter){
+		if(this===null || this.class!=="dataset"){
+			return null;
+		}
+		if(typeof filter==="undefined"){
+			return this;
+		}
+
+		//Convert {"gender": "M" } into [ ["gender", "M"] ]
+		if(!isArray(filter)){
+			var
+				p,
+				arr=[]
+			;
+			for (p in filter) {
+				arr.push([ p, filter[p] ]);
+			}
+
+			filter=arr;
+		}
+
+		var
+			ds=this,
+			nfilters=filter.length,
+			totbl=ds.toTable({field: "id", content: "id" , status: true}),
+			statin=ds.status,
+			head=totbl.shift(),
+			error=false,
+			value=[], statout=[],
+			ndx=[], //dimndx, catndx
+			lbl=[] //catlbl
+		;
+
+		filter.forEach(function(e){
+			var dim=ds.Dimension( e[0] );
+
+			//Wrong dimension ID
+			if(dim===null){
+				error=true;
+				return;
+			}
+
+			var catndx=dim.id.indexOf( e[1] );
+
+			//Wrong cat ID
+			if(catndx===-1){
+				error=true;
+				return;
+			}
+
+			//e[0] dimid e[1] catid
+			ndx.push( [ ds.id.indexOf( e[0] ), catndx ] );
+			lbl.push( dim.Category( catndx ).label );
+		});
+
+		if(error){
+			return null;
+		}
+
+		totbl.forEach(function(e){
+			var
+				tblr={},
+				n=0,
+				j
+			;
+
+			//Avoidable? Use a different .toTable()?
+			for(j=e.length;j--;){
+				tblr[head[j]]=e[j];
+			}
+
+			//Filter
+			filter.forEach(function(f){
+				if(tblr[ f[0] ]===f[1]){
+					n++;
+				}
+			});
+
+			if(nfilters===n){
+				value.push(tblr.value);
+				statout.push(tblr.status);
+			}
+		});
+
+		ds.n=value.length;
+		ds.value=ds.__tree__.value=value;
+		ds.status=ds.__tree__.status=(statin!==null) ? statout : null;
+
+		filter.forEach(function(e, i){
+			ds.size[ ndx[i][0] ]=1; //dimndx
+			ds.__tree__.dimension[ e[0] ].category.index={};//dimid
+			ds.__tree__.dimension[ e[0] ].category.index[ e[1] ]=0; //dimid catid
+			ds.__tree__.dimension[ e[0] ].category.label={};//dimid
+			ds.__tree__.dimension[ e[0] ].category.label[ e[1] ]=lbl[i]; //catlbl
+		});
+
+		return ds;
+	}
 
 	Jsonstat.prototype.Data=function(e, include){
 		var
