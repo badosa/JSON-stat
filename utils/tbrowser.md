@@ -26,9 +26,7 @@ JSONstat(
 
 ### jsonstat (object, string): required
 
-It can be a JSON-stat object or a string representing a URL.
-
-The object can be in the JSON-stat format:
+It can be an object in the JSON-stat format,
 
 ```js
 JSONstatUtils.tbrowser(
@@ -46,7 +44,7 @@ JSONstatUtils.tbrowser(
 );
 ```
 
-Or it can be the result of an object in the JSON-stat format processed by JJT:
+a *jsonstat* instance (the result of a JSON-stat object processed by JJT),
 
 ```js
 var
@@ -68,7 +66,7 @@ JSONstatUtils.tbrowser(
 );
 ```
 
-It also accepts a string representing a URL.
+or a string representing a URL
 
 ```js
 JSONstatUtils.tbrowser(
@@ -112,7 +110,7 @@ When *true*, dimensions with a single category are removed from the dataset and 
 
 This property is ignored if the dataset does not contain any dimension with a single category.
 
-Warning: if **jsonstat** is an object already processed by JJT, it will be modified by tbrowser() when **noconst** is *true*.
+Warning: if **jsonstat** is a *jsonstat* instance, it will be modified by tbrowser() when **noconst** is *true*.
 
 #### i18n (object)
 

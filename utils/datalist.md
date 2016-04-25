@@ -26,36 +26,34 @@ JSONstat(
 
 ### jsonstat (object, string): required
 
-It can be a JSON-stat object or a string representing a URL.
-
-The object can be in the JSON-stat format:
+It can be an object in the JSON-stat format,
 
 ```js
 var html=JSONstatUtils.datalist( {
-  	"version" : "2.0",
-  	"class" : "dataset",
-  	"href" : "http://json-stat.org/samples/galicia.json",
-  	"label" : "Population by province of residence, place of birth, age, gender and year in Galicia",
+    "version" : "2.0",
+    "class" : "dataset",
+    "href" : "http://json-stat.org/samples/galicia.json",
+    "label" : "Population by province of residence, place of birth, age, gender and year in Galicia",
     ...
 } );
 ```
 
-Or it can be the result of a JSON-stat object processed by JJT:
+a *jsonstat* instance (the result of a JSON-stat object processed by JJT),
 
 ```js
 var
   jsonstat={
     "version" : "2.0",
-  	"class" : "dataset",
-  	"href" : "http://json-stat.org/samples/galicia.json",
-  	"label" : "Population by province of residence, place of birth, age, gender and year in Galicia",
+    "class" : "dataset",
+    "href" : "http://json-stat.org/samples/galicia.json",
+    "label" : "Population by province of residence, place of birth, age, gender and year in Galicia",
     ...
   },
   html=JSONstatUtils.datalist( JSONstat( jsonstat ) )
 ;
 ```
 
-It also accepts a string representing a URL.
+or a string representing a URL
 
 ```js
 var html=JSONstatUtils.datalist( "http://json-stat.org/samples/galicia.json" );

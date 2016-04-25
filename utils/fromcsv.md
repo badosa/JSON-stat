@@ -8,7 +8,7 @@ Converts a string in the Comma Separated Values (CSV) file format to the JSON-st
 ```js
 var csv="place of birth,age group,gender,year,province of residence,concept,value\n ...";
 
-var jsonstat=JSONstatUtils.fromCSV( 
+var jsonstat=JSONstatUtils.fromCSV(
   csv,
   {
     label: "Imported from a CSV"
@@ -55,4 +55,4 @@ It is a text that will be used as the dataset label. By default, "".
 
 ### Return Value
 
-It returns an object in the JSON-stat format with *class* "dataset". This object can be processed by JJT. On error it returns *null*.
+It returns an object in the JSON-stat format of class "dataset". This object can be processed by JJT. On error it returns *null*.

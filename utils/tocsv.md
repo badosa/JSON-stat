@@ -28,9 +28,7 @@ JSONstat(
 
 ### jsonstat (object, string): required
 
-It can be a JSON-stat object or a string representing a URL.
-
-The object can be in the JSON-stat format:
+It can be an object in the JSON-stat format,
 
 ```js
 var csv=JSONstatUtils.toCSV( {
@@ -42,7 +40,7 @@ var csv=JSONstatUtils.toCSV( {
 } );
 ```
 
-Or it can be the result of a JSON-stat object processed by JJT:
+a *jsonstat* instance (the result of a JSON-stat object processed by JJT),
 
 ```js
 var
@@ -57,7 +55,7 @@ var
 ;
 ```
 
-It also accepts a string representing a URL.
+or a string representing a URL
 
 ```js
 var csv=JSONstatUtils.toCSV( "http://json-stat.org/samples/canada.json" );
