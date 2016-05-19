@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.1.6 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.2.0 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -988,6 +988,85 @@ var JSONstatUtils=function(){
 		return killed;
 	}
 
+	function join(arr, options){
+		if(typeof arr==="undefined" || Object.prototype.toString.call(arr) !== "[object Array]"){
+			return null;
+		}
+
+		if(typeof options==="undefined"){
+			options={};
+		}
+
+		var
+			dslabel=(typeof options.label==="undefined") ? null : options.label,
+			dimid=(typeof options.by==="undefined") ? null : options.by,
+
+			output=JSON.parse( JSON.stringify( arr[0] ) ),
+			input=[]
+		;
+
+		//Join metadata+data1+data2+...
+		if(dimid===null){
+			for(var i=1, len=arr.length; i<len; i++){
+				input=input.concat( arr[i].value ); //or .push.apply
+			}
+
+			output.value=input;
+
+			if(dslabel!==null){
+				output.label=dslabel;
+			}
+
+			return JSONstat( output );
+		}
+
+		//Join by dimension
+		var
+			index, label,
+			oAdd=function(o, e, i){
+				if(Object.prototype.toString.call(o) === "[object Array]"){
+					o=o.concat(e);
+				}else{
+					for(var p in e){
+						o[p]=(e[p]===0) ? i : e[p];
+					}
+				}
+				return o;
+			}
+		;
+
+		arr.forEach(function(e, i){
+			var
+				tbl=JSONstat(e).toTable({ status: true }),
+				cat=e.dimension[dimid].category
+			;
+
+			//header
+			if(i===0){
+				input=[tbl[0]];
+				index=cat.index;
+				label=cat.label;
+			}else{
+				index=oAdd(index, cat.index, i);
+				label=oAdd(label, cat.label, i);
+			}
+			input=input.concat( tbl.slice(1) ); //or .push.apply
+		});
+
+		var ds=JSONstatUtils.fromTable(input);
+
+		output.href=ds.href;
+		output.value=ds.value;
+		output.status=ds.status;
+		output.size=ds.size;
+		output.label=dslabel || "";
+
+		output.dimension[dimid].category.index=index;
+		output.dimension[dimid].category.label=label;
+
+		return JSONstat( output );
+	}
+
 	return {
 		tbrowser: tbrowser,
 		datalist: datalist,
@@ -995,6 +1074,7 @@ var JSONstatUtils=function(){
 		fromCSV: fromCSV,
 		toCSV: toCSV,
 		subset: subset,
-		version: "2.1.6"
+		join: join,
+		version: "2.2.0"
 	};
 }();
