@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.2.0 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.2.1 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -988,8 +988,13 @@ var JSONstatUtils=function(){
 		return killed;
 	}
 
+	//Takes an array of JSON-stat 2.0 Dataset responses
 	function join(arr, options){
-		if(typeof arr==="undefined" || Object.prototype.toString.call(arr) !== "[object Array]"){
+		if(typeof arr==="undefined" || 
+			Object.prototype.toString.call(arr) !== "[object Array]" ||
+			!arr[0].hasOwnProperty("class") || //Not JSON-stat v.2.0
+			arr[0].class!=="dataset"
+		){
 			return null;
 		}
 
@@ -1064,7 +1069,7 @@ var JSONstatUtils=function(){
 		output.dimension[dimid].category.index=index;
 		output.dimension[dimid].category.label=label;
 
-		return JSONstat( output );
+		return output;
 	}
 
 	return {
@@ -1075,6 +1080,6 @@ var JSONstatUtils=function(){
 		toCSV: toCSV,
 		subset: subset,
 		join: join,
-		version: "2.2.0"
+		version: "2.2.1"
 	};
 }();
