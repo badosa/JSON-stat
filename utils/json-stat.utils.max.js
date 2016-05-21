@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.2.2 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.2.3 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -902,9 +902,9 @@ var JSONstatUtils=function(){
 
 	//Takes an array of JSON-stat 2.0 Dataset responses
 	function join(arr, options){
-		if(typeof arr==="undefined" || 
+		if(typeof arr==="undefined" ||
 			Object.prototype.toString.call(arr) !== "[object Array]" ||
-			!arr[0].hasOwnProperty("version") || //Not JSON-stat v.2.0 
+			!arr[0].hasOwnProperty("version") || //Not JSON-stat v.2.0
 			!arr[0].hasOwnProperty("class") ||
 			arr[0].class!=="dataset"
 		){
@@ -940,7 +940,7 @@ var JSONstatUtils=function(){
 
 		//Join by dimension
 		var
-			index, label,
+			index, label, unit,
 			oAdd=function(o, e, i){
 				if(Object.prototype.toString.call(o) === "[object Array]"){
 					o=o.concat(e);
@@ -964,23 +964,26 @@ var JSONstatUtils=function(){
 				input=[tbl[0]];
 				index=cat.index;
 				label=cat.label;
+				unit=cat.unit;
 			}else{
 				index=oAdd(index, cat.index, i);
 				label=oAdd(label, cat.label, i);
+				unit=oAdd(unit, cat.unit, i);
 			}
 			input=input.concat( tbl.slice(1) ); //or .push.apply
 		});
 
 		var ds=JSONstatUtils.fromTable(input);
 
-		output.href=ds.href;
 		output.value=ds.value;
-		output.status=ds.status;
 		output.size=ds.size;
+		output.status=ds.status || null;
 		output.label=dslabel || "";
+		output.href=null;
 
-		output.dimension[dimid].category.index=index;
-		output.dimension[dimid].category.label=label;
+		output.dimension[dimid].category.index=index || null;
+		output.dimension[dimid].category.label=label || null;
+		output.dimension[dimid].category.unit=unit || null;
 
 		return output;
 	}
@@ -992,6 +995,6 @@ var JSONstatUtils=function(){
 		fromCSV: fromCSV,
 		toCSV: toCSV,
 		join: join,
-		version: "2.2.2"
+		version: "2.2.3"
 	};
 }();
