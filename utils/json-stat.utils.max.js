@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.2.3 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.2.4 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -901,12 +901,21 @@ var JSONstatUtils=function(){
 	}
 
 	//Takes an array of JSON-stat 2.0 Dataset responses
-	function join(arr, options){
-		if(typeof arr==="undefined" ||
-			Object.prototype.toString.call(arr) !== "[object Array]" ||
-			!arr[0].hasOwnProperty("version") || //Not JSON-stat v.2.0
-			!arr[0].hasOwnProperty("class") ||
-			arr[0].class!=="dataset"
+	function join(arrobj, options){
+		if(typeof arrobj==="undefined" ||
+			Object.prototype.toString.call(arrobj) !== "[object Array]"
+		){
+			return null;
+		}
+
+		var
+			arr=JSON.parse( JSON.stringify(arrobj) ), //clone
+			output=arr[0]
+		;
+
+		if(!output.hasOwnProperty("version") || //Not JSON-stat v.2.0
+			!output.hasOwnProperty("class") ||
+			output.class!=="dataset"
 		){
 			return null;
 		}
@@ -918,8 +927,6 @@ var JSONstatUtils=function(){
 		var
 			dslabel=(typeof options.label==="undefined") ? null : options.label,
 			dimid=(typeof options.by==="undefined") ? null : options.by,
-
-			output=JSON.parse( JSON.stringify( arr[0] ) ),
 			input=[]
 		;
 
@@ -935,7 +942,7 @@ var JSONstatUtils=function(){
 				output.label=dslabel;
 			}
 
-			return JSONstat( output );
+			return output;
 		}
 
 		//Join by dimension
@@ -995,6 +1002,6 @@ var JSONstatUtils=function(){
 		fromCSV: fromCSV,
 		toCSV: toCSV,
 		join: join,
-		version: "2.2.3"
+		version: "2.2.4"
 	};
 }();
