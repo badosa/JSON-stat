@@ -328,7 +328,12 @@ function JSONstat(resp,f,p){
 				}
 			break;
 			case "dimension" :
-				ot=o.__tree__;
+				//It's a native response of class "dimension"
+				if (!o.hasOwnProperty("__tree__")){
+					this.__tree__=ot=o;
+				}else{
+					ot=o.__tree__;
+				}
 				var cats=[], otc=ot.category;
 				if(
 					!o.hasOwnProperty("__tree__") ||
