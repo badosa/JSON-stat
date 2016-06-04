@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.11.0 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.12.0 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.11.0";
+JSONstat.version="0.12.0";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -39,7 +39,12 @@ function JSONstat(resp,f,p){
 	Array.prototype.indexOf||(Array.prototype.indexOf=function(r,t){var n;if(null==this)throw new TypeError('"this" is null or not defined');var e=Object(this),i=e.length>>>0;if(0===i)return-1;var a=+t||0;if(Math.abs(a)===1/0&&(a=0),a>=i)return-1;for(n=Math.max(a>=0?a:i-Math.abs(a),0);i>n;){if(n in e&&e[n]===r)return n;n++}return-1});
 	//Array.forEach
 	Array.prototype.forEach||(Array.prototype.forEach=function(r,t){var o,n;if(null==this)throw new TypeError(" this is null or not defined");var e=Object(this),i=e.length>>>0;if("function"!=typeof r)throw new TypeError(r+" is not a function");for(arguments.length>1&&(o=t),n=0;i>n;){var a;n in e&&(a=e[n],r.call(o,a,n,e)),n++}});
-
+	//Simplified Object.keys polyfill
+	if(!Object.keys) Object.keys = function(o) {
+		var k=[],p;
+		for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
+		return k;
+	}
 
 
 	function isArray(o) {
@@ -119,6 +124,11 @@ function JSONstat(resp,f,p){
 					ret.push(e);
 				}
 				return ret;
+			},
+			//For native dimension responses
+			dimSize=function(cat){
+				var c=( typeof cat.index==="undefined" ) ? cat.label : cat.index;
+				return ( isArray(c) ) ? c.length : Object.keys(c).length;
 			},
 			ot, prop, ilen, i
 		;
@@ -328,10 +338,24 @@ function JSONstat(resp,f,p){
 				}
 			break;
 			case "dimension" :
+				//It's a native response of class "dimension"
+				if( !o.hasOwnProperty("__tree__") ){
+					return JSONstat({
+							"version": "2.0",
+							"class": "dataset",
+							"dimension": {
+								d: o
+							},
+							"id": ["d"],
+							"size": [ dimSize(o.category) ],
+							"value": [ null ]
+						}).Dimension(0)
+					;
+				}
+
 				ot=o.__tree__;
 				var cats=[], otc=ot.category;
 				if(
-					!o.hasOwnProperty("__tree__") ||
 					!ot.hasOwnProperty("category") //Already tested in the Dimension() / Category() ? method
 					){
 					return;
@@ -733,7 +757,7 @@ function JSONstat(resp,f,p){
 		});
 
 		return ds;
-	}
+	};
 
 	Jsonstat.prototype.Data=function(e, include){
 		var

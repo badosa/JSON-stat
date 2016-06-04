@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.11.0 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.12.0 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.11.0";
+JSONstat.version="0.12.0";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -64,6 +64,11 @@ function JSONstat(resp,f){
 					ret.push(e);
 				}
 				return ret;
+			},
+			//For native dimension responses
+			dimSize=function(cat){
+				var c=( typeof cat.index==="undefined" ) ? cat.label : cat.index;
+				return ( isArray(c) ) ? c.length : Object.keys(c).length;
 			},
 			ot, prop, ilen, i
 		;
@@ -265,10 +270,24 @@ function JSONstat(resp,f){
 				}
 			break;
 			case "dimension" :
+				//It's a native response of class "dimension"
+				if( !o.hasOwnProperty("__tree__") ){
+					return JSONstat({
+							"version": "2.0",
+							"class": "dataset",
+							"dimension": {
+								d: o
+							},
+							"id": ["d"],
+							"size": [ dimSize(o.category) ],
+							"value": [ null ]
+						}).Dimension(0)
+					;
+				}
+
 				ot=o.__tree__;
 				var cats=[], otc=ot.category;
 				if(
-					!o.hasOwnProperty("__tree__") ||
 					!ot.hasOwnProperty("category") //Already tested in the Dimension() / Category() ? method
 					){
 					return;
@@ -533,6 +552,40 @@ function JSONstat(resp,f){
 		return new Jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otr,dim)});
 	};
 
+	Jsonstat.prototype.Category=function(cat){
+		if (this===null || this.class!=="dimension"){
+			return null;
+		}
+		if(typeof cat==="undefined"){
+			var ar=[];
+			for(var c=0, len=this.id.length; c<len; c++){
+				ar.push(this.Category(this.id[c]));
+			}
+			return ar;
+		}
+		if(typeof cat==="number"){
+			var num=this.id[cat];
+			return (typeof num!=="undefined") ? this.Category(num) : null;
+		}
+
+		var oc=this.__tree__.category;
+		if(typeof oc==="undefined"){
+			return null;
+		}
+		var index=oc.index[cat];
+		if(typeof index==="undefined"){
+			return null;
+		}
+
+		var
+			unit=(oc.unit && oc.unit[cat]) || null,
+			coord=(oc.coordinates && oc.coordinates[cat]) || null,
+			child=(oc.child && oc.child[cat]) || null,
+			note=(oc.note && oc.note[cat]) || null
+		;
+		return new Jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
+	};
+
 	Jsonstat.prototype.Slice=function(filter){
 		if(this===null || this.class!=="dataset"){
 			return null;
@@ -630,40 +683,6 @@ function JSONstat(resp,f){
 		});
 
 		return ds;
-	}
-
-	Jsonstat.prototype.Category=function(cat){
-		if (this===null || this.class!=="dimension"){
-			return null;
-		}
-		if(typeof cat==="undefined"){
-			var ar=[];
-			for(var c=0, len=this.id.length; c<len; c++){
-				ar.push(this.Category(this.id[c]));
-			}
-			return ar;
-		}
-		if(typeof cat==="number"){
-			var num=this.id[cat];
-			return (typeof num!=="undefined") ? this.Category(num) : null;
-		}
-
-		var oc=this.__tree__.category;
-		if(typeof oc==="undefined"){
-			return null;
-		}
-		var index=oc.index[cat];
-		if(typeof index==="undefined"){
-			return null;
-		}
-
-		var
-			unit=(oc.unit && oc.unit[cat]) || null,
-			coord=(oc.coordinates && oc.coordinates[cat]) || null,
-			child=(oc.child && oc.child[cat]) || null,
-			note=(oc.note && oc.note[cat]) || null
-		;
-		return new Jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
 	};
 
 	Jsonstat.prototype.Data=function(e, include){
