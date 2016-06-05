@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.12.0 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.12.1 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.12.0";
+JSONstat.version="0.12.1";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -81,7 +81,7 @@ function JSONstat(resp,f){
 
 		this.class=o.class || "bundle";
 		switch(this.class){
-			case "bundle" : //Real bundle, or URL (bundle, dataset, collection [dimension, pending]), or error
+			case "bundle" : //Real bundle, or URL (bundle, dataset, collection, dimension), or error [nodejs: can't be a URL actually. Kept for symmetry.]
 				var arr=[], ds=0;
 				this.error=null;
 				this.length=0;
@@ -106,7 +106,8 @@ function JSONstat(resp,f){
 				//When o is a URI, class won't be set before the request
 				//and it will enter the bundle case: once we have a response
 				//if class is dataset we redirect to case "dataset". 0.7.5
-				if(o.class==="dataset" || o.class==="collection"){
+				//[nodejs: can't be a URL actually. Kept for symmetry.]
+				if(o.class==="dataset" || o.class==="collection" || o.class==="dimension"){
 					return JSONstat(o);
 				}
 
