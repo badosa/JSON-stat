@@ -16,7 +16,7 @@ JJUS includes 6 functions:
 * [datalist()](https://github.com/badosa/JSON-stat/blob/master/utils/datalist.md)
 * [fromCSV()](https://github.com/badosa/JSON-stat/blob/master/utils/fromcsv.md)
 * [fromTable()](https://github.com/badosa/JSON-stat/blob/master/utils/fromtable.md)
-* join() (Pending documentation)
+* join()(https://github.com/badosa/JSON-stat/blob/master/utils/join.md)
 * [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)
 * [toCSV()](https://github.com/badosa/JSON-stat/blob/master/utils/tocsv.md)
 
