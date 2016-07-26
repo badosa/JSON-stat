@@ -13,9 +13,11 @@ The JSON-stat format is documented at https://json-stat.org/format/.
 
 The goal of the **JSON-stat Javascript Toolkit (JJT)** is to help dealing with JSON-stat responses in Javascript.
 
-For a library of high level functions built on top of JJT, see the [JSON-stat Javascript Utilities Suite](https://github.com/badosa/JSON-stat/tree/master/utils) (JJUS).
+For **installation** instructions, code **samples**, the **API reference**, etc., see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**.
 
 [Test Suite](test/) available.
+
+For a library of high level functions built on top of JJT, see the [JSON-stat Javascript Utilities Suite](https://github.com/badosa/JSON-stat/tree/master/utils) (JJUS).
 
 ## Design principles
 
@@ -189,7 +191,3 @@ JSONstat( j ).Dataset( 1 ).toTable(
 //Get only the female population by age of Canada
 //and convert values from thousands to persons.
 ```
-
-## Further information
-
-For **installation** instructions, code **samples**, the **API reference**, etc., see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**.
