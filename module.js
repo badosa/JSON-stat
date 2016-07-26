@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.12.1 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.12.2 (JSON-stat v. 2.0 ready) (Nodejs module)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.12.1";
+JSONstat.version="0.12.2";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -490,7 +490,9 @@ function JSONstat(resp,f){
 		return new Jsonstat({"class" : "dataset", "__tree__": tds});
 	};
 
-	Jsonstat.prototype.Dimension=function(dim){
+	Jsonstat.prototype.Dimension=function(dim, bool){
+		bool=(typeof bool==="boolean") ? bool : true; //0.12.2
+
 		var
 			ar=[],
 			c,
@@ -520,7 +522,7 @@ function JSONstat(resp,f){
 		}
 		if(typeof dim==="number"){
 			var num=this.id[dim];
-			return (typeof num!=="undefined") ? this.Dimension(num) : null;
+			return (typeof num!=="undefined") ? this.Dimension(num, bool) : null;
 		}
 
 		var otr=this.role;
@@ -531,7 +533,7 @@ function JSONstat(resp,f){
 				for(c=0; c<len; c++){
 					var oid=this.id[c];
 					if(role(otr,oid)===dim.role){
-						ar.push(this.Dimension(oid));
+						ar.push(this.Dimension(oid, bool));
 					}
 				}
 				return (typeof ar[0]==="undefined") ? null : ar;
@@ -548,6 +550,16 @@ function JSONstat(resp,f){
 		var otdd=otd[dim];
 		if(typeof otdd==="undefined"){
 			return null;
+		}
+
+		if(!bool){ //0.12.2
+			return (function(index, label){
+				var labels=[];
+				for(var prop in index){
+					labels[index[prop]]=label[prop];
+				}
+				return labels;
+			})(otdd.category.index, otdd.category.label);
 		}
 
 		return new Jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otr,dim)});
