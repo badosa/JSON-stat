@@ -38,11 +38,11 @@ Generally, items in a collection contain just basic content and a pointer that a
 
 Bundles were packages of unordered arbitrary datasets.
 
-  * *Bundle*
-   * *Dataset*
-     * *Dimension*
-       * *Category*
-     * *Data*
+* *Bundle*
+  * *Dataset*
+    * *Dimension*
+      * *Category*
+    * *Data*
 
 Even though JSON-stat currently encourages the use of collections of embedded datasets instead of bundles, JJT supports both approaches.
 
