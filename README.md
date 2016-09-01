@@ -79,14 +79,14 @@ JSONstat( { ... } ).length
 //number of datasets in the object
 
 JSONstat( "http://json-stat.org/samples/oecd-canada-col.json" ).length
-//number of items in oecd-canada-col.json. Sync connection.
+//number of items in oecd-canada-col.json. Sync connection. (Not available in the Node.js module.)
 
 JSONstat( "http://json-stat.org/samples/oecd-canada-col.json",
    function(){
       console.log( this.length );
    }
 )
-//number of items in oecd-canada-col.json. Async connection.
+//number of items in oecd-canada-col.json. Async connection. (Not available in the Node.js module.)
 ```
 
 #### Dataset
