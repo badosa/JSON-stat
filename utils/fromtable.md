@@ -2,7 +2,7 @@
 
 Converts an array with tabular data to the JSON-stat dataset format. This function performs the opposite conversion of the [toTable() method](https://github.com/badosa/JSON-stat/wiki/API-Reference#totable).
 
-**<code><i>object</i> JSONstatUtils.fromTableCSV ( <i>array</i> tbl [, <i>object</i> options] )
+**<code><i>object</i> JSONstatUtils.fromTable ( <i>array</i> tbl [, <i>object</i> options] )
 </code>**
 
 ```js
