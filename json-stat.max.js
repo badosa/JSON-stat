@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.12.2 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.12.3 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.12.2";
+JSONstat.version="0.12.3";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -953,8 +953,7 @@ function JSONstat(resp,f,p){
 			len
 		;
 
-		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false} //default: use label for field names and content instead of "id"
-		;
+		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false}; //default: use label for field names and content instead of "id"
 
 		if(typeof func==="function"){
 			totbl=this.toTable(opts);
@@ -984,20 +983,45 @@ function JSONstat(resp,f,p){
 			return ret;
 		}
 
-		//For example, as D3 input
 		if(opts.type==="arrobj"){
 			totbl=this.toTable({field: "id", content: opts.content, status: opts.status});// At the moment, options besides "type" are not passed
 
 			var
 				tbl=[],
-				head=totbl.shift()
+				head=totbl.shift(),
+				//0.12.3
+				metric=dataset.role.metric,
+				addUnits=function(){},
+				metriclabels={}
 			;
+
+			//0.12.3 Include unit information if there's any (only if arrobj)
+			if(opts.unit && metric){
+				if(opts.content!=="id"){
+					for(var m=metric.length; m--;){
+						var mdim=this.Dimension(metric[m]);
+						metriclabels[metric[m]]={};
+
+						for(var mm=mdim.length; mm--;){
+							metriclabels[metric[m]][mdim.Category(mm).label]=mdim.id[mm];
+						}
+					}
+				}
+
+				addUnits=function(d, c){
+					//array indexOf
+					if(metric.indexOf(d)!==-1){
+						tblr.unit=dataset.dimension[d].category.unit[opts.content!=="id" ? metriclabels[d][c] : c];
+					}
+				};
+			}
 
 			len=totbl.length;
 			for(i=0; i<len; i++){ //Can't be done with i-- as we want to keep the original order
 				var tblr={};
 				for(j=totbl[i].length;j--;){
 					tblr[head[j]]=totbl[i][j];
+					addUnits(head[j], totbl[i][j]); //0.12.3
 				}
 				tbl.push(tblr);
 			}
@@ -1023,8 +1047,8 @@ function JSONstat(resp,f,p){
 
 			addColValue=function(str1,str2,status){
 				var
-					vlabel=(useid && "value") || str1|| "Value",
-					slabel=(useid && "status") || str2|| "Status"
+					vlabel=(useid && "value") || str1 || "Value",
+					slabel=(useid && "status") || str2 || "Status"
 				;
 				if(status){
 					cols.push({id: "status", label: slabel, type: "string"});
