@@ -917,7 +917,7 @@ function JSONstat(resp,f){
 				tbl=[],
 				head=totbl.shift(),
 				//0.12.3
-				metric=dataset.role.metric,
+				metric=dataset.role && dataset.role.metric,
 				addUnits=function(){},
 				metriclabels={}
 			;
