@@ -14,7 +14,7 @@
 	},
 	"dependencies": {},
 	"devDependencies": {},
-	"version"       : "0.12.3",
+	"version"       : "0.12.4",
 	"license"       : "Apache-2.0",
 	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js", "tonicdev.js"],
 	"tonicExampleFilename": "tonicdev.js"
