@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.12.3 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.12.4 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.12.3";
+JSONstat.version="0.12.4";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -990,7 +990,7 @@ function JSONstat(resp,f,p){
 				tbl=[],
 				head=totbl.shift(),
 				//0.12.3
-				metric=dataset.role.metric,
+				metric=dataset.role && dataset.role.metric,
 				addUnits=function(){},
 				metriclabels={}
 			;
