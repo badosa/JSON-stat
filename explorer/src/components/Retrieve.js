@@ -22,7 +22,8 @@ export default class Retrieve extends React.Component {
   }
 
   loadSample() {
-    this.refs.url.value="http://json-stat.org/samples/canada.json";
+    const protocol=(window.location.protocol==="https:") ? "https" : "http";
+    this.refs.url.value=protocol+"://json-stat.org/samples/canada.json";
   }
 
   submit() {
