@@ -60,6 +60,12 @@ export default class Retrieve extends React.Component {
     }
   }
 
+  handleKeyPress(e) {
+    if(e.key=="Enter"){
+      this.submit();
+    }
+  }
+
   componentDidMount(){
     const
       url=decodeURIComponent(window.location.hash.slice(2)),
@@ -82,7 +88,7 @@ export default class Retrieve extends React.Component {
           <span className={this.state.method==="post" ? "selected" : null} data-id="post" onClick={this.handleMethod.bind(this)}>POST</span>
           {this.state.method==="get" ? <a onClick={this.loadSample.bind(this)}>Load sample URL</a> : null}
         </div>
-        <input type="text" ref="url" placeholder="URL" />
+        <input type="text" ref="url" placeholder="URL" onKeyPress={this.handleKeyPress.bind(this)} />
         {
           method==="post" ?
             <textarea ref="query" placeholder="JSON query"></textarea>
