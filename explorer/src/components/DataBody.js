@@ -8,7 +8,7 @@ export default class DataBody extends React.Component {
       filters=this.props.filters,
       removed=this.props.removed,
       counter=this.props.counter,
-      units=this.props.units,
+      unit=this.props.unit,
       status=this.props.status,
       format=(Number.toLocaleString) ?
     				function(v, d){
@@ -37,7 +37,7 @@ export default class DataBody extends React.Component {
           if(row.unit){
             value=format(value, row.unit.decimals || null);
 
-            if(units){
+            if(unit){
               if(row.unit.symbol){
                 if(row.unit.position==="start"){
                   value=`${row.unit.symbol}${value}`;

@@ -221,6 +221,11 @@ tr:hover td.selected {
   margin-top: -31px;
   margin-right: 6px;
 }
+
+.show .unit {
+    margin-right: 50px;
+}
+
 .cntrl {
   display: inline-block;
   height: 10px;
@@ -242,11 +247,11 @@ tr:hover td.selected {
   background-color: #008000;
 }
 
-.off.units:hover .cntrllabel,
-.on.units .cntrllabel {
+.off.unit:hover .cntrllabel,
+.on.unit .cntrllabel {
   color: #a52a2a;
 }
-.on.units .cntrl {
+.on.unit .cntrl {
   background-color: #a52a2a;
 }
 
@@ -316,6 +321,11 @@ button {
 
 p {
   margin: 8px;
+}
+
+em {
+  color: #ccc;
+  font-style: normal; 
 }
 
 @media only screen and (min-width : 768px) {

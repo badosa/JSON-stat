@@ -9,12 +9,12 @@ export default class Data extends React.Component {
     this.state={
       counter: false,
       status: false,
-      units: false
+      unit: false
     };
   }
 
-  toggleUnits() {
-    this.setState({ units: !this.state.units });
+  toggleUnit() {
+    this.setState({ unit: !this.state.unit });
   }
 
   toggleCounter() {
@@ -43,11 +43,11 @@ export default class Data extends React.Component {
         :
         `${len} of ${this.props.n} values (${tfilters} active) ${tremoved}`,
 
-      units=(this.props.units) ? (
+      unit=(this.props.unit) ? (
         <OnOff
-          text="units"
-          checked={this.state.units}
-          toggle={this.toggleUnits.bind(this)}
+          text="unit"
+          checked={this.state.unit}
+          toggle={this.toggleUnit.bind(this)}
         />
       ) : null
     ;
@@ -61,7 +61,7 @@ export default class Data extends React.Component {
             checked={this.props.show}
             toggle={this.props.toggleId}
           />
-          {units}
+          {unit}
           <OnOff
             text="status"
             checked={this.state.status}
@@ -89,7 +89,7 @@ export default class Data extends React.Component {
           data={data}
           filters={this.props.filters}
           removed={removed}
-          units={this.state.units}
+          unit={this.state.unit}
           counter={this.state.counter}
           status={this.state.status}
         />

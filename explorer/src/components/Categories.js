@@ -5,13 +5,18 @@ export default class Categories extends React.Component {
   constructor() {
     super();
     this.state={
-      checked: false,
+      id: false,
+      unit: false,
       selected: null
     };
   }
 
   toggleId() {
-    this.setState({checked: !this.state.checked});
+    this.setState({id: !this.state.id});
+  }
+
+  toggleUnit() {
+    this.setState({unit: !this.state.unit});
   }
 
   selectCat(id, label){
@@ -32,9 +37,19 @@ export default class Categories extends React.Component {
 
     return (
       <div className={this.props.show ? "show" : "hidden"}>
+        {
+          data.role==="metric" ?
+            <OnOff
+              text="unit"
+              checked={this.state.unit}
+              toggle={this.toggleUnit.bind(this)}
+            />
+            :
+            null
+        }
         <OnOff
           text="id"
-          checked={this.state.checked}
+          checked={this.state.id}
           toggle={this.toggleId.bind(this)}
         />
         <ul className="category">
@@ -44,9 +59,12 @@ export default class Categories extends React.Component {
               label=cat.label
             ;
 
-            let title=(that.state.checked) ? id : label;
+            let
+              title=(that.state.id) ? id : label,
+              unitText=null
+            ;
 
-            if(data.role==="metric" && cat.unit){
+            if(that.state.unit && cat.unit){
               let unit=[];
               if(cat.unit.label){
                 unit.push(cat.unit.label);
@@ -54,7 +72,7 @@ export default class Categories extends React.Component {
               if(cat.unit.symbol){
                 unit.push(cat.unit.symbol);
               }
-              title+=(unit.length) ? ` (${unit.join(" ")})`: "";
+              unitText=unit.length ? <em>{unit.join(" ")}</em> : null;
             }
 
             return (
@@ -62,7 +80,7 @@ export default class Categories extends React.Component {
                 className={ that.state.selected===id ? "selected" : null }
                 key={id}
                 onClick={that.selectCat.bind(that, id, label)}
-              >{title}</li>
+              >{title} {unitText}</li>
             );
           })}
         </ul>
