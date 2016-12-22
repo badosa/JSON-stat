@@ -32,13 +32,18 @@ export default class Categories extends React.Component {
   render() {
     const
       data=this.props.data,
-      that=this
+      that=this,
+      unit=data.Category(0).unit
     ;
 
     return (
       <div className={this.props.show ? "show" : "hidden"}>
         {
-          data.role==="metric" ?
+          data.role==="metric"
+          &&
+          unit
+          && (unit.label || unit.symbol)
+            ?
             <OnOff
               text="unit"
               checked={this.state.unit}
