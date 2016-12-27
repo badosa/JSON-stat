@@ -30,6 +30,7 @@ export default class Output extends React.Component {
           source={data.source}
           bundle={bundle}
           size={size}
+          extension={data.extension}
         />
         <Detail
           data={data}

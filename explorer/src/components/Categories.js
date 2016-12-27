@@ -89,6 +89,12 @@ export default class Categories extends React.Component {
             );
           })}
         </ul>
+        {
+          data.extension ?
+            <div className="extension">Extension information found: <i>{JSON.stringify(data.extension).replace(/:("|{|\[)/g, ": $1")}</i></div>
+            :
+            null
+        }
       </div>
     );
   }

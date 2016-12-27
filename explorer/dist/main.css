@@ -130,7 +130,7 @@ li strong:hover, li .selected strong {
 }
 
 /* Categories */
-.category {
+.category, .extension {
   margin: 6px;
 }
 .category li {
@@ -325,7 +325,7 @@ p {
 
 em {
   color: #ccc;
-  font-style: normal; 
+  font-style: normal;
 }
 
 @media only screen and (min-width : 768px) {
