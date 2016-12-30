@@ -12,7 +12,7 @@ export default class Summary extends React.Component {
         "First and only dataset in the bundle" : "First dataset (of " + this.props.bundle + ") in the bundle"} ({this.props.size})</div>
         {this.props.source ? <div>{this.props.source}</div> : null}
         {this.props.updated ? <div>{this.props.updated}</div> : null}
-        {this.props.extension ? <div>Extension information found: <i>{JSON.stringify(this.props.extension).replace(/:("|{|\[)/g, ': $1')}</i></div> : null}
+        {this.props.extension ? <div>Extension information found <pre>{JSON.stringify(this.props.extension, null, 3).replace(/:("|{|\[)/g, ': $1')}</pre></div> : null}
       </header>
     );
   }

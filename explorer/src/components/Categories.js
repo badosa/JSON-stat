@@ -91,7 +91,7 @@ export default class Categories extends React.Component {
         </ul>
         {
           data.extension ?
-            <div className="extension">Extension information found: <i>{JSON.stringify(data.extension).replace(/:("|{|\[)/g, ": $1")}</i></div>
+            <div className="extension">Extension information found<pre>{JSON.stringify(data.extension, null, 3).replace(/:("|{|\[)/g, ": $1")}</pre></div>
             :
             null
         }
