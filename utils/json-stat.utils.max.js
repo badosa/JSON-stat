@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.2.4 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.2.5 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -681,17 +681,21 @@ var JSONstatUtils=function(){
 			vcol=table[0].indexOf(vlabel)
 		;
 
-		for(var i=1, len=table.length; i<len; i++){
-			if(table[i][vcol]===null){
-				table[i][vcol]=na;
-			}else{
-				if(decimal!=="."){
-					table[i][vcol]=String(table[i][vcol]).replace(".", decimal);
-				}
-			}
-		}
-
 		table.forEach(function(r){
+		  r.forEach(function(c, i){
+		    if(i===vcol){
+		      if(c===null){
+		        r[i]='"' + na + '"';
+		      }else{
+		        if(decimal!=="."){
+		          r[i]=String(r[i]).replace(".", decimal);
+		        }
+		      }
+		    }else{
+		      r[i]='"' + r[i] + '"';
+		    }
+		  });
+
 			csv+=r.join(delimiter)+"\n";
 		});
 
@@ -1002,6 +1006,6 @@ var JSONstatUtils=function(){
 		fromCSV: fromCSV,
 		toCSV: toCSV,
 		join: join,
-		version: "2.2.4"
+		version: "2.2.5"
 	};
 }();
