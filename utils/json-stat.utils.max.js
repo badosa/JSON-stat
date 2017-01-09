@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.2.5 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.2.6 (requires JJT 0.10+)
 http://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
-Copyright 2016 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2017 Xavier Badosa (http://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -681,20 +681,20 @@ var JSONstatUtils=function(){
 			vcol=table[0].indexOf(vlabel)
 		;
 
-		table.forEach(function(r){
-		  r.forEach(function(c, i){
-		    if(i===vcol){
-		      if(c===null){
-		        r[i]='"' + na + '"';
-		      }else{
-		        if(decimal!=="."){
-		          r[i]=String(r[i]).replace(".", decimal);
-		        }
-		      }
-		    }else{
-		      r[i]='"' + r[i] + '"';
-		    }
-		  });
+		table.forEach(function(r, j){
+			r.forEach(function(c, i){
+				if(i===vcol && j){
+					if(c===null){
+						r[i]='"' + na + '"';
+					}else{
+						if(decimal!=="."){
+							r[i]=String(r[i]).replace(".", decimal);
+						}
+					}
+				}else{
+					r[i]='"' + r[i] + '"';
+				}
+			});
 
 			csv+=r.join(delimiter)+"\n";
 		});
@@ -1006,6 +1006,6 @@ var JSONstatUtils=function(){
 		fromCSV: fromCSV,
 		toCSV: toCSV,
 		join: join,
-		version: "2.2.5"
+		version: "2.2.6"
 	};
 }();
