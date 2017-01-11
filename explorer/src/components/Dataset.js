@@ -83,7 +83,7 @@ export default class Dataset extends React.Component {
           toggleId={this.toggleId.bind(this)}
           show={this.state.checked}
           removed={this.state.hide}
-          unit={(unit && (unit.label || unit.symbol))}
+          unit={(unit && (unit.label || unit.symbol || typeof unit.decimals!=="undefined"))}
         />
       </section>
     );

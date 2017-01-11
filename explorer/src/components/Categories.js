@@ -42,7 +42,7 @@ export default class Categories extends React.Component {
           data.role==="metric"
           &&
           unit
-          && (unit.label || unit.symbol)
+          && (unit.label || unit.symbol || typeof unit.decimals!=="undefined")
             ?
             <OnOff
               text="unit"
@@ -77,6 +77,9 @@ export default class Categories extends React.Component {
               if(cat.unit.symbol){
                 unit.push(cat.unit.symbol);
               }
+              if(typeof cat.unit.decimals!=="undefined"){
+                unit.push("dec=" + cat.unit.decimals);
+              }
               unitText=unit.length ? <em>{unit.join(" ")}</em> : null;
             }
 
@@ -99,13 +102,3 @@ export default class Categories extends React.Component {
     );
   }
 }
-
-/*
-{data.id.map((id,i)=>(
-  <li
-    className={ this.state.selected===id ? "selected" : "" }
-    key={id}
-    onClick={this.selectCat.bind(this, id, data.Category(i).label)}
-  >{this.state.checked ? id : data.Category(i).label}</li>
-))}
-*/
