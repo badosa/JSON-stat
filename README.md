@@ -1,5 +1,7 @@
 # JSON-stat
 
+[![NPM][npm-img]][npm-url]
+
 The JSON-stat format is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
 
 The JSON-stat format is documented at https://json-stat.org/format/.
