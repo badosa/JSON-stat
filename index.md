@@ -21,6 +21,8 @@ For **installation** instructions, code **samples**, the **API reference**, etc.
 
 For a library of high level functions built on top of JJT, see the [JSON-stat Javascript Utilities Suite](https://github.com/badosa/JSON-stat/tree/master/utils) (JJUS).
 
+For simple conversion from the JSON-stat format, see the [JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv).
+
 ## Design principles
 
 JSON-stat is based on a data cube information structure. The JSON-stat Javascript Toolkit exposes the data cube as a tree.
