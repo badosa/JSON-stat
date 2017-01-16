@@ -2,7 +2,7 @@
 	"name"          : "jsonstat",
 	"description"   : "JavaScript library to deal with JSON-stat responses.",
 	"homepage"      : "https://github.com/badosa/JSON-stat",
-	"keywords"      : ["util", "jsonstat", "stats", "data", "cube"],
+	"keywords"      : ["util", "jsonstat", "stats", "data", "cube", "opendata"],
 	"author"        : {
 		"name": "Xavier Badosa",
 		"url": "http://xavierbadosa.com"
@@ -14,7 +14,7 @@
 	},
 	"dependencies": {},
 	"devDependencies": {},
-	"version"       : "0.12.4",
+	"version"       : "0.13.0",
 	"license"       : "Apache-2.0",
 	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js", "tonicdev.js", "json-stat.js"],
 	"tonicExampleFilename": "tonicdev.js"

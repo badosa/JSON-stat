@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.12.4 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.13.0 (JSON-stat v. 2.0 ready)
 http://json-stat.com
 https://github.com/badosa/JSON-stat
 
-Copyright 2016 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2017 Xavier Badosa (http://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.12.4";
+JSONstat.version="0.13.0";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -45,7 +45,8 @@ function JSONstat(resp,f,p){
 		for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
 		return k;
 	}
-
+	//Array.filter
+	Array.prototype.filter||(Array.prototype.filter=function(r){"use strict";if(void 0===this||null===this)throw new TypeError;var t=Object(this),e=t.length>>>0;if("function"!=typeof r)throw new TypeError;for(var i=[],o=arguments.length>=2?arguments[1]:void 0,n=0;e>n;n++)if(n in t){var f=t[n];r.call(o,f,n,t)&&i.push(f)}return i});
 
 	function isArray(o) {
 		return Object.prototype.toString.call(o) === "[object Array]";
@@ -932,9 +933,7 @@ function JSONstat(resp,f,p){
 
 	/*
 		Transformation method: output in DataTable format (array or object)
-		Setup: opts={status: false, slabel: "Status", vlabel: "Value", field: "label", content: "label", type: "array"} (type values: "array" / "object" / "arrobj")
-
-		PENDING: use metric or any dim cat IDs instead of "value" and assign as many fields as metrics (pivot "by").
+		Setup: opts={by: null, meta: false, drop: [], status: false, slabel: "Status", vlabel: "Value", field: "label", content: "label", type: "array"} (type values: "array" / "object" / "arrobj")
 	*/
 	Jsonstat.prototype.toTable=function(opts, func){
 		if(this===null || this.class!=="dataset"){
@@ -953,7 +952,7 @@ function JSONstat(resp,f,p){
 			len
 		;
 
-		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false}; //default: use label for field names and content instead of "id"
+		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false}; //default: use label for field names and content instead of "id". "by", "prefix", drop & meta added on 0.13.0 (currently only for "arrobj", "by" cancels "unit")
 
 		if(typeof func==="function"){
 			totbl=this.toTable(opts);
@@ -984,7 +983,7 @@ function JSONstat(resp,f,p){
 		}
 
 		if(opts.type==="arrobj"){
-			totbl=this.toTable({field: "id", content: opts.content, status: opts.status});// At the moment, options besides "type" are not passed
+			totbl=this.toTable({field: "id", content: opts.content, status: opts.status});
 
 			var
 				tbl=[],
@@ -992,11 +991,51 @@ function JSONstat(resp,f,p){
 				//0.12.3
 				metric=dataset.role && dataset.role.metric,
 				addUnits=function(){},
-				metriclabels={}
+				metriclabels={},
+				//0.13.0 "by" is ignored if it's not an existing dimension ID
+				by=opts.by || null,
+				meta=(opts.meta===true),
+				drop=(typeof opts.drop!=="undefined" && isArray(opts.drop)) ? opts.drop : [],
+				ds=this,
+				ids=ds.id,
+				formatResp=function(arr){
+					if(meta){
+						var obj={};
+
+						ids.forEach(function(i){
+							var d=ds.Dimension(i);
+
+							obj[i]={
+								"label": d.label,
+								"role": d.role,
+								"length": d.length,
+								"by": i===by,
+								"drop": drop.indexOf(i)!==-1,
+								"categories": {
+									"id": d.id,
+									"label": ds.Dimension(i, false)
+								}
+							};
+						});
+
+						return {
+							"meta": {
+								"label": ds.label,
+								"source": ds.source,
+								"updated": ds.updated,
+								"dimensions": obj
+							},
+							"data": arr
+						};
+					}else{
+						//does nothing
+						return arr;
+					}
+				}
 			;
 
-			//0.12.3 Include unit information if there's any (only if arrobj)
-			if(opts.unit && metric){
+			//0.12.3 Include unit information if there's any (only if arrobj and 0.13.0 not "by")
+			if(by===null && opts.unit && metric){
 				if(opts.content!=="id"){
 					for(var m=metric.length; m--;){
 						var mdim=this.Dimension(metric[m]);
@@ -1025,7 +1064,85 @@ function JSONstat(resp,f,p){
 				}
 				tbl.push(tblr);
 			}
-			return tbl;
+
+			//0.13.0
+			//Categories' IDs of "by" dimension will be used as object properties: user can use "prefix" to avoid conflict with non-by dimensions' IDs
+			if(by!==null && ids.indexOf(by)!==-1){
+				var
+					save={},
+					arr=[],
+					labelid={},
+					assignValue,
+					prefix=(typeof opts.prefix!=="undefined") ? opts.prefix : ""
+				;
+
+				drop.forEach(function(id, i){
+					//remove incorrect ids & ids for dimensions with size>1 from the drop array
+					if( !ds.Dimension(id) || ds.Dimension(id).length>1 ){
+						drop[i]="";
+					}
+				});
+
+				var
+					noby=ids.filter(function(i) {
+						return i!==by && drop.indexOf(i)===-1;
+					}),
+					byDim=ds.Dimension(by),
+					setId=function(row, noby){
+						var a=[];
+
+						noby.forEach(function(e){
+							a.push(row[e]);
+						});
+
+						return a.join("\t");
+					},
+					setObj=function(row, noby){
+						var obj={};
+
+						noby.forEach(function(e){
+							obj[e]=row[e];
+						});
+
+						return obj;
+					}
+				;
+
+				//Fill labelid object (label->id) if content is "label"
+				//Define assignValue: do not use labelid if content is "id" 
+				if(opts.content!=="id"){
+					byDim.Category().forEach(function(c, i){
+						labelid[c.label]=byDim.id[i];
+					});
+
+					assignValue=function(save, id, row){
+						save[id][ prefix+labelid[row[by]] ]=row.value;
+					}
+				}else{
+					assignValue=function(save, id, row){
+						save[id][ prefix+row[by] ]=row.value;
+					}
+				}
+
+				tbl.forEach(function(row){
+					var id=setId(row, noby);
+
+					if(typeof save[id]==="undefined"){
+						save[id]=setObj(row, noby);
+					}
+
+					//We use a conditionally defined function to avoid an "if" inside the loop.
+					assignValue(save, id, row, by);
+				});
+
+				for(var prop in save){
+					arr.push(save[prop]);
+				}
+
+				return formatResp(arr);
+			}
+
+			return formatResp(tbl);
 		}
 
 		var
@@ -1069,7 +1186,7 @@ function JSONstat(resp,f,p){
 		}else{
 			//Array
 			addCol=function(dimid,dimlabel){
-				var colid=(useid && dimid) || dimlabel || dimid; //if userid then id; else label; then id if not label
+				var colid=(useid && dimid) || dimlabel || dimid; //if useid then id; else label; then id if not label
 				cols.push(colid);
 			};
 
@@ -1109,9 +1226,11 @@ function JSONstat(resp,f,p){
 		var dim=[], total=1, m=1, mult=[], dimexp=[], label=[], table=[], cols=[], rows=[];
 
 		for (i=0; i<ddil; i++){
-			var	dimid=ddi[i],
-					dimlabel=dd[dimid].label
+			var	
+				dimid=ddi[i],
+				dimlabel=dd[dimid].label
 			;
+
 			addCol(dimid,dimlabel); //Global cols
 
 			total*=dds[i];
