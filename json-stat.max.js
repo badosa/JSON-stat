@@ -1,7 +1,7 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.0 (JSON-stat v. 2.0 ready)
-http://json-stat.com
+JSON-stat Javascript Toolkit v. 0.13.1 (JSON-stat v. 2.0 ready)
+https://json-stat.com
 https://github.com/badosa/JSON-stat
 
 Copyright 2017 Xavier Badosa (http://xavierbadosa.com)
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.13.0";
+JSONstat.version="0.13.1";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -945,14 +945,15 @@ function JSONstat(resp,f,p){
 			opts=null;
 		}
 
+		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false}; //default: use label for field names and content instead of "id". "by", "prefix", drop & meta added on 0.13.0 (currently only for "arrobj", "by" cancels "unit")
+
 		var
 			totbl,
 			dataset=this.__tree__,
 			i, j, x,
-			len
+			len,
+			status=(opts.status===true) //0.13.1: be as strict as "meta": allow only booleans
 		;
-
-		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false}; //default: use label for field names and content instead of "id". "by", "prefix", drop & meta added on 0.13.0 (currently only for "arrobj", "by" cancels "unit")
 
 		if(typeof func==="function"){
 			totbl=this.toTable(opts);
@@ -983,7 +984,7 @@ function JSONstat(resp,f,p){
 		}
 
 		if(opts.type==="arrobj"){
-			totbl=this.toTable({field: "id", content: opts.content, status: opts.status});
+			totbl=this.toTable({field: "id", content: opts.content, status: status});
 
 			var
 				tbl=[],
@@ -993,11 +994,11 @@ function JSONstat(resp,f,p){
 				addUnits=function(){},
 				metriclabels={},
 				//0.13.0 "by" is ignored if it's not an existing dimension ID
-				by=opts.by || null,
-				meta=(opts.meta===true),
-				drop=(typeof opts.drop!=="undefined" && isArray(opts.drop)) ? opts.drop : [],
 				ds=this,
 				ids=ds.id,
+				by=(opts.by && ids.indexOf(opts.by)!==-1) ? opts.by : null,
+				meta=(opts.meta===true),
+				drop=(typeof opts.drop!=="undefined" && isArray(opts.drop)) ? opts.drop : [],
 				formatResp=function(arr){
 					if(meta){
 						var obj={};
@@ -1008,10 +1009,7 @@ function JSONstat(resp,f,p){
 							obj[i]={
 								"label": d.label,
 								"role": d.role,
-								"length": d.length,
-								"by": i===by,
-								"drop": drop.indexOf(i)!==-1,
-								"categories": {
+								"categories": { //diferent from JSON-stat on purpose: "id" is not "index" and "label" is different than JSON-stat categories' label.
 									"id": d.id,
 									"label": ds.Dimension(i, false)
 								}
@@ -1023,7 +1021,16 @@ function JSONstat(resp,f,p){
 								"label": ds.label,
 								"source": ds.source,
 								"updated": ds.updated,
-								"dimensions": obj
+
+								//0.13.1
+								"id": ids,
+								"status": status,
+								"unit": opts.unit,
+								"by": by,
+								"drop": by!==null && drop.length>0 ? drop : null,
+								"prefix": by!==null ? (prefix || "") : null,
+
+								"dimensions": obj //different from JSON-stat on purpose: the content is different and this export format is addressed to people probably not familiar with the JSON-stat format
 							},
 							"data": arr
 						};
@@ -1053,6 +1060,10 @@ function JSONstat(resp,f,p){
 						tblr.unit=dataset.dimension[d].category.unit[opts.content!=="id" ? metriclabels[d][c] : c];
 					}
 				};
+
+				opts.unit=true; //normalized
+			}else{
+				opts.unit=false;
 			}
 
 			len=totbl.length;
@@ -1067,7 +1078,7 @@ function JSONstat(resp,f,p){
 
 			//0.13.0
 			//Categories' IDs of "by" dimension will be used as object properties: user can use "prefix" to avoid conflict with non-by dimensions' IDs
-			if(by!==null && ids.indexOf(by)!==-1){
+			if(by!==null){
 				var
 					save={},
 					arr=[],
@@ -1139,6 +1150,7 @@ function JSONstat(resp,f,p){
 					arr.push(save[prop]);
 				}
 
+				status=false; //Incompatible with "by"
 				return formatResp(arr);
 			}
 
@@ -1247,7 +1259,7 @@ function JSONstat(resp,f,p){
 			dim.push(cat);
 			mult.push(m);
 		}
-		addColValue(opts.vlabel,opts.slabel,opts.status); //Global cols and table
+		addColValue(opts.vlabel,opts.slabel,status); //Global cols and table
 
 		//end of inversion: now use dim array
 		len=dim.length;
@@ -1279,7 +1291,7 @@ function JSONstat(resp,f,p){
 			for (var d=0; d<len; d++){
 				addRow(label[d][x]); //Global row
 			}
-			if(opts.status){
+			if(status){
 				addRow(
 					(this.status) ? this.status[x] : null
 				);

@@ -5,7 +5,7 @@
 	"keywords"      : ["util", "jsonstat", "stats", "data", "cube", "opendata"],
 	"author"        : {
 		"name": "Xavier Badosa",
-		"url": "http://xavierbadosa.com"
+		"url": "https://xavierbadosa.com"
 	},
 	"repository"    : {"type": "git", "url": "https://github.com/badosa/JSON-stat.git"},
 	"main"          : "module.js",
@@ -14,7 +14,7 @@
 	},
 	"dependencies": {},
 	"devDependencies": {},
-	"version"       : "0.13.0",
+	"version"       : "0.13.1",
 	"license"       : "Apache-2.0",
 	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js", "tonicdev.js", "json-stat.js"],
 	"tonicExampleFilename": "tonicdev.js"

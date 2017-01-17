@@ -2,9 +2,9 @@
 	"name": "jsonstat",
 	"author": {
 		"name": "Xavier Badosa",
-		"url": "http://xavierbadosa.com"
+		"url": "https://xavierbadosa.com"
 	},
-	"version": "0.13.0",
+	"version": "0.13.1",
 	"main": "json-stat.js",
 	"ignore": [
 		"**/.*"
