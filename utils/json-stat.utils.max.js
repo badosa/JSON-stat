@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.2.6 (requires JJT 0.10+)
-http://json-stat.com
+JSON-stat Javascript Utilities Suite v. 2.2.7 (requires JJT 0.10+)
+https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
-Copyright 2017 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2017 Xavier Badosa (https://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -661,7 +661,7 @@ var JSONstatUtils=function(){
 			csv=[],
 			vlabel=options.vlabel || "Value", //Same default as .toTable()
 			slabel=options.slabel || "Status", //Same default as .toTable()
-			status=options.status || false, //Same default as .toTable()
+			status=(options.status===true), //Same default as .toTable()
 			na=options.na || "n/a",
 			delimiter=options.delimiter || ",",
 			decimal=(delimiter===";") ?
@@ -678,12 +678,13 @@ var JSONstatUtils=function(){
 
 		var
 			table=ds.toTable({vlabel: vlabel, slabel: slabel, status: status, type: "array"}),
-			vcol=table[0].indexOf(vlabel)
+			vcol=table[0].indexOf(vlabel),
+			scol=status ? table[0].indexOf(slabel) : -1
 		;
 
 		table.forEach(function(r, j){
 			r.forEach(function(c, i){
-				if(i===vcol && j){
+				if(j && i===vcol){
 					if(c===null){
 						r[i]='"' + na + '"';
 					}else{
@@ -692,7 +693,11 @@ var JSONstatUtils=function(){
 						}
 					}
 				}else{
-					r[i]='"' + r[i] + '"';
+					if(j && i===scol && c===null){
+						r[i]=""; //Status does not use n/a because usually laking of status means "normal".
+					}else{
+						r[i]='"' + r[i] + '"';
+					}
 				}
 			});
 
@@ -1006,6 +1011,6 @@ var JSONstatUtils=function(){
 		fromCSV: fromCSV,
 		toCSV: toCSV,
 		join: join,
-		version: "2.2.6"
+		version: "2.2.7"
 	};
 }();
