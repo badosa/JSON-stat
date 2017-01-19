@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.1 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.13.2 (JSON-stat v. 2.0 ready)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.13.1";
+JSONstat.version="0.13.2";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -945,8 +945,8 @@ function JSONstat(resp,f,p){
 			opts=null;
 		}
 
-		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false}; //default: use label for field names and content instead of "id". "by", "prefix", drop & meta added on 0.13.0 (currently only for "arrobj", "by" cancels "unit")
-
+		//default: use label for field names and content instead of "id". "by", "prefix", drop & meta added on 0.13.0 (currently only for "arrobj", "by" cancels "unit"). "comma" is 0.13.2
+		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false, comma: false};
 		var
 			totbl,
 			dataset=this.__tree__,
@@ -999,6 +999,7 @@ function JSONstat(resp,f,p){
 				by=(opts.by && ids.indexOf(opts.by)!==-1) ? opts.by : null,
 				meta=(opts.meta===true),
 				drop=(typeof opts.drop!=="undefined" && isArray(opts.drop)) ? opts.drop : [],
+				comma=(opts.comma===true),
 				formatResp=function(arr){
 					if(meta){
 						var obj={};
@@ -1029,6 +1030,8 @@ function JSONstat(resp,f,p){
 								"by": by,
 								"drop": by!==null && drop.length>0 ? drop : null,
 								"prefix": by!==null ? (prefix || "") : null,
+								//0.13.2
+								"comma": comma,
 
 								"dimensions": obj //different from JSON-stat on purpose: the content is different and this export format is addressed to people probably not familiar with the JSON-stat format
 							},
@@ -1076,6 +1079,15 @@ function JSONstat(resp,f,p){
 				tbl.push(tblr);
 			}
 
+			//0.13.2
+			if(comma){
+				tbl.forEach(function(r){
+					if(r.value!==null){
+						r.value=(""+r.value).replace(".", ",");
+					}
+				});
+			}
+
 			//0.13.0
 			//Categories' IDs of "by" dimension will be used as object properties: user can use "prefix" to avoid conflict with non-by dimensions' IDs
 			if(by!==null){
@@ -1120,7 +1132,7 @@ function JSONstat(resp,f,p){
 				;
 
 				//Fill labelid object (label->id) if content is "label"
-				//Define assignValue: do not use labelid if content is "id" 
+				//Define assignValue: do not use labelid if content is "id"
 				if(opts.content!=="id"){
 					byDim.Category().forEach(function(c, i){
 						labelid[c.label]=byDim.id[i];
@@ -1238,7 +1250,7 @@ function JSONstat(resp,f,p){
 		var dim=[], total=1, m=1, mult=[], dimexp=[], label=[], table=[], cols=[], rows=[];
 
 		for (i=0; i<ddil; i++){
-			var	
+			var
 				dimid=ddi[i],
 				dimlabel=dd[dimid].label
 			;

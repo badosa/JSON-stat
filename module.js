@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.1 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.13.2 (JSON-stat v. 2.0 ready) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
-Copyright 2017 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2017 Xavier Badosa (https://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.13.1";
+JSONstat.version="0.13.2";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -871,8 +871,8 @@ function JSONstat(resp,f){
 			opts=null;
 		}
 
-		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false}; //default: use label for field names and content instead of "id". "by", "prefix", drop & meta added on 0.13.0 (currently only for "arrobj", "by" cancels "unit")
-
+		//default: use label for field names and content instead of "id". "by", "prefix", drop & meta added on 0.13.0 (currently only for "arrobj", "by" cancels "unit"). "comma" is 0.13.2
+		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false, comma: false};
 		var
 			totbl,
 			dataset=this.__tree__,
@@ -925,6 +925,7 @@ function JSONstat(resp,f){
 				by=(opts.by && ids.indexOf(opts.by)!==-1) ? opts.by : null,
 				meta=(opts.meta===true),
 				drop=(typeof opts.drop!=="undefined" && isArray(opts.drop)) ? opts.drop : [],
+				comma=(opts.comma===true),
 				formatResp=function(arr){
 					if(meta){
 						var obj={};
@@ -955,6 +956,8 @@ function JSONstat(resp,f){
 								"by": by,
 								"drop": by!==null && drop.length>0 ? drop : null,
 								"prefix": by!==null ? (prefix || "") : null,
+								//0.13.2
+								"comma": comma,
 
 								"dimensions": obj //different from JSON-stat on purpose: the content is different and this export format is addressed to people probably not familiar with the JSON-stat format
 							},
@@ -1000,6 +1003,15 @@ function JSONstat(resp,f){
 					addUnits(head[j], totbl[i][j]); //0.12.3
 				}
 				tbl.push(tblr);
+			}
+
+			//0.13.2
+			if(comma){
+				tbl.forEach(function(r){
+					if(r.value!==null){
+						r.value=(""+r.value).replace(".", ",");
+					}
+				});
 			}
 
 			//0.13.0
