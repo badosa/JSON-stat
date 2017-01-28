@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.2 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.13.3 (JSON-stat v. 2.0 ready)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.13.2";
+JSONstat.version="0.13.3";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
@@ -933,7 +933,7 @@ function JSONstat(resp,f,p){
 
 	/*
 		Transformation method: output in DataTable format (array or object)
-		Setup: opts={by: null, meta: false, drop: [], status: false, slabel: "Status", vlabel: "Value", field: "label", content: "label", type: "array"} (type values: "array" / "object" / "arrobj")
+		Setup: opts={by: null, bylabel: false, meta: false, drop: [], status: false, slabel: "Status", vlabel: "Value", field: "label", content: "label", type: "array"} (type values: "array" / "object" / "arrobj")
 	*/
 	Jsonstat.prototype.toTable=function(opts, func){
 		if(this===null || this.class!=="dataset"){
@@ -946,7 +946,7 @@ function JSONstat(resp,f,p){
 		}
 
 		//default: use label for field names and content instead of "id". "by", "prefix", drop & meta added on 0.13.0 (currently only for "arrobj", "by" cancels "unit"). "comma" is 0.13.2
-		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false, comma: false};
+		opts=opts || {field: "label", content: "label", vlabel: "Value", slabel: "Status", type: "array", status: false, unit: false, by: null, prefix: "", drop: [], meta: false, comma: false, bylabel: false};
 		var
 			totbl,
 			dataset=this.__tree__,
@@ -970,11 +970,11 @@ function JSONstat(resp,f,p){
 					arr[i], //Discarded for efficiency: (opts.type!=='object') ? arr[i] : arr[i].c,
 					i
 				);
-				if (typeof a!=="undefined"){
+				if(typeof a!=="undefined"){
 					ret.push(a);
 				}
 			}
-			if (opts.type==='object'){
+			if(opts.type==='object'){
 				return {cols: totbl.cols, rows: ret};
 			}
 			if(opts.type==='array'){
@@ -1000,6 +1000,7 @@ function JSONstat(resp,f,p){
 				meta=(opts.meta===true),
 				drop=(typeof opts.drop!=="undefined" && isArray(opts.drop)) ? opts.drop : [],
 				comma=(opts.comma===true),
+				bylabel=(opts.bylabel===true),
 				formatResp=function(arr){
 					if(meta){
 						var obj={};
@@ -1028,6 +1029,7 @@ function JSONstat(resp,f,p){
 								"status": status,
 								"unit": opts.unit,
 								"by": by,
+								"bylabel": bylabel,
 								"drop": by!==null && drop.length>0 ? drop : null,
 								"prefix": by!==null ? (prefix || "") : null,
 								//0.13.2
@@ -1131,15 +1133,20 @@ function JSONstat(resp,f,p){
 					}
 				;
 
-				//Fill labelid object (label->id) if content is "label"
-				//Define assignValue: do not use labelid if content is "id"
 				if(opts.content!=="id"){
-					byDim.Category().forEach(function(c, i){
-						labelid[c.label]=byDim.id[i];
-					});
+					//0.13.3
+					if(bylabel){
+						assignValue=function(save, id, row){
+							save[id][ prefix+row[by] ]=row.value;
+						}
+					}else{
+						byDim.Category().forEach(function(c, i){
+							labelid[c.label]=byDim.id[i];
+						});
 
-					assignValue=function(save, id, row){
-						save[id][ prefix+labelid[row[by]] ]=row.value;
+						assignValue=function(save, id, row){
+							save[id][ prefix+labelid[row[by]] ]=row.value;
+						}
 					}
 				}else{
 					assignValue=function(save, id, row){
