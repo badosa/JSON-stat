@@ -8,12 +8,12 @@
 		"url": "https://xavierbadosa.com"
 	},
 	"repository"    : {"type": "git", "url": "https://github.com/badosa/JSON-stat.git"},
-	"main"          : "utils/module.js",
+	"main"          : "module.js",
 	"dependencies": {
 		"jsonstat": "^0.13.3"
 	},
 	"devDependencies": {},
-	"version"       : "2.2.8",
+	"version"       : "2.2.9",
 	"license"       : "Apache-2.0",
-	"files"         : ["utils/module.js", "LICENSE", "utils/README.md", "utils/json-stat.utils.js"]
+	"files"         : ["module.js", "LICENSE", "README.md", "json-stat.utils.js"]
 }
