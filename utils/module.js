@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.3.0 (requires JJT 0.10+) (Nodejs module)
+JSON-stat Javascript Utilities Suite v. 2.3.1 (requires JJT 0.10+) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -812,13 +812,12 @@ var
 		}
 
 		return {
-			tbrowser: tbrowser,
 			datalist: datalist,
 			fromTable: fromTable,
 			fromCSV: fromCSV,
 			toCSV: toCSV,
 			join: join,
-			version: "2.3.0"
+			version: "2.3.1"
 		};
 	}()
 ;
