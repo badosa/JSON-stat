@@ -1,6 +1,6 @@
 # toCSV()
 
-Converts JSON-stat to the Comma Separated Values (CSV) file format. The JSON-stat input must be of class "dataset", "collection" (and have some embedded dataset) or "bundle".
+Converts JSON-stat to the Comma-Separated Values (CSV) file format. The JSON-stat input must be of class "dataset", "collection" (and have some embedded dataset) or "bundle".
 
 **<code><i>string</i> or <i>object</i> JSONstatUtils.toCSV ( <i>object</i> or <i>string</i> jsonstat [, <i>object</i> options] )
 </code>**
@@ -91,8 +91,20 @@ It is the character that will be used as the decimal mark. By default, it is "."
 
 #### dsid (positive integer or string)
 
-It is used to select a dataset when the JSON-stat input is of class "collection" or "bundle". When a positive integer is specified, it is interpreted as an index. By default, it is 0 (first dataset).  When a string is specified, it is the id of the selected dataset.
+It is used to select a dataset when the JSON-stat input is of class "collection" or "bundle". When a positive integer is specified, it is interpreted as an index. By default, it is 0 (first dataset). When a string is specified, it is the id of the selected dataset.
+
+#### rich (boolean)
+
+It is used to set the CSV flavor. See the [Return Value section](#return-value). By default, *false*.
+
+When **rich** is *true*, **vlabel**, **slabel** and **status** are ignored.
+
+#### separator (string)
+
+It is the character that will be used as the unit fields (number of decimals, unit label, symbol, symbol position) separator. It must be different from **delimiter** and cannot be a character present in the unit fields. When **rich** is *false*, it is ignored. By default, "|".
 
 ### Return Value
 
-It returns a string in the CSV format. On error it returns *null*.
+It returns a string in the CSV format. When **rich** is *true*, it returns a rich CSV string in the JSON-stat Comma-Separated Values format (CSV-stat, or JSV for short). CSV-stat is CSV plus a metadata header. CSV-stat supports all the JSON-stat dataset core semantics. This means that CSV-stat can be converted back to JSON-stat (using [fromCSV](fromcsv.md)) without loss of information (only the *note*, *link*, *child*, *coordinates* and *extension* properties are not currently supported).
+
+On error it returns *null*.

@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.2.7 (requires JJT 0.10+) (Nodejs module)
+JSON-stat Javascript Utilities Suite v. 2.3.0 (requires JJT 0.10+) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
-Copyright 2017 Xavier Badosa (https://xavierbadosa.com)
+Copyright 2018 Xavier Badosa (https://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -230,9 +230,12 @@ var
 						};
 					}else{ //status field is present
 						valuestatus=function(){
-							var v=tbl[dd][vlabel];
-							value[getPos(pos, size)]=( isNaN(v) ) ? null : v;
-							status[getPos(pos, size)]=tbl[dd][slabel];
+							var
+								v=tbl[dd][vlabel],
+								s=tbl[dd][slabel]
+							;
+							value[getPos(pos, size)]=( isNaN(v) ) ? null : v;//when missing na string
+							status[getPos(pos, size)]=( s==="" ) ? null : s; //when missing status, there will be a blank string
 						};
 					}
 				}
@@ -254,20 +257,34 @@ var
 			dimension.size=size;
 			*/
 
-			return {
+			var ret={
 				"version": "2.0",
 				"class": "dataset",
-				"label": label, //added in 1.2.2
 				"value": value,
-				"status": status,
 				"dimension": dimension,
 
 				//JSON-stat 2.00+
 				"id": id,
 				"size": size
-			};
+			}
+
+			//Since 3.0.0 we don't write this optional properties if not set
+			if(label){
+				ret.label=label;
+			}
+			if(status.length){
+				ret.status=status;
+			}
+			return ret;
 		}
 
+		//s string del delimiter
+		function dcomma(s,del){
+			return (s.indexOf(del)!==-1) ? '"'+ s +'"' : s;
+		}
+
+		//jsonstat, {rich, dsid, delimiter, decimal, na, [ignored if rich: vlabel, slabel, status], [ignored if not rich: separator]}
+		//Returns text (CSV or JSV[JSON-stat Comma Separed values or "CSV-stat" -Rich CSV-])
 		function toCSV(jsonstat, options){
 			if(typeof jsonstat==="undefined"){
 				return null;
@@ -278,12 +295,20 @@ var
 			}
 
 			var
-				csv=[],
-				vlabel=options.vlabel || "Value", //Same default as .toTable()
-				slabel=options.slabel || "Status", //Same default as .toTable()
-				status=(options.status===true), //Same default as .toTable()
+				csv="",
+				header="jsonstat",
+				rich=(options.rich===true), //2.3.0 Default: false (backward compat)
+
+				//The following options are ignored when rich
+				//When rich, toTable uses field=id and vlabel/slabel are ignored
+				vlabel=rich ? "value" : (options.vlabel || "Value"), //Same default as .toTable()
+				slabel=rich ? "status" : (options.slabel || "Status"), //Same default as .toTable()
+				status=(options.status===true), //Same default as .toTable(). If rich, it will be rewritten and set according to ds content
+
 				na=options.na || "n/a",
+
 				delimiter=options.delimiter || ",",
+				separator=options.separator || "|", //2.3.0 only if rich
 				decimal=(delimiter===";") ?
 					(options.decimal || ",")
 					:
@@ -296,8 +321,20 @@ var
 				return null;
 			}
 
+			//If rich, include status if available
+			if(rich){
+				status=!(ds.status===null);
+			}
+
 			var
-				table=ds.toTable({vlabel: vlabel, slabel: slabel, status: status, type: "array"}),
+				table=ds.toTable({
+					vlabel: vlabel,
+					slabel: slabel,
+					status: status,
+					field: rich ? "id" : "label",
+					content: rich ? "id" : "label",
+					type: "array"
+				}),
 				vcol=table[0].indexOf(vlabel),
 				scol=status ? table[0].indexOf(slabel) : -1
 			;
@@ -305,8 +342,8 @@ var
 			table.forEach(function(r, j){
 				r.forEach(function(c, i){
 					if(j && i===vcol){
-						if(c===null){
-							r[i]='"' + na + '"';
+						if( c===null ){
+							r[i]=dcomma(na,delimiter);
 						}else{
 							if(decimal!=="."){
 								r[i]=String(r[i]).replace(".", decimal);
@@ -314,9 +351,9 @@ var
 						}
 					}else{
 						if(j && i===scol && c===null){
-							r[i]=""; //Status does not use n/a because usually laking of status means "normal".
+							r[i]=""; //Status does not use n/a because usually lacking of status means "normal".
 						}else{
-							r[i]='"' + r[i] + '"';
+							r[i]=dcomma(r[i],delimiter);
 						}
 					}
 				});
@@ -324,10 +361,66 @@ var
 				csv+=r.join(delimiter)+"\n";
 			});
 
+			if(rich){
+				header+=delimiter+decimal+delimiter+separator+"\n";
+				["label", "source", "updated", "href"].forEach(function(s){
+					if(ds[s]){
+						header+=s+delimiter+dcomma(ds[s],delimiter)+"\n";
+					}
+				});
+
+				//dimensions
+				ds.id.forEach(function(e,i){
+					var
+						unit=[],
+						dim=ds.Dimension(i),
+						role=dim.role,
+						hasUnit=false
+					;
+
+					header+="dimension"+delimiter+dcomma(e,delimiter)+delimiter+dcomma(dim.label,delimiter)+delimiter+dim.length;
+
+					if(role==="metric" && dim.__tree__.category.unit){
+						hasUnit=true;
+					}
+
+					//categories
+					dim.id.forEach(function(e,i){
+						var
+							u=[],
+							cat=dim.Category(i)
+						;
+						header+=delimiter+dcomma(e,delimiter)+delimiter+dcomma(cat.label,delimiter);
+						if(hasUnit){
+							u.push(
+								cat.unit.hasOwnProperty("decimals") ? cat.unit.decimals : ""
+							);
+							u.push(cat.unit.label||"");
+							if(cat.unit.symbol){
+								u.push(cat.unit.symbol);
+								u.push(cat.unit.position);
+							}
+							unit.push(dcomma( u.join(separator), delimiter));
+						}
+					});
+
+					if(role!=="classification"){
+						header+=delimiter+dim.role;
+						if(hasUnit){
+							header+=delimiter+unit.join(delimiter);
+						}
+					}
+
+					header+="\n";
+				});
+
+				csv=header+"data\n"+csv;
+			}
+
 			return csv;
 		}
 
-		//csv, {vlabel, slabel, delimiter, decimal, label}
+		//csv, {delimiter, decimal, vlabel, slabel, label} All options ignored if not rich
 		//Returns JSONstat
 		function fromCSV(csv, options){
 			if(typeof csv==="undefined"){
@@ -339,17 +432,41 @@ var
 			}
 
 			var
+				header=[],
 				vcol=null,
-				delimiter=options.delimiter || ",",
-				vlabel=options.vlabel,
+				nrows,
+				i,
+				roleExist=false,
+				role={ time: [], geo: [], metric: [] },
+				ret,
+				separator,
+
+				rich=(csv.substring(0,8)==="jsonstat"), //Rich CSV (CSV-stat)
+				//All options will be ignored if rich
+				vlabel=rich ? "value" : options.vlabel,
+				slabel=rich ? "status" : options.slabel,
+
+				delimiter=rich ? csv.substring(8,9) : (options.delimiter || ","), //CSV column delimiter
 				decimal=(delimiter===";") ?
 					(options.decimal || ",")
 					:
 					(options.decimal || "."),
-				table=CSVToArray(csv.trim(), delimiter),
-				nrows=table.length,
-				i=table[0].length
+				table=CSVToArray( csv.trim(), delimiter )
 			;
+
+			if(rich){
+				decimal=table[0][1];
+				separator=table[0][2];
+
+				table.shift();
+				while(table[0][0]!=="data"){
+					header.push(table.shift());
+				}
+				table.shift();
+			}
+
+			nrows=table.length;
+			i=table[0].length;
 
 			//2.1.3: If no vlabel, last column used
 			if(typeof vlabel!=="undefined"){
@@ -377,15 +494,85 @@ var
 				}
 			}
 
-
-			return fromTable(
+			ret=fromTable(
 				table, {
 					vlabel: vlabel,
-					slabel: options.slabel || "Status", //Same default as .toTable()
+					slabel: slabel,
 					type: "array",
-					label: options.label || ""
+					label: options.label || "" //It will be rewritten if rich
 				})
 			;
+
+			if(rich){
+				header.forEach(function(e,i){
+					var i, label, len, dim, cat, unit;
+					switch (e[0]) {
+						case "dimension":
+							dim=ret.dimension[e[1]];
+							dim.label=e[2];
+							cat=dim.category;
+
+							label={};
+							len=(e[3]*2)+3;
+							if(e.length>=len){
+								for(i=4; i<len; i++){ //3=4-1
+									Object.defineProperty( label, e[i], {
+										value: e[++i],
+										writable: true,
+										configurable: true,
+										enumerable: true
+									});
+
+									cat.label=label;
+								}
+								//role info available?
+								if(typeof e[i]==="string" && ["time", "geo", "metric"].indexOf(e[i])!==-1){
+									role[e[i]].push(e[1]);
+									roleExist=true;
+
+									//Unit info available?
+									if(e[i]==="metric" && typeof e[++i]==="string"){
+										cat.unit={};
+										//For each category extract unit info
+										cat.index.forEach(function(c,j){
+											var u=e[i+j].split(separator);
+											cat.unit[c]={};
+											unit=cat.unit[c];
+
+											if(typeof u[0]!=="undefined" && u[0]!==""){
+												unit.decimals=u[0]*1;
+											}
+											if(typeof u[1]!=="undefined" && u[1]!==""){
+												unit.label=u[1];
+											}
+											if(typeof u[2]!=="undefined" && u[2]!==""){
+												unit.symbol=u[2];
+											}
+											if(typeof u[1]!=="undefined" && ["start","end"].indexOf(u[3])!==-1){
+												unit.position=u[3];
+											}
+										});
+									}
+								}
+							}
+						break;
+						case "label":
+						case "source":
+						case "updated":
+						case "href":
+							ret[e[0]]=e[1] || "";
+						break;
+						//No default case: ignore lines with unknown tags. If known tags are void, empty string
+					}
+
+					if(roleExist){
+						ret.role=role;
+					}
+				});
+			}
+
+			return ret;
+
 		}
 
 		//Private
@@ -481,12 +668,11 @@ var
 		}
 
 		function dataset(j, dsid){
-			if(typeof j==="undefined" ||
-				typeof j==="string" //uri (synchronous!) not supporeted in nodejs module
-				){
+			if(typeof j==="undefined"){
 				return null;
 			}
 			if(
+				typeof j==="string" || //uri (synchronous!)
 				typeof j.length==="undefined" //JSON-stat response
 				){
 				j=JSONstat(j);
@@ -610,7 +796,7 @@ var
 				input=input.concat( tbl.slice(1) ); //or .push.apply
 			});
 
-			var ds=JSONstatUtils.fromTable(input);
+			var ds=fromTable(input);
 
 			output.value=ds.value;
 			output.size=ds.size;
@@ -626,13 +812,13 @@ var
 		}
 
 		return {
-			/* tbrowser: tbrowser, not in nodejs */
+			tbrowser: tbrowser,
 			datalist: datalist,
 			fromTable: fromTable,
 			fromCSV: fromCSV,
 			toCSV: toCSV,
 			join: join,
-			version: "2.2.7"
+			version: "2.3.0"
 		};
 	}()
 ;
