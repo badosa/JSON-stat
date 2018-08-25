@@ -17,7 +17,7 @@ JJUS can also be run on the server as a [Node.js module](https://www.npmjs.com/p
 npm install jsonstat-utils
 ```
 
-This module has all the functionality of the client version except [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md).
+This module has all the functionality of the client version except [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md). This functionality is also available in the command line (install the [JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv)).
 
 JJUS includes 6 functions:
 
