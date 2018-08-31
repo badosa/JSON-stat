@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.3.2 (requires JJT 0.10+) (Nodejs module)
+JSON-stat Javascript Utilities Suite v. 2.3.3 (requires JJT 0.10+) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -137,6 +137,7 @@ var
 				slabel=options.slabel || "Status",
 				type=options.type || "array", //default is array as in .toTable()
 				label=options.label || "",
+				header=options.header || null, //internal option for rich CSV (CSV-stat) v. 2.3.3
 
 				id=[],
 				size=[],
@@ -203,7 +204,10 @@ var
 				break;
 			}
 
-			var obs=tbl.length;
+			var
+			 	hdim,
+				obs=tbl.length
+			;
 
 			//Dimensions are taken from first observation
 			for(var field in tbl[0]){
@@ -211,23 +215,35 @@ var
 					if(field!==slabel){
 						id.push(field);
 
-						odims[field]=[];
-						for(var j=0; j<obs; j++){
-							var e=tbl[j][field];
+						//if rich
+						if(header){
+							hdim=header.dimension[field];
+							odims[field]=hdim.category.index;
+						}else{
+							odims[field]=[];
+							for(var j=0; j<obs; j++){
+								var e=tbl[j][field];
 
-							if(odims[field].indexOf(e)===-1){
-								odims[field].push(e);
+								if(odims[field].indexOf(e)===-1){
+									odims[field].push(e);
+								}
 							}
 						}
-
 						size.push(odims[field].length);
 
 						dimension[field]={
-							"label": field,
+							"label": header ? hdim.label : field,
 							"category": {
 								"index": odims[field]
 							}
 						};
+
+						if(header){
+							dimension[field].category.label=hdim.category.label;
+							if(hdim.category.unit){
+								dimension[field].category.unit=hdim.category.unit;
+							}
+						}
 					}else{ //status field is present
 						valuestatus=function(){
 							var
@@ -268,13 +284,32 @@ var
 				"size": size
 			}
 
-			//Since 3.0.0 we don't write this optional properties if not set
+			//Since 3.0.0 we don't write these optional properties if not set
 			if(label){
-				ret.label=label;
+				ret.label=label; //it will be rewritten if rich (header set)
 			}
 			if(status.length){
 				ret.status=status;
 			}
+
+			if(header){
+				if(header.label){
+					ret.label=header.label;
+				}
+				if(header.source){
+					ret.source=header.source;
+				}
+				if(header.updated){
+					ret.updated=header.updated;
+				}
+				if(header.href){
+					ret.href=header.href;
+				}
+				if(header.role){
+					ret.role=header.role;
+				}
+			}
+
 			return ret;
 		}
 
@@ -420,7 +455,7 @@ var
 			return csv;
 		}
 
-		//csv, {delimiter, decimal, vlabel, slabel, label} All options ignored if not rich
+		//csv, {delimiter, decimal, vlabel, slabel, label} All options ignored if rich
 		//Returns JSONstat
 		function fromCSV(csv, options){
 			if(typeof csv==="undefined"){
@@ -438,7 +473,6 @@ var
 				i,
 				roleExist=false,
 				role={ time: [], geo: [], metric: [] },
-				ret,
 				separator,
 
 				rich=(csv.substring(0,8)==="jsonstat"), //Rich CSV (CSV-stat)
@@ -463,68 +497,36 @@ var
 					header.push(table.shift());
 				}
 				table.shift();
-			}
 
-			nrows=table.length;
-			i=table[0].length;
-
-			//2.1.3: If no vlabel, last column used
-			if(typeof vlabel!=="undefined"){
-				for(;i--;){
-					if(table[0][i]===vlabel){
-						vcol=i;
-						break;
-					}
-				}
-				if(vcol===null){
-					return null; //vlabel not found in the CSV
-				}
-			}else{//simple standard CSV without status: value is last column
-				vcol=i-1;
-				vlabel=table[0][vcol];
-			}
-
-			if(decimal===","){
-				for(i=1; i<nrows; i++){
-					table[i][vcol]=Number(table[i][vcol].replace(",", "."));
-				}
-			}else{
-				for(i=1; i<nrows; i++){
-					table[i][vcol]=Number(table[i][vcol]);
-				}
-			}
-
-			ret=fromTable(
-				table, {
-					vlabel: vlabel,
-					slabel: slabel,
-					type: "array",
-					label: options.label || "" //It will be rewritten if rich
-				})
-			;
-
-			if(rich){
+				var obj={ dimension: {} };
 				header.forEach(function(e,i){
-					var i, label, len, dim, cat, unit;
+					var i, label, len, dim, cat, unit, id, lab;
 					switch (e[0]) {
 						case "dimension":
-							dim=ret.dimension[e[1]];
+							obj.dimension[e[1]]={};
+							dim=obj.dimension[e[1]];
 							dim.label=e[2];
+							dim.category={};
 							cat=dim.category;
+							cat.index=[]; //Ignore index returned by fromTable(): take ids order from header
 
 							label={};
 							len=(e[3]*2)+3;
 							if(e.length>=len){
 								for(i=4; i<len; i++){ //3=4-1
-									Object.defineProperty( label, e[i], {
-										value: e[++i],
+									id=e[i];
+									lab=e[++i];
+									Object.defineProperty( label, id, {
+										value: lab,
 										writable: true,
 										configurable: true,
 										enumerable: true
 									});
 
 									cat.label=label;
+									cat.index.push(id);
 								}
+
 								//role info available?
 								if(typeof e[i]==="string" && ["time", "geo", "metric"].indexOf(e[i])!==-1){
 									role[e[i]].push(e[1]);
@@ -560,19 +562,55 @@ var
 						case "source":
 						case "updated":
 						case "href":
-							ret[e[0]]=e[1] || "";
+							obj[e[0]]=e[1] || null;
 						break;
 						//No default case: ignore lines with unknown tags. If known tags are void, empty string
 					}
 
 					if(roleExist){
-						ret.role=role;
+						obj.role=role;
 					}
 				});
 			}
 
-			return ret;
+			nrows=table.length;
+			i=table[0].length;
 
+			//2.1.3: If no vlabel, last column used
+			if(typeof vlabel!=="undefined"){
+				for(;i--;){
+					if(table[0][i]===vlabel){
+						vcol=i;
+						break;
+					}
+				}
+				if(vcol===null){
+					return null; //vlabel not found in the CSV
+				}
+			}else{//simple standard CSV without status: value is last column
+				vcol=i-1;
+				vlabel=table[0][vcol];
+			}
+
+			if(decimal===","){
+				for(i=1; i<nrows; i++){
+					table[i][vcol]=Number(table[i][vcol].replace(",", "."));
+				}
+			}else{
+				for(i=1; i<nrows; i++){
+					table[i][vcol]=Number(table[i][vcol]);
+				}
+			}
+
+			return fromTable(
+				table, {
+					header: obj, //internal option for rich (CSV-stat)
+					vlabel: vlabel,
+					slabel: slabel,
+					type: "array",
+					label: options.label || "" //It will be rewritten if rich
+				})
+			;
 		}
 
 		//Private
@@ -817,7 +855,7 @@ var
 			fromCSV: fromCSV,
 			toCSV: toCSV,
 			join: join,
-			version: "2.3.2"
+			version: "2.3.3"
 		};
 	}()
 ;

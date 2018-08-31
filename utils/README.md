@@ -9,9 +9,9 @@ Download the latest versions of [json-stat.js](https://github.com/badosa/JSON-st
 <script src="/your-js-dir/json-stat.utils.js"></script>
 ```
 
-While JJT works on any browser, JJUS requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *querySelector*, *querySelectorAll* and *trim*.
+While JJT works on any browser, JJUS requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *Array.indexOf* and *trim* (*querySelector*, *querySelectorAll* also required for [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)).
 
-JJUS can also be run on the server as a [Node.js module](https://www.npmjs.com/package/jsonstat-utils). Type the following command to install:
+JJUS can also be run on the server as a Node.js module. Type the following command to install:
 
 ```
 npm install jsonstat-utils
