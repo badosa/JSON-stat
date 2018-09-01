@@ -105,6 +105,6 @@ It is the character that will be used as the unit fields (number of decimals, un
 
 ### Return Value
 
-It returns a string in the CSV format. When **rich** is *true*, it returns a rich CSV string in the JSON-stat Comma-Separated Values format (CSV-stat, or JSV for short). CSV-stat is CSV plus a metadata header. CSV-stat supports all the JSON-stat dataset core semantics. This means that CSV-stat can be converted back to JSON-stat (using [fromCSV](fromcsv.md)) without loss of information (only the *note*, *link*, *child*, *coordinates* and *extension* properties are not currently supported).
+It returns a string in the CSV format. When **rich** is *true*, it returns a rich CSV string in the [JSON-stat Comma-Separated Values format](https://github.com/badosa/CSV-stat) (CSV-stat, or JSV for short). CSV-stat is CSV plus a metadata header. CSV-stat supports all the JSON-stat dataset core semantics. This means that CSV-stat can be converted back to JSON-stat (using [fromCSV](fromcsv.md)) without loss of information (only the *note*, *link*, *child*, *coordinates* and *extension* properties are not currently supported).
 
 On error it returns *null*.
