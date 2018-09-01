@@ -31,7 +31,7 @@ It must be a string in the Comma-Separated Values (CSV) format with a first row 
 
 By default, a CSV with values in the last column and no status column is expected. Use **vlabel** and **slabel** options when this is not the case.
 
-CSV-stat is also supported. The JSON-stat Comma-Separated Values format (CSV-stat, or JSV for short) is CSV plus a metadata header. CSV-stat supports all the JSON-stat dataset core semantics. This means that CSV-stat can be created using [toCSV](tocsv.md) and converted back to JSON-stat without loss of information (only the *note*, *link*, *child*, *coordinates* and *extension* properties are not currently supported).
+CSV-stat is also supported. The [JSON-stat Comma-Separated Values format](https://github.com/badosa/CSV-stat) (CSV-stat, or JSV for short) is CSV plus a metadata header. CSV-stat supports all the JSON-stat dataset core semantics. This means that CSV-stat can be created using [toCSV](tocsv.md) and converted back to JSON-stat without loss of information (only the *note*, *link*, *child*, *coordinates* and *extension* properties are not currently supported).
 
 When CSV-stat is detected, all options are ignored.
 
