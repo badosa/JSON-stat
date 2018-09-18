@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.3.3 (requires JJT 0.10+) (Nodejs module)
+JSON-stat Javascript Utilities Suite v. 2.4.0 (requires JJT 0.10+) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -849,13 +849,175 @@ var
 			return output;
 		}
 
+		//Since 2.4.0. Input: SDMX-JSON flat flavor
+		function fromSDMX(sdmx){
+			if(typeof sdmx!=="object" || !sdmx.hasOwnProperty("dataSets") || Object.prototype.toString.call(sdmx.dataSets) !== "[object Array]"){
+				return null;
+			}
+
+			//Only support for flat format with 1 dataset
+			if(sdmx.dataSets.length!==1){
+				return null;
+			}
+			if(!sdmx.dataSets[0].hasOwnProperty("observations")){
+				return null;
+			}
+
+			var
+				meta=sdmx.structure,
+				data=sdmx.dataSets[0].observations, //assuming one dataset and flat flavor
+				attr=meta.attributes.observation,
+				dim=meta.dimensions
+			;
+
+			if(!dim.hasOwnProperty("observation")){
+				return null;
+			}
+			//series not null or empty {}?
+			if(dim.hasOwnProperty("series") && (dim.series!==null || Object.keys(dim.series).length) ){
+				return null;
+			}
+
+			var
+				id=[],
+				size=[],
+				dimension={},
+				statusId=[],
+				role={ time: [], geo: [] /*, metric: [] no metric so far*/ },
+
+				getValueIndex=function(jsonstat, indices){
+					var size=jsonstat.size;
+
+					//If metadata at the dataSet level, indices.length<size.length: difference must be filled with 0
+					for( var j=size.length-indices.length; j--; ){
+						indices.push(0);
+					}
+
+					for( var i=0, ndims=size.length, num=0, mult=1; i<ndims; i++ ){
+						mult*=( i>0 ) ? size[ndims-i] : 1;
+						num+=mult*indices[ndims-i-1];
+					}
+
+					return num;
+				},
+				getDimInfo=function(o){
+					dimension[o.id]={ label: o.name };
+
+					if(o.hasOwnProperty("role")){
+						switch(o.role){
+							case "REF_AREA": role.geo.push(o.id); break;
+							case "TIME_PERIOD": role.time.push(o.id); break;
+							//case "UNIT_MEASURE": attribute
+						}
+					}
+
+					Object.defineProperty(dimension[o.id], "category", {
+						value: { index: [], label: {} },
+						writable: true,
+						enumerable: true
+					});
+
+					id.push(o.id);
+					size.push(o.values.length);
+
+					var cat=dimension[o.id].category;
+					o.values.forEach(function(v){
+						cat.index.push(v.id);
+
+						Object.defineProperty(cat.label, v.id, {
+							value: v.name,
+							writable: true,
+							enumerable: true
+						});
+					});
+				},
+
+				self=sdmx.header.links.find(function(e){return e.rel==="request"}),
+				statusPos=attr.findIndex(function(e){return e.id==="OBS_STATUS"});
+			;
+
+			if(statusPos!==-1){
+				//any status value?
+				if(!attr[statusPos].values.length){
+					statusPos=-1;
+				}else{
+					statusId=attr[statusPos].values;
+				}
+			}
+
+			//Metadata: obs level
+			dim.observation.forEach(getDimInfo);
+
+			//Metadata: dataset level [constant dimensions]
+			//Even though in OECD's API "Dimensions and attributes with only one requested value are not yet moved to dataset level even though the draft specification (see example message) would allow this"
+			if(dim.hasOwnProperty("dataSet")){
+				dim.dataSet.forEach(getDimInfo);
+			}
+
+			//Void dataset
+			var stat={
+				version: "2.0",
+				class: "dataset",
+				updated: sdmx.header.prepared || null, //Not exactly the same thing... but publicationYear and publicationPeriod usually missing
+				source: sdmx.header.sender.name || null, //Not exactly the same thing...
+				label: meta.name || null,
+				id: id,
+				size: size,
+				dimension: dimension,
+				value: []
+			}
+
+			if(self){
+				stat.link={
+					alternate: [
+						{
+							type: "application/vnd.sdmx.data+json",
+							href: self.href
+						}
+					]
+				};
+			}
+
+			//No metric so far (metric treatment in SDMX/JSON-stat completely different)
+			if(role.geo.length+role.time.length>0){
+				if(role.time.length===0){
+					role.time=null;
+				}
+				if(role.geo.length===0){
+					delete role.geo;
+				}
+				stat.role=role;
+			}
+
+			//Keep status labels in extension (Eurostat-like)
+			if(statusPos!==-1){
+				stat.status=[];
+				stat.extension={ status: { label: {} } };
+				statusId.forEach(function(e){
+					stat.extension.status.label[e.id]=e.name;
+				});
+			}
+
+			//Data+Status
+			for(var ndx in data){
+				var posArr=ndx.split(":");
+				stat.value[ getValueIndex(stat, posArr) ] = data[ndx][0];
+				if(statusPos!==-1){
+					stat.status[ getValueIndex(stat, posArr) ] = statusId[ data[ndx][statusPos] ].id;
+				}
+			}
+
+			return stat;
+		}
+
 		return {
 			datalist: datalist,
 			fromTable: fromTable,
 			fromCSV: fromCSV,
 			toCSV: toCSV,
 			join: join,
-			version: "2.3.3"
+			fromSDMX: fromSDMX,
+			version: "2.4.0"
 		};
 	}()
 ;
