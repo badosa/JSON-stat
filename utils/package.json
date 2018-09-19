@@ -13,7 +13,7 @@
 		"jsonstat": "^0.13.3"
 	},
 	"devDependencies": {},
-	"version"       : "2.4.0",
+	"version"       : "2.4.1",
 	"license"       : "Apache-2.0",
 	"files"         : ["module.js", "LICENSE", "README.md", "json-stat.utils.js"]
 }

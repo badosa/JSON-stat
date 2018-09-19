@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.4.0 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.4.1 (requires JJT 0.10+)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -1392,10 +1392,11 @@ var JSONstatUtils=function(){
 		}
 
 		//Data+Status
+		statusPos++; //index 1 instead of 0 because obs array has value in pos 0.
 		for(var ndx in data){
 			var posArr=ndx.split(":");
 			stat.value[ getValueIndex(stat, posArr) ] = data[ndx][0];
-			if(statusPos!==-1){
+			if(statusPos!==0 && data[ndx][statusPos]!==null){
 				stat.status[ getValueIndex(stat, posArr) ] = statusId[ data[ndx][statusPos] ].id;
 			}
 		}
@@ -1411,6 +1412,6 @@ var JSONstatUtils=function(){
 		toCSV: toCSV,
 		join: join,
     fromSDMX: fromSDMX,
-		version: "2.4.0"
+		version: "2.4.1"
 	};
 }();
