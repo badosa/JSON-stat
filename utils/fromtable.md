@@ -56,6 +56,18 @@ It is the name of the status column. By default, "Status". If no column has the 
 
 It is a text that will be used as the dataset label. By default, "".
 
+#### ovalue (boolean)
+
+When *true*, the *value* property in the resulting JSON-stat object will be an object instead of an array. By default, *false*.
+
+(This option was mainly added for the [JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv) where speed is probably not critical. The way it is implemented in *fromTable()* requires post-processing the data. That's why it is not recommended unless size is more important than speed. Take into account that the resulting JSON-stat will be lighter using an object for *value* only if there are a lot of missing values.)
+
+#### ostatus (boolean)
+
+When *true*, the *status* property in the resulting JSON-stat object, if present, will be an object instead of an array. By default, *false*.
+
+(This option was mainly added for the [JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv) where speed is probably not critical. The way it is implemented in *fromTable()* requires post-processing the data. That's why it is not recommended unless size is more important than speed. Usually, using an object for *status* returns a lighter JSON-stat because, usually, only a small amount of data has status information attached.)
+
 ### Return Value
 
 It returns an object in the JSON-stat format with *class* "dataset". This object can be processed by JJT. On error it returns *null*.

@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.4.1 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.4.2 (requires JJT 0.10+)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -20,7 +20,7 @@ permissions and limitations under the License.
 
 */
 
-//Required polyfills for old browsers: forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored), trim, Array.indexOf, find, findIndex
+//Required polyfills for old browsers: forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored), trim, Array.indexOf, find, findIndex, reduce
 /* global JSONstat */
 /* jshint newcap:false */
 var JSONstatUtils=function(){
@@ -516,6 +516,7 @@ var JSONstatUtils=function(){
 		return '<table class="'+tblclass+'"><caption>'+(options.caption || ds.label || "")+'</caption>'+tfoot+'<tbody>'+trs+"</tbody></table>";
 	}
 
+	//Since 2.4.2 ovalue, ostatus
 	function fromTable(tbl, options){
 		if(typeof tbl==="undefined"){
 			return null;
@@ -523,6 +524,13 @@ var JSONstatUtils=function(){
 
 		if(typeof options==="undefined"){
 			options={};
+		}
+
+		if(typeof options.ovalue!=="boolean"){
+			options.ovalue=false;
+		}
+		if(typeof options.ostatus!=="boolean"){
+			options.ostatus=false;
 		}
 
 		var
@@ -598,7 +606,7 @@ var JSONstatUtils=function(){
 		}
 
 		var
-		 	hdim,
+			hdim,
 			obs=tbl.length
 		;
 
@@ -675,7 +683,7 @@ var JSONstatUtils=function(){
 			//JSON-stat 2.00+
 			"id": id,
 			"size": size
-		}
+		};
 
 		//Since 3.0.0 we don't write these optional properties if not set
 		if(label){
@@ -703,7 +711,35 @@ var JSONstatUtils=function(){
 			}
 		}
 
+
+		//in fromTable (and as a consequence in fromCSV), vs. fromSDMX,
+		//ovalue and ostatus is done in a post processing (because it as added mainly
+		//for jsonstat-conv where speed is not super important)
+		if(options.ovalue){
+			ret.value=arr2obj(ret, "value");
+		}
+		if(options.ostatus && ret.hasOwnProperty("status")){
+			ret.status=arr2obj(ret, "status");
+		}
+
 		return ret;
+	}
+
+	//o object p property
+	function arr2obj(o,p){
+		var ret={};
+
+		if(Object.prototype.toString.call(o[p]) === '[object Array]'){
+			o[p].forEach(function(e,i){
+				if(e!==null){
+					ret[String(i)]=e;
+				}
+			});
+
+			return ret;
+		}
+
+		return o[p];
 	}
 
 	//s string del delimiter
@@ -848,7 +884,7 @@ var JSONstatUtils=function(){
 		return csv;
 	}
 
-	//csv, {delimiter, decimal, vlabel, slabel, label} All options ignored if rich
+	//csv, {delimiter, decimal, vlabel, slabel, label, ostatus, ovalue} All options ignored if rich
 	//Returns JSONstat
 	function fromCSV(csv, options){
 		if(typeof csv==="undefined"){
@@ -1001,7 +1037,9 @@ var JSONstatUtils=function(){
 				vlabel: vlabel,
 				slabel: slabel,
 				type: "array",
-				label: options.label || "" //It will be rewritten if rich
+				label: options.label || "", //It will be rewritten if rich,
+				ovalue: options.ovalue || false,
+				ostatus: options.ostatus || false
 			})
 		;
 	}
@@ -1243,7 +1281,8 @@ var JSONstatUtils=function(){
 	}
 
 	//Since 2.4.0. Input: SDMX-JSON flat flavor
-	function fromSDMX(sdmx){
+	//Options (ovalue, ostatus) added in 2.4.2
+	function fromSDMX(sdmx, options){
 		if(typeof sdmx!=="object" || !sdmx.hasOwnProperty("dataSets") || Object.prototype.toString.call(sdmx.dataSets) !== "[object Array]"){
 			return null;
 		}
@@ -1252,8 +1291,22 @@ var JSONstatUtils=function(){
 		if(sdmx.dataSets.length!==1){
 			return null;
 		}
-		if(!sdmx.dataSets[0].hasOwnProperty("observations")){
+		if(!sdmx.dataSets[0].hasOwnProperty("observations")){ //better to look for dataset with "action": "Information"?
 			return null;
+		}
+
+		if(typeof options==="undefined"){
+			options={
+				ovalue: false, //array
+				ostatus: false //array
+			};
+		}else{
+			if(typeof options.ovalue!=="boolean"){
+				options.ovalue=false;
+			}
+			if(typeof options.ostatus!=="boolean"){
+				options.ostatus=false;
+			}
 		}
 
 		var
@@ -1277,6 +1330,7 @@ var JSONstatUtils=function(){
 			dimension={},
 			statusId=[],
 			role={ time: [], geo: [] /*, metric: [] no metric so far*/ },
+			assignStatus=function(){}, //void unless there's status info
 
 			getValueIndex=function(jsonstat, indices){
 				var size=jsonstat.size;
@@ -1357,7 +1411,7 @@ var JSONstatUtils=function(){
 			id: id,
 			size: size,
 			dimension: dimension,
-			value: []
+			value: options.ovalue ? {} : []
 		}
 
 		if(self){
@@ -1384,20 +1438,49 @@ var JSONstatUtils=function(){
 
 		//Keep status labels in extension (Eurostat-like)
 		if(statusPos!==-1){
-			stat.status=[];
+			stat.status=options.ostatus ? {} : [];
 			stat.extension={ status: { label: {} } };
 			statusId.forEach(function(e){
 				stat.extension.status.label[e.id]=e.name;
 			});
+
+			assignStatus=(options.ostatus) ?
+				function(){
+					var statusVal=data[ndx][statusPos];
+					if(statusVal!==null){
+						stat.status[ getValueIndex(stat, posArr) ] = statusId[ statusVal ].id;
+					}
+				}
+				:
+				function(){
+					var statusVal=data[ndx][statusPos];
+					stat.status[ getValueIndex(stat, posArr) ] = statusVal===null ? null : statusId[ statusVal ].id;
+				}
+			;
 		}
 
 		//Data+Status
 		statusPos++; //index 1 instead of 0 because obs array has value in pos 0.
 		for(var ndx in data){
 			var posArr=ndx.split(":");
-			stat.value[ getValueIndex(stat, posArr) ] = data[ndx][0];
-			if(statusPos!==0 && data[ndx][statusPos]!==null){
-				stat.status[ getValueIndex(stat, posArr) ] = statusId[ data[ndx][statusPos] ].id;
+
+			if(!options.ovalue || data[ndx][0]!==null){
+				stat.value[ getValueIndex(stat, posArr) ] = data[ndx][0];
+			}
+
+			assignStatus();
+		}
+
+		//When array, padding with nulls if last values/status not set
+		var k;
+		if(!options.ovalue){
+			for( k=size.reduce(function(a, b){ return a * b;})-stat.value.length; k--; ){
+				stat.value.push(null);
+			}
+		}
+		if(!options.ostatus){
+			for( k=size.reduce(function(a, b){ return a * b;})-stat.status.length; k--; ){
+				stat.status.push(null);
 			}
 		}
 
@@ -1411,7 +1494,7 @@ var JSONstatUtils=function(){
 		fromCSV: fromCSV,
 		toCSV: toCSV,
 		join: join,
-    fromSDMX: fromSDMX,
-		version: "2.4.1"
+		fromSDMX: fromSDMX,
+		version: "2.4.2"
 	};
 }();
