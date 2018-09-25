@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.4.2 (requires JJT 0.10+) (Nodejs module)
+JSON-stat Javascript Utilities Suite v. 2.4.3 (requires JJT 0.10+) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -1085,7 +1085,7 @@ var
 					stat.value.push(null);
 				}
 			}
-			if(!options.ostatus){
+			if(!options.ostatus && stat.hasOwnProperty("status")){
 				for( k=size.reduce(function(a, b){ return a * b;})-stat.status.length; k--; ){
 					stat.status.push(null);
 				}
@@ -1101,7 +1101,7 @@ var
 			toCSV: toCSV,
 			join: join,
 	    fromSDMX: fromSDMX,
-			version: "2.4.2"
+			version: "2.4.3"
 		};
 	}();
 
