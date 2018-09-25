@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.4.2 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.4.3 (requires JJT 0.10+)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
