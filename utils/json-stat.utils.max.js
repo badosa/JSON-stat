@@ -1,6 +1,31 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.4.3 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.4.4 (requires JJT 0.10+)
+https://json-stat.com
+https://github.com/badosa/JSON-stat/tree/master/utils
+
+Copyright 2018 Xavier Badosa (https://xavierbadosa.com)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License.
+
+*/
+
+//Required polyfills for old browsers: forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored), trim, Array.indexOf, find, findIndex, reduce
+/* global JSONstat */
+/* jshint newcap:false */
+/*
+
+JSON-stat Javascript Utilities Suite v. 2.4.4 (requires JJT 0.10+)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -744,6 +769,9 @@ var JSONstatUtils=function(){
 
 	//s string del delimiter
 	function dcomma(s,del){
+		if(typeof s==="undefined" || s===null){
+			return "";
+		}
 		return (s.indexOf(del)!==-1) ? '"'+ s +'"' : s;
 	}
 
@@ -787,7 +815,7 @@ var JSONstatUtils=function(){
 
 		//If rich, include status if available
 		if(rich){
-			status=!(ds.status===null);
+			status=(ds.status!==null);
 		}
 
 		var
@@ -898,6 +926,7 @@ var JSONstatUtils=function(){
 		var
 			header=[],
 			vcol=null,
+			obj=null,
 			nrows,
 			i,
 			roleExist=false,
@@ -927,8 +956,8 @@ var JSONstatUtils=function(){
 			}
 			table.shift();
 
-			var obj={ dimension: {} };
-			header.forEach(function(e,i){
+			obj={ dimension: {} };
+			header.forEach(function(e){
 				var i, label, len, dim, cat, unit, id, lab;
 				switch (e[0]) {
 					case "dimension":
@@ -995,11 +1024,20 @@ var JSONstatUtils=function(){
 					break;
 					//No default case: ignore lines with unknown tags. If known tags are void, empty string
 				}
-
-				if(roleExist){
-					obj.role=role;
-				}
 			});
+
+			if(roleExist){
+				if(!role.time.length){
+					delete role.time;
+				}
+				if(!role.geo.length){
+					delete role.geo;
+				}
+				if(!role.metric.length){
+					delete role.metric;
+				}
+				obj.role=role;
+			}
 		}
 
 		nrows=table.length;
@@ -1137,7 +1175,7 @@ var JSONstatUtils=function(){
 	}
 
 	function dataset(j, dsid){
-		if(typeof j==="undefined"){
+		if(typeof j==="undefined" || j===null){
 			return null;
 		}
 		if(
@@ -1291,6 +1329,7 @@ var JSONstatUtils=function(){
 		if(sdmx.dataSets.length!==1){
 			return null;
 		}
+		//Only flat flavor is supported (no series)
 		if(!sdmx.dataSets[0].hasOwnProperty("observations")){ //better to look for dataset with "action": "Information"?
 			return null;
 		}
@@ -1379,8 +1418,8 @@ var JSONstatUtils=function(){
 				});
 			},
 
-			self=sdmx.header.links.find(function(e){return e.rel==="request"}),
-			statusPos=attr.findIndex(function(e){return e.id==="OBS_STATUS"});
+			self=sdmx.header.links.find(function(e){return e.rel==="request";}),
+			statusPos=attr.findIndex(function(e){return e.id==="OBS_STATUS";})
 		;
 
 		if(statusPos!==-1){
@@ -1412,7 +1451,7 @@ var JSONstatUtils=function(){
 			size: size,
 			dimension: dimension,
 			value: options.ovalue ? {} : []
-		}
+		};
 
 		if(self){
 			stat.link={
@@ -1427,10 +1466,10 @@ var JSONstatUtils=function(){
 
 		//No metric so far (metric treatment in SDMX/JSON-stat completely different)
 		if(role.geo.length+role.time.length>0){
-			if(role.time.length===0){
-				role.time=null;
+			if(!role.time.length){
+				delete role.time;
 			}
-			if(role.geo.length===0){
+			if(!role.geo.length){
 				delete role.geo;
 			}
 			stat.role=role;
@@ -1495,6 +1534,6 @@ var JSONstatUtils=function(){
 		toCSV: toCSV,
 		join: join,
 		fromSDMX: fromSDMX,
-		version: "2.4.3"
+		version: "2.4.4"
 	};
 }();
