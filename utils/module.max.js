@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.4.4 (requires JJT 0.10+) (Nodejs module)
+JSON-stat Javascript Utilities Suite v. 2.5.0 (requires JJT 0.10+) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -216,6 +216,14 @@ var
 				hdim,
 				obs=tbl.length
 			;
+
+			if(options.hasOwnProperty("drop") && Object.prototype.toString.call(options.drop)==="[object Array]" && options.drop.length){
+				tbl.forEach(function(row){
+					options.drop.forEach(function(d){
+						delete row[d];
+					});
+				});
+			}
 
 			//Dimensions are taken from first observation
 			for(var field in tbl[0]){
@@ -1090,7 +1098,7 @@ var
 			toCSV: toCSV,
 			join: join,
 			fromSDMX: fromSDMX,
-			version: "2.4.4"
+			version: "2.5.0"
 		};
 	}()
 ;

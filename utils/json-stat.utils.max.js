@@ -1,31 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.4.4 (requires JJT 0.10+)
-https://json-stat.com
-https://github.com/badosa/JSON-stat/tree/master/utils
-
-Copyright 2018 Xavier Badosa (https://xavierbadosa.com)
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-	http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-or implied. See the License for the specific language governing
-permissions and limitations under the License.
-
-*/
-
-//Required polyfills for old browsers: forEach, querySelector, querySelectorAll, toLocaleString (fallback: toFixed, locale ignored), trim, Array.indexOf, find, findIndex, reduce
-/* global JSONstat */
-/* jshint newcap:false */
-/*
-
-JSON-stat Javascript Utilities Suite v. 2.4.4 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.5.0 (requires JJT 0.10+)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -634,6 +609,14 @@ var JSONstatUtils=function(){
 			hdim,
 			obs=tbl.length
 		;
+
+		if(options.hasOwnProperty("drop") && Object.prototype.toString.call(options.drop)==="[object Array]" && options.drop.length){
+			tbl.forEach(function(row){
+				options.drop.forEach(function(d){
+					delete row[d];
+				});
+			});
+		}
 
 		//Dimensions are taken from first observation
 		for(var field in tbl[0]){
@@ -1534,6 +1517,6 @@ var JSONstatUtils=function(){
 		toCSV: toCSV,
 		join: join,
 		fromSDMX: fromSDMX,
-		version: "2.4.4"
+		version: "2.5.0"
 	};
 }();
