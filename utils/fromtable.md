@@ -68,6 +68,11 @@ When *true*, the *status* property in the resulting JSON-stat object, if present
 
 (This option was mainly added for the [JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv) where speed is probably not critical. The way it is implemented in *fromTable()* requires post-processing the data. That's why it is not recommended unless size is more important than speed. Usually, using an object for *status* returns a lighter JSON-stat because, usually, only a small amount of data has status information attached.)
 
+#### drop (array)
+
+It is an array of column labels to be dropped from the dataset. Only columns that do not act as dimensions (or are single-category dimensions) should be dropped. For example, a table could have a column for county names and another one for county codes: one of them must be dropped because they are the same dimension.
+
+
 ### Return Value
 
 It returns an object in the JSON-stat format with *class* "dataset". This object can be processed by JJT. On error it returns *null*.
