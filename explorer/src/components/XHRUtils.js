@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import JSONstat from "jsonstat";
+import JSONstatUtils from "jsonstat-utils";
 
 const getMessage=function(status){
   let msg=null;
@@ -21,6 +22,15 @@ const fetchJsonStat=function(that, loadData, method, url, query, jsonstat){
 
   const
     processData=function(json){
+
+      //SDMX-JSON? v.0.2.0
+      if(json.hasOwnProperty("structure") && json.hasOwnProperty("dataSets") //Could also be a weird JSON-stat bundle
+          && Array.isArray(json.dataSets) && json.dataSets.length===1 //Only support for 1 dataset
+          && json.dataSets[0].hasOwnProperty("observations")//Only flat flavor is supported (no series) (better look for dataset with "action": "Information"?)
+        ){
+  			 json=JSONstatUtils.fromSDMX(json);
+  		}
+
       let data=JSONstat(json);
 
       if(!data.length){
