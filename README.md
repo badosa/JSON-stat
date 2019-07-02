@@ -4,6 +4,12 @@ The [JSON-stat format](https://json-stat.org/format/) is a simple lightweight JS
 
 JSON-stat Javascript Toolkit is part of the [JSON-stat Toolkit](https://json-stat.com). The goal of JJT is to help dealing with JSON-stat responses in Javascript.
 
+### Resources
+
+* [Installation](https://github.com/badosa/JSON-stat/wiki/Installation)
+* [API Reference](https://github.com/badosa/JSON-stat/wiki/API-Reference)
+* [Examples](https://github.com/badosa/JSON-stat/wiki/Examples)
+
 For **installation** instructions, the full **API reference**, code **samples**, etc. see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**.
 
 ## Design principles
