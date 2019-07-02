@@ -1,31 +1,30 @@
 ---
 layout: default
-title: JSON-stat Javascript Toolkit
-description: A library for the JSON-stat format
-parent: "JJT: "
+title: JSON-stat Toolkit
+description: A set of tools for the JSON-stat format
 ---
 
 # What is JSON-stat?
 
-The JSON-stat format is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
+The JSON-stat standard is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
 
-The JSON-stat format is documented at https://json-stat.org/format/.
+The JSON-stat format is documented at [JSON-stat.org](https://json-stat.org/format/).
 
-The goal of the **JSON-stat Javascript Toolkit (JJT)** is to help dealing with JSON-stat responses in Javascript.
+# What is the JSON-stat Toolkit?
 
-Visit the [JSON-stat Explorer](http://json-stat.com/explorer/) for a JSON-stat ES2015 React example.
+The JSON-stat Toolkit is a set of tools for the JSON-stat format:
 
-For **installation** instructions, code **samples**, the **API reference**, etc., see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**.
+* The goal of the [JSON-stat Javascript Toolkit](https://www.npmjs.com/package/jsonstat) (JJT) is to help dealing with JSON-stat responses in Javascript.
 
-[Test Suite](test/) available.
+* For a library of high level functions built on top of JJT, see the [JSON-stat Javascript Utilities Suite](https://www.npmjs.com/package/jsonstat-utils) (JJUS).
 
-For a library of high level functions built on top of JJT, see the [JSON-stat Javascript Utilities Suite](https://github.com/badosa/JSON-stat/tree/master/utils) (JJUS).
+* For simple conversion from the JSON-stat format, see the [JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv).
 
-For simple conversion from the JSON-stat format, see the [JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv).
+* Visit the [JSON-stat Explorer](http://json-stat.com/explorer/) to view JSON-stat responses.
 
-## Design principles
+## JSON-stat and JSON-stat Toolkit Design principles
 
-JSON-stat is based on a data cube information structure. The JSON-stat Javascript Toolkit exposes the data cube as a tree.
+JSON-stat is based on a data cube information structure. The JSON-stat Toolkit exposes the data cube as a tree.
 
 ### The JSON-stat tree
 
