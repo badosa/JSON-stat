@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.3 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.13.4 (JSON-stat v. 2.0 ready) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
-Copyright 2017 Xavier Badosa (https://xavierbadosa.com)
+Copyright 2019 Xavier Badosa (https://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.13.3";
+JSONstat.version="0.13.4";
 
 /* jshint newcap:false */
 function JSONstat(resp,f){
@@ -1255,10 +1255,7 @@ function JSONstat(resp,f){
 		return this.__tree__;
 	};
 	Jsonstat.prototype.toString=function(){
-		return this.class; //improve?
-	};
-	Jsonstat.prototype.toValue=function(){
-		return this.length;
+		return this.class;
 	};
 
 	JSONstat.jsonstat=Jsonstat;

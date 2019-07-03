@@ -1,16 +1,16 @@
-# JSON-stat
+# JSON-stat Javascript Toolkit
 
-The JSON-stat format is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
+The [JSON-stat format](https://json-stat.org/format/) is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
 
-The JSON-stat format is documented at https://json-stat.org/format/.
+JSON-stat Javascript Toolkit is part of the [JSON-stat Toolkit](https://json-stat.com). The goal of JJT is to help dealing with JSON-stat responses in Javascript.
 
-The goal of the JSON-stat Javascript Toolkit (JJT) is to help dealing with JSON-stat responses in Javascript.
+### Resources
 
-For **installation** instructions, code **samples**, the **API reference**, etc., see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**. For a full ES2015 React example, see the [JSON-stat Explorer](https://github.com/badosa/JSON-stat/tree/master/explorer).
+* [Installation](https://github.com/badosa/JSON-stat/wiki/Installation)
+* [API Reference](https://github.com/badosa/JSON-stat/wiki/API-Reference)
+* [Examples](https://github.com/badosa/JSON-stat/wiki/Examples)
 
-For a library of high level functions built on top of JJT, see the [JSON-stat Javascript Utilities Suite](https://github.com/badosa/JSON-stat/tree/master/utils) (JJUS).
-
-For simple conversion from the JSON-stat format, see the [JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv).
+For **installation** instructions, the full **API reference**, code **samples**, etc. see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**.
 
 ## Design principles
 
