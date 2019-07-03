@@ -1,10 +1,10 @@
 {
   "name": "jsonstat-explorer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A JSON-stat example developed using ES2015, the JSON-stat Javascript Toolkit and the React library.",
   "main": "webpack.config.js",
   "dependencies": {
-    "axios": "^0.15.2",
+    "axios": ">=0.19.0",
     "babel": "^6.5.2",
     "babel-core": "^6.26.3",
     "babel-loader": "^6.4.1",
