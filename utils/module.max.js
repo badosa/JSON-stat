@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.5.0 (requires JJT 0.10+) (Nodejs module)
+JSON-stat Javascript Utilities Suite v. 2.5.1 (requires JJT 0.10+) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -1098,7 +1098,7 @@ var
 			toCSV: toCSV,
 			join: join,
 			fromSDMX: fromSDMX,
-			version: "2.5.0"
+			version: "2.5.1"
 		};
 	}()
 ;
