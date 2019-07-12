@@ -3,7 +3,7 @@
 var
 	http=require('http'),
 	JSONstat=require('jsonstat'),
-	uri="http://json-stat.org/samples/oecd-canada-col.json"
+	uri="https://json-stat.org/samples/oecd-canada-col.json"
 ;
 
 console.log("\nRunning jsonstat v. "+JSONstat.version+" test...\n");
