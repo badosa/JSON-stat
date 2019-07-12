@@ -1,14 +1,14 @@
 // jsonstat module for Node.js tests
 
 var
-	http=require('http'),
+	https=require('https'),
 	JSONstat=require('jsonstat'),
 	uri="https://json-stat.org/samples/oecd-canada-col.json"
 ;
 
 console.log("\nRunning jsonstat v. "+JSONstat.version+" test...\n");
 
-http.get(uri, function(res) {
+https.get(uri, function(res) {
 	var
 		str="",
 		s=res.statusCode
