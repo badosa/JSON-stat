@@ -4,7 +4,7 @@
 		"name": "Xavier Badosa",
 		"url": "https://xavierbadosa.com"
 	},
-	"version": "0.13.7",
+	"version": "0.13.8",
 	"main": "json-stat.js",
 	"ignore": [
 		"**/.*"
