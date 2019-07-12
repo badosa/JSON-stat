@@ -10,8 +10,6 @@ JSON-stat Javascript Toolkit is part of the [JSON-stat Toolkit](https://json-sta
 * [API Reference](https://github.com/badosa/JSON-stat/wiki/API-Reference)
 * [Examples](https://github.com/badosa/JSON-stat/wiki/Examples)
 
-For **installation** instructions, the full **API reference**, code **samples**, etc. see the **[Wiki](https://github.com/badosa/JSON-stat/wiki)**.
-
 ## Design principles
 
 JSON-stat is based on a data cube information structure. The JSON-stat Javascript Toolkit exposes the data cube as a tree.

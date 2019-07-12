@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.5 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.13.5 (JSON-stat v. 2.0 ready) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
-Copyright 2019 Xavier Badosa (http://xavierbadosa.com)
+Copyright 2019 Xavier Badosa (https://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,80 +25,19 @@ var JSONstat = JSONstat || {};
 JSONstat.version="0.13.5";
 
 /* jshint newcap:false */
-function JSONstat(resp,f,p){
-	if(window===this){
-		return new JSONstat.jsonstat(resp,f,p);
-	}
+function JSONstat(resp){
+	return new JSONstat.jsonstat(resp);//nodejs
 }
 
 (function(){
 	"use strict";
 
-	//Polyfills
-	//Array.indexOf
-	Array.prototype.indexOf||(Array.prototype.indexOf=function(r,t){var n;if(null==this)throw new TypeError('"this" is null or not defined');var e=Object(this),i=e.length>>>0;if(0===i)return-1;var a=+t||0;if(Math.abs(a)===1/0&&(a=0),a>=i)return-1;for(n=Math.max(a>=0?a:i-Math.abs(a),0);i>n;){if(n in e&&e[n]===r)return n;n++}return-1});
-	//Array.forEach
-	Array.prototype.forEach||(Array.prototype.forEach=function(r,t){var o,n;if(null==this)throw new TypeError(" this is null or not defined");var e=Object(this),i=e.length>>>0;if("function"!=typeof r)throw new TypeError(r+" is not a function");for(arguments.length>1&&(o=t),n=0;i>n;){var a;n in e&&(a=e[n],r.call(o,a,n,e)),n++}});
-	//Simplified Object.keys polyfill
-	if(!Object.keys) Object.keys = function(o) {
-		var k=[],p;
-		for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
-		return k;
-	}
-	//Array.filter
-	Array.prototype.filter||(Array.prototype.filter=function(r){"use strict";if(void 0===this||null===this)throw new TypeError;var t=Object(this),e=t.length>>>0;if("function"!=typeof r)throw new TypeError;for(var i=[],o=arguments.length>=2?arguments[1]:void 0,n=0;e>n;n++)if(n in t){var f=t[n];r.call(o,f,n,t)&&i.push(f)}return i});
-
 	function isArray(o) {
 		return Object.prototype.toString.call(o) === "[object Array]";
 	}
-	function jsonstat(o,f,p){
+	function jsonstat(o){
+		//nodejs xhr gone
 		var
-			xhr=function(uri, func, proc){
-				var json, async=(func!==false), req;
-				proc=(!func) ? true : proc;
-
-				if(window.XDomainRequest && /^(http(s)?:)?\/\//.test(uri)){ //IE9 cross-domain (assuming access to same domain won't be specified using an absolute address). Not integrated because it will be removed someday...
-					if(!async){ //JSONstat: IE9 sync cross-domain request? Sorry, not supported (only async if IE9 and cross-domain).
-						return;
-					}
-					req=new XDomainRequest();
-					/*
-					req.onerror=function(){
-						return;  //JSONstat: Can't access "+uri;
-					}
-					*/
-					req.onload=function(){
-						json=JSON.parse(req.responseText);
-						if(proc){
-							func.call(JSONstat(json));
-						}else{
-							func.call(json);
-						}
-					};
-					req.open("GET", uri);
-					req.send();
-				}else{ //Standard xhr
-					req=new XMLHttpRequest();
-					req.onreadystatechange=function(){
-						if(req.readyState===4){
-							var s=req.status;
-							json=(s && req.responseText && (s>=200 && s<300 || s===304)) ? JSON.parse(req.responseText) : null;
-							if(async){
-								if(proc){
-									func.call(JSONstat(json));
-								}else{
-									func.call(json);
-								}
-							}
-						}
-					};
-					req.open("GET",uri,async);
-					req.send(null);
-					if(!async){
-						return json;
-					}
-				}
-			},
 			//sparse cube (value or status)
 			//If only one value/status is provided it means same for all (if more than one, then missing values/statuses are nulled).
 			normalize=function(s,len){
@@ -142,27 +81,19 @@ function JSONstat(resp,f,p){
 
 		this.class=o.class || "bundle";
 		switch(this.class){
-			case "bundle" : //Real bundle, or URL (bundle, dataset, collection, dimension), or error
+			case "bundle" : //Real bundle, or URL (bundle, dataset, collection, dimension), or error [nodejs: can't be a URL actually. Kept for symmetry.]
 				var arr=[], ds=0;
 				this.error=null;
 				this.length=0;
 
 				//URI assumed
-				if(typeof o==="string" && o.length>0){
-					o=xhr(o, typeof f==="function"? f : false, typeof p==="undefined"? true : p);//If second argument is function then async
+				if(typeof o==="string"){
+					console.log("Module does not accept a URI string, must be an object."); //nodejs
 				}
 
-				// Wrong input object or wrong URI or connection problem
-				// Or async (o is undefined)
+				// Wrong input object (nodejs)
 				if(o===null || typeof o!=="object"){
 					this.class=null;
-					// Async: remove properties: they are meaningless (0.8.3)
-					if(typeof o==="undefined"){
-						delete(this.id);
-						delete(this.class);
-						delete(this.error);
-						delete(this.length);
-					}
 					return;
 				}
 
@@ -175,8 +106,9 @@ function JSONstat(resp,f,p){
 				//When o is a URI, class won't be set before the request
 				//and it will enter the bundle case: once we have a response
 				//if class is dataset we redirect to case "dataset". 0.7.5
+				//[nodejs: can't be a URL actually. Kept for symmetry.]
 				if(o.class==="dataset" || o.class==="collection" || o.class==="dimension"){
-					return JSONstat(o); //Proc only implemented if async
+					return JSONstat(o);
 				}
 
 				for (prop in o){
@@ -477,14 +409,8 @@ function JSONstat(resp,f,p){
 						}
 					};
 				}
-			}else{
-				//{follow: true} not documented because sync xhr are deprecated outside of workers. Use only for testing and demoing. That's why it's been defined as incompatible with {class: ...}
-				if(o.follow){
-					func=function(t,i){
-						ret.push(JSONstat(t.id[i]));
-					};
-				}
 			}
+			//{follow: true} not available in nodejs
 		}else{ //not object, not number: void or string (ignore)
 			func=function(t,i){
 				ret.push(t.link.item[i]);
@@ -1334,3 +1260,6 @@ function JSONstat(resp,f,p){
 
 	JSONstat.jsonstat=jsonstat;
 })();
+
+//nodejs
+module.exports=JSONstat;

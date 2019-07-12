@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.4 (JSON-stat v. 2.0 ready) (ES6 module)
+JSON-stat Javascript Toolkit v. 0.13.5 (JSON-stat v. 2.0 ready) (ES6 module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -25,7 +25,7 @@ permissions and limitations under the License.
 function isArray(o) {
 	return Object.prototype.toString.call(o) === "[object Array]";
 }
-function Jsonstat(o,f){
+function jsonstat(o){
 	//nodejs xhr gone
 	var
 		//sparse cube (value or status)
@@ -348,7 +348,7 @@ function Jsonstat(o,f){
 	}
 }
 
-Jsonstat.prototype.Item=function(o){ //0.8.0
+jsonstat.prototype.Item=function(o){ //0.8.0
 	if (this===null || this.class!=="collection" || !this.length){
 		return null;
 	}
@@ -413,7 +413,7 @@ Jsonstat.prototype.Item=function(o){ //0.8.0
 	return ret;
 };
 
-Jsonstat.prototype.Dataset=function(ds){
+jsonstat.prototype.Dataset=function(ds){
 	if(this===null){
 		return null;
 	}
@@ -477,10 +477,10 @@ Jsonstat.prototype.Dataset=function(ds){
 		return null;
 	}
 
-	return new Jsonstat({"class" : "dataset", "__tree__": tds});
+	return new jsonstat({"class" : "dataset", "__tree__": tds});
 };
 
-Jsonstat.prototype.Dimension=function(dim, bool){
+jsonstat.prototype.Dimension=function(dim, bool){
 	bool=(typeof bool==="boolean") ? bool : true; //0.12.2
 
 	var
@@ -552,10 +552,10 @@ Jsonstat.prototype.Dimension=function(dim, bool){
 		})(otdd.category.index, otdd.category.label);
 	}
 
-	return new Jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otr,dim)});
+	return new jsonstat({"class" : "dimension", "__tree__": otdd, "role": role(otr,dim)});
 };
 
-Jsonstat.prototype.Category=function(cat){
+jsonstat.prototype.Category=function(cat){
 	if (this===null || this.class!=="dimension"){
 		return null;
 	}
@@ -586,10 +586,10 @@ Jsonstat.prototype.Category=function(cat){
 		child=(oc.child && oc.child[cat]) || null,
 		note=(oc.note && oc.note[cat]) || null
 	;
-	return new Jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
+	return new jsonstat({"class" : "category", "index": index, "label": oc.label[cat], "note": note, "child" : child, "unit" : unit, "coord" : coord});
 };
 
-Jsonstat.prototype.Slice=function(filter){
+jsonstat.prototype.Slice=function(filter){
 	if(this===null || this.class!=="dataset"){
 		return null;
 	}
@@ -688,7 +688,7 @@ Jsonstat.prototype.Slice=function(filter){
 	return ds;
 };
 
-Jsonstat.prototype.Data=function(e, include){
+jsonstat.prototype.Data=function(e, include){
 	var
 		i, ret=[], len,
 		firstprop=function(o){
@@ -851,7 +851,7 @@ Jsonstat.prototype.Data=function(e, include){
 	Transformation method: output in DataTable format (array or object)
 	Setup: opts={by: null, bylabel: false, meta: false, drop: [], status: false, slabel: "Status", vlabel: "Value", field: "label", content: "label", type: "array"} (type values: "array" / "object" / "arrobj")
 */
-Jsonstat.prototype.toTable=function(opts, func){
+jsonstat.prototype.toTable=function(opts, func){
 	if(this===null || this.class!=="dataset"){
 		return null;
 	}
@@ -1241,15 +1241,15 @@ Jsonstat.prototype.toTable=function(opts, func){
 	}
 };
 
-Jsonstat.prototype.node=function(){
+jsonstat.prototype.node=function(){
 	return this.__tree__;
 };
-Jsonstat.prototype.toString=function(){
+jsonstat.prototype.toString=function(){
 	return this.class;
 };
 
-export const version="0.13.4";
+export const version="0.13.5";
 
-export function JSONstat(resp,f){
-	return new Jsonstat(resp,f);
+export function JSONstat(resp){
+	return new jsonstat(resp);
 }
