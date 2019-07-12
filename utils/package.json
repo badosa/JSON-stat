@@ -15,5 +15,5 @@
 	"devDependencies": {},
 	"version"       : "2.5.1",
 	"license"       : "Apache-2.0",
-	"files"         : ["module.js", "LICENSE", "README.md", "json-stat.utils.js, export.js"]
+	"files"         : ["module.js", "LICENSE", "README.md", "json-stat.utils.js", "export.js"]
 }
