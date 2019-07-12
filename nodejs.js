@@ -30,7 +30,7 @@ http.get(uri, function(res) {
 					{
 						text: "First item ID",
 						real: J.id[0],
-						exp: "http://json-stat.org/samples/oecd.json"
+						exp: "https://json-stat.org/samples/oecd.json"
 					},
 					{
 						text: "Second dimension ID",
@@ -73,7 +73,7 @@ http.get(uri, function(res) {
 						exp: 3.098584692
 					},
 
-					//From the JJT Test Suite (http://json-stat.com/test/)
+					//From the JJT Test Suite (https://json-stat.com/test/)
 					{
 						text: 'Number of items in a JSON-stat collection response',
 						exp: 2,
