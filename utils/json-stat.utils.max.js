@@ -4,7 +4,7 @@ JSON-stat Javascript Utilities Suite v. 2.5.2 (requires JJT 0.10+)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
-Copyright 2018 Xavier Badosa (https://xavierbadosa.com)
+Copyright 2019 Xavier Badosa (https://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
