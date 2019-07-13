@@ -1,5 +1,5 @@
 /*
-JSON-stat Javascript Utilities Suite v. 2.5.1 (requires JJT ES6 module) (ES6 module)
+JSON-stat Javascript Utilities Suite v. 2.5.2 (requires JJT ES6 module) (ES6 module)
 https://json-stat.com
 Copyright 2019 Xavier Badosa (https://xavierbadosa.com)
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ permissions and limitations under the License.
 
 import { JSONstat } from "../export.js";
 
-const version="2.5.1";
+const version="2.5.2";
 
 function datalist(jsonstat, options){
 	if(typeof jsonstat==="undefined"){

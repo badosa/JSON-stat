@@ -1,10 +1,10 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.5.1 (requires JJT 0.10+) (Nodejs module)
+JSON-stat Javascript Utilities Suite v. 2.5.2 (requires JJT 0.10+) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
-Copyright 2018 Xavier Badosa (https://xavierbadosa.com)
+Copyright 2019 Xavier Badosa (https://xavierbadosa.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -1098,7 +1098,7 @@ var
 			toCSV: toCSV,
 			join: join,
 			fromSDMX: fromSDMX,
-			version: "2.5.1"
+			version: "2.5.2"
 		};
 	}()
 ;
