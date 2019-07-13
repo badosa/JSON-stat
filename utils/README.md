@@ -47,9 +47,9 @@ Or using a particular version:
 <script src="https://unpkg.com/jsonstat-utils@2.5.1/json-stat.utils.js"></script>
 ```
 
-While JJT library works on any browser, JJUS library requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *Array.indexOf*, *trim*, *find*, *findIndex* and *reduce* (*querySelector*, *querySelectorAll* also required for [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)).
+While the JJT library works on any browser, the JJUS library requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *Array.indexOf*, *trim*, *find*, *findIndex* and *reduce* (*querySelector*, *querySelectorAll* also required for [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)).
 
-To import the JJUS ECMAScript module in your webpage, download the latest versions of [export.js](https://github.com/badosa/JSON-stat/blob/master/export.js) [utils/export.js](https://github.com/badosa/JSON-stat/blob/master/utils/export.js) and link to your own copy of the JJUS module:
+To import the JJUS ECMAScript module in your webpage, download the latest versions of [export.js](https://github.com/badosa/JSON-stat/blob/master/export.js) and [utils/export.js](https://github.com/badosa/JSON-stat/blob/master/utils/export.js) and link to your own copy of the JJUS module:
 
 ```html
 <script type="module">
@@ -79,7 +79,7 @@ Or
 </script>
 ```
 
-The ECMAScript modules are available from several CDNs ([jsDelivr](https://www.jsdelivr.com/), [unpkg](https://unpkg.com/)):
+The ECMAScript module is available from several CDNs ([jsDelivr](https://www.jsdelivr.com/), [unpkg](https://unpkg.com/)):
 
 ```html
 <script type="module">
@@ -93,7 +93,7 @@ The ECMAScript modules are available from several CDNs ([jsDelivr](https://www.j
 </script>
 ```
 
-Using these CDNs you cannot freely choose a version of JJUS but you can pick a version of JJT (and you will get the JJUS version associated with it).
+Using these CDNs you cannot freely choose a version of JJUS: you can only pick a version of JJT (and you will get the JJUS version associated with it).
 
 ```html
 <script type="module">
