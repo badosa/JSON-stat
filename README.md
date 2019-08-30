@@ -2,7 +2,7 @@
 
 The [JSON-stat format](https://json-stat.org/format/) is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
 
-JSON-stat Javascript Toolkit is part of the [JSON-stat Toolkit](https://json-stat.com). The goal of JJT is to help dealing with JSON-stat responses in Javascript.
+The JSON-stat Javascript Toolkit (JJT) is part of the [JSON-stat Toolkit](https://json-stat.com). JJT's goal is to help dealing with JSON-stat responses in JavaScript.
 
 ### Resources
 

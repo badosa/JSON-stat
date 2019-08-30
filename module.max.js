@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.8 (JSON-stat v. 2.0 ready) (Nodejs module)
+JSON-stat Javascript Toolkit v. 0.13.9 (JSON-stat v. 2.0 ready) (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.13.8";
+JSONstat.version="0.13.9";
 
 /* jshint newcap:false */
 function JSONstat(resp){
@@ -988,7 +988,13 @@ function JSONstat(resp){
 				addUnits=function(d, c){
 					//array indexOf
 					if(metric.indexOf(d)!==-1){
-						tblr.unit=dataset.dimension[d].category.unit[opts.content!=="id" ? metriclabels[d][c] : c];
+						var cat=dataset.dimension[d].category;
+						/*0.13.9*/
+						if(cat.unit){
+							tblr.unit=cat.unit[opts.content!=="id" ? metriclabels[d][c] : c];
+						}else{
+							tblr.unit=null; /*when units requested but missing in the dataset, create "unit" property too*/
+						}
 					}
 				};
 
