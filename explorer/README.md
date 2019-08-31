@@ -1,3 +1,3 @@
-The **JSON-stat Explorer** is an example developed using ES2015, the JSON-stat Javascript Toolkit and the React library.
+The **JSON-stat Explorer** is JSON-stat/SDMX-JSON viewer developed using the [JSON-stat Javascript Toolkit](https://www.npmjs.com/package/jsonstat) and the React library.
 
-You can try it at http://json-stat.com/explorer/.
+You can try it at https://json-stat.com/explorer/.
