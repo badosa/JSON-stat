@@ -1,20 +1,23 @@
-const debug = process.env.NODE_ENV !== "production";
-const webpack = require('webpack');
-const path = require('path');
+const
+  webpack = require('webpack'),
+  path = require('path')
+;
 
 module.exports = {
   context: path.join(__dirname, "src"),
-  devtool: debug ? "inline-sourcemap" : null,
   entry: "./main.max.js",
+
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['react', 'es2015', 'stage-0'],
-          plugins: ['react-html-attrs', 'transform-decorators-legacy', 'transform-class-properties'],
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [["@babel/env", { "modules": "commonjs" }], '@babel/preset-react'],
+            plugins: ['add-module-exports','react-html-attrs', ['@babel/plugin-proposal-decorators', { 'legacy': true }], 'transform-class-properties', '@babel/plugin-proposal-function-bind'],
+          }
         }
       }
     ]
@@ -22,10 +25,5 @@ module.exports = {
   output: {
     path: __dirname + "/dist/",
     filename: "main.js"
-  },
-  plugins: debug ? [] : [
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
-  ],
+  }
 };
