@@ -2,7 +2,7 @@ The **JSON-stat Explorer** is a JSON-stat/CSV-stat/SDMX-JSON viewer developed us
 
 You can try it at https://json-stat.com/explorer/.
 
-To recreate main.js from the source files use:
+To rebuild main.js from the source files use:
 
 ```
 npm i
