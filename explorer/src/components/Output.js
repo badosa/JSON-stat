@@ -9,7 +9,7 @@ export default class Output extends React.Component {
     if(!data){
       return (
         <section>
-          <p>Welcome to the <strong>JSON-stat Explorer</strong>. This tool allows you to retrieve a <a href="https://json-stat.org">JSON-stat document</a> from a web address or paste some JSON-stat code and explore its content.</p>
+          <p>Welcome to the <strong>JSON-stat Explorer</strong>. This tool allows you to retrieve a <a href="https://json-stat.org">JSON-stat document</a> from a web address or paste some JSON-stat code and explore its content. <a href="https://github.com/badosa/CSV-stat">CSV-stat</a> and <a href="https://github.com/sdmx-twg/sdmx-json/blob/master/data-message/docs/1-sdmx-json-field-guide.md">SDMX-JSON</a> documents are also accepted.</p>
           <p>It is mainly designed to display JSON-stat <strong>datasets</strong> but it also accepts JSON-stat <strong>collections</strong> or <strong>bundles</strong>. If the input is a bundle, the content of the first dataset in it will be automatically displayed.</p>
         </section>
       );

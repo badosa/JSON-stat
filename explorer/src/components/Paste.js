@@ -34,7 +34,7 @@ export default class Paste extends React.Component {
   render() {
     return (
       <section id="form">
-        <textarea ref="jsonstat" placeholder="JSON-stat code"></textarea>
+        <textarea ref="jsonstat" placeholder="JSON-stat/CSV-stat/SDMX-JSON code"></textarea>
         <button className="btn btn-primary" onClick={this.submit.bind(this)}>Send</button>
         <button className="btn" onClick={this.reset.bind(this)}>Reset</button>
         {getMessage(this.state.status)}

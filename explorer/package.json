@@ -1,7 +1,7 @@
 {
   "name": "jsonstat-explorer",
-  "version": "0.2.3",
-  "description": "An interactive viewer for JSON-stat responses or documents.",
+  "version": "0.3.0",
+  "description": "An interactive viewer for JSON-stat/CSV-stat/SDMX-JSON responses or documents.",
   "scripts": {
     "build": "webpack --mode=production",
     "test": "echo \"Error: no test specified\" && exit 1"
