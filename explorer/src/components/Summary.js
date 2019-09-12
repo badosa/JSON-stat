@@ -4,7 +4,7 @@ export default class Summary extends React.Component {
   render() {
     return (
       <header id="summary">
-        <div><strong>{this.props.label}</strong></div>
+        {this.props.label ? <div><strong>{this.props.label}</strong></div> : null}
         <div>{
           !this.props.bundle ?
           this.props.className :

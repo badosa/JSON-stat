@@ -15,9 +15,21 @@ export default class Retrieve extends React.Component {
   }
 
   reset() {
+    const method=this.state.method;
+
     this.refs.url.value="";
-    if(this.state.method==="post"){
+
+    if(method==="post"){
       this.refs.query.value="";
+    }
+
+    if(method==="get"){
+      if("pushState" in history){
+        history.pushState("", document.title, window.location.pathname+window.location.search);
+      }else{
+        //very old browsers
+        window.location.hash="#";
+      }
     }
   }
 
