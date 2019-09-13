@@ -26,10 +26,12 @@ export default class Input extends React.Component {
           this.state.tab==="retrieve" ?
             <Retrieve
               loadData={this.props.loadData}
+              version={this.props.version}
             />
             :
             <Paste
               loadData={this.props.loadData}
+              version={this.props.version}
             />
         }
       </section>

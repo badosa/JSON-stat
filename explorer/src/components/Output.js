@@ -17,6 +17,7 @@ export default class Output extends React.Component {
 
     const
       bundle=this.props.bundle,
+      type=this.props.type,
       className=data.class,
       size=(className==="dataset") ? data.n + " values" : data.length + " items"
     ;
@@ -29,6 +30,7 @@ export default class Output extends React.Component {
           updated={data.updated}
           source={data.source}
           bundle={bundle}
+          type={type}
           size={size}
           extension={data.extension}
         />

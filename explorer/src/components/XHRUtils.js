@@ -20,11 +20,18 @@ const getMessage=function(status){
 const fetchJsonStat=function(that, loadData, method, url, query, text){
   let bundle=0;
 
+  if(method===null){
+    loadData(null);
+    return;
+  }
+
   const
     processData=function(json){
+      let type="JSON-stat";
 
       //CSV-stat? v.0.3.0
       if(typeof json==="string"){
+        type=(json.trim().slice(0,8)==="jsonstat") ? "CSV-stat" : "CSV";
         json=JSONstatUtils.fromCSV(json);
       }else{
         //SDMX-JSON? v.0.2.0
@@ -33,6 +40,7 @@ const fetchJsonStat=function(that, loadData, method, url, query, text){
             && json.dataSets[0].hasOwnProperty("observations")//Only flat flavor is supported (no series) (better look for dataset with "action": "Information"?)
           ){
     			 json=JSONstatUtils.fromSDMX(json);
+           type="SDMX-JSON";
     		}
       }
 
@@ -46,7 +54,7 @@ const fetchJsonStat=function(that, loadData, method, url, query, text){
           data=data.Dataset(0);
         }
 
-        loadData(data, bundle);
+        loadData(data, bundle, type);
         that.setState({status : "ok"});
       }
     };

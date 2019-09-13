@@ -31,6 +31,8 @@ export default class Retrieve extends React.Component {
         window.location.hash="#";
       }
     }
+
+    fetchJsonStat(this, this.props.loadData, null);
   }
 
   loadSample() {
@@ -108,7 +110,7 @@ export default class Retrieve extends React.Component {
           null
         }
         <button className="btn btn-primary" onClick={this.submit.bind(this)}>Send</button>
-        <button className="btn" onClick={this.reset.bind(this)}>Reset</button>
+        <button className="btn" onClick={this.reset.bind(this)}>Reset</button> <div id="version">v. {this.props.version}</div>
         {getMessage(this.state.status)}
       </section>
     );

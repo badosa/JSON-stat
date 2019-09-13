@@ -1,6 +1,6 @@
 {
   "name": "jsonstat-explorer",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "An interactive viewer for JSON-stat/CSV-stat/SDMX-JSON responses or documents.",
   "scripts": {
     "build": "webpack --mode=production",

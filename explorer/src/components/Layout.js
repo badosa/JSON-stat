@@ -8,12 +8,15 @@ export default class Layout extends React.Component {
     super();
     this.state = {
       data: null,
-      bundle: false
+      bundle: false,
+      type: null,
+      version: VERSION
     };
   }
 
-  loadData(data, bundle) {
-    this.setState({ data, bundle });
+  loadData(data, bundle, type) {
+    //data is null when reset
+    this.setState({ data, bundle, type });
   }
 
   changeUrl(url) {
@@ -32,10 +35,12 @@ export default class Layout extends React.Component {
       <div>
         <Input
           loadData={this.loadData.bind(this)}
+          version={this.state.version}
         />
         <Output
           data={this.state.data}
           bundle={this.state.bundle}
+          type={this.state.type}
           changeUrl={this.changeUrl.bind(this)}
         />
       </div>

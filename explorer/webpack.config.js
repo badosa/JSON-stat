@@ -7,6 +7,12 @@ module.exports = {
   context: path.join(__dirname, "src"),
   entry: "./main.max.js",
 
+  plugins: [
+    new webpack.DefinePlugin({
+      VERSION: JSON.stringify(process.env.npm_package_version)
+    })
+  ],
+
   module: {
     rules: [
       {
