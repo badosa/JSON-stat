@@ -335,6 +335,10 @@ em {
   padding: 6px 0;
 }
 
+#table {
+  overflow-x: auto;
+}
+
 @media only screen and (min-width : 768px) {
   body {
     margin: 12px;

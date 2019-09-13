@@ -53,47 +53,49 @@ export default class Data extends React.Component {
     ;
 
     return (
-      <table>
-        <caption>
-          {caption}
-          <OnOff
-            text="id"
-            checked={this.props.show}
-            toggle={this.props.toggleId}
+      <div id="table">
+        <table>
+          <caption>
+            {caption}
+            <OnOff
+              text="id"
+              checked={this.props.show}
+              toggle={this.props.toggleId}
+            />
+            {unit}
+            <OnOff
+              text="status"
+              checked={this.state.status}
+              circle={false}
+              toggle={this.toggleStatus.bind(this)}
+            />
+            <OnOff
+              text="counter"
+              checked={this.state.counter}
+              circle={false}
+              toggle={this.toggleCounter.bind(this)}
+            />
+          </caption>
+          <DataHead
+            show={this.props.show}
+            labels={this.props.labels}
+            ids={this.props.ids}
+            filters={filters}
+            removed={removed}
+            counter={this.state.counter}
+            status={this.state.status}
           />
-          {unit}
-          <OnOff
-            text="status"
-            checked={this.state.status}
-            circle={false}
-            toggle={this.toggleStatus.bind(this)}
+          <DataBody
+            ids={this.props.ids}
+            data={data}
+            filters={this.props.filters}
+            removed={removed}
+            unit={this.state.unit}
+            counter={this.state.counter}
+            status={this.state.status}
           />
-          <OnOff
-            text="counter"
-            checked={this.state.counter}
-            circle={false}
-            toggle={this.toggleCounter.bind(this)}
-          />
-        </caption>
-        <DataHead
-          show={this.props.show}
-          labels={this.props.labels}
-          ids={this.props.ids}
-          filters={filters}
-          removed={removed}
-          counter={this.state.counter}
-          status={this.state.status}
-        />
-        <DataBody
-          ids={this.props.ids}
-          data={data}
-          filters={this.props.filters}
-          removed={removed}
-          unit={this.state.unit}
-          counter={this.state.counter}
-          status={this.state.status}
-        />
-      </table>
+        </table>
+      </div>
     );
   }
 }
