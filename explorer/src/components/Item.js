@@ -20,7 +20,9 @@ export default class Item extends React.Component {
 
     return (
       <li
+        tabindex="0"
         onClick={this.onClick.bind(this, this.props.href)}
+        onKeyPress={e=>{if(e.key==="Enter"){this.onClick(this.props.href);}}}
       >
         {this.props.label} [{this.props.className}]
         {msg}

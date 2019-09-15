@@ -11,6 +11,10 @@ body {
   display: none;
 }
 
+*:focus {
+  outline: 0!important;
+}
+
 #form {
   padding: 8px;
   background-color: #444;
@@ -21,7 +25,8 @@ body {
   cursor: pointer;
   padding: 6px;
   border-radius: 4px 0 0 4px;
-  background-color: #c0c0c0;
+  background-color: #222;
+  color: #fff;
   width: 50px;
   border-right: 1px solid #333
 }
@@ -29,9 +34,19 @@ body {
   border-radius: 0 4px 4px 0;
   border-right: none;
 }
-.select .selected {
+.select span.selected,
+.select span.selected:hover,
+.select span.selected:focus {
+  color: #000;
+  background-color: #ccc;
+  cursor: default;
+}
+.select span:hover,
+.select span:focus {
+  color: #000;
   background-color: #fff;
 }
+
 .select a {
   display: inline-block;
   margin-left: 8px;
@@ -90,7 +105,7 @@ li {
 .collection li {
   background-color: #f6f6f6;
 }
-.collection li:hover {
+.collection li:hover, .collection li:focus {
   background-color: #eee;
 }
 
@@ -111,7 +126,7 @@ li strong {
   border: 1px solid #777;
   border-radius: 4px;
 }
-li strong:hover, li .selected strong {
+li strong:hover, li strong:focus, li .selected strong {
   color: #a52a2a;
   border: 1px solid #a52a2a;
   background-color: #fff;
@@ -142,7 +157,7 @@ li strong:hover, li .selected strong {
   border-radius: 2px;
   background-color: #666;
 }
-#dataset .category li:hover {
+#dataset .category li:hover, #dataset .category li:focus {
   background-color: #333;
 }
 
@@ -183,7 +198,7 @@ tbody tr:hover td {
 .number {
   text-align: right;
 }
-.category .selected, #dataset .category .selected:hover {
+.category .selected, #dataset .category .selected:hover, #dataset .category .selected:focus {
   background-color: #a52a2a;
 }
 th.selected {
@@ -240,6 +255,7 @@ tr:hover td.selected {
 }
 
 .off:hover .cntrllabel,
+.off:focus .cntrllabel,
 .on .cntrllabel {
   color: #008000;
 }
@@ -248,6 +264,7 @@ tr:hover td.selected {
 }
 
 .off.unit:hover .cntrllabel,
+.off.unit:focus .cntrllabel,
 .on.unit .cntrllabel {
   color: #a52a2a;
 }
@@ -256,6 +273,7 @@ tr:hover td.selected {
 }
 
 .off.status:hover .cntrllabel,
+.off.status:focus .cntrllabel,
 .on.status .cntrllabel {
   color: #7c7c1d;
 }
@@ -264,6 +282,7 @@ tr:hover td.selected {
 }
 
 .off.counter:hover .cntrllabel,
+.off.counter:focus .cntrllabel,
 .on.counter .cntrllabel {
   color: #3e3ec3;
 }
@@ -312,11 +331,27 @@ tr:hover td.counter {
   border-left: none;
 }
 .tab.selected {
+  color: #fff;
   background-color: #444;
+  cursor: default;
 }
+.tab:hover,
+.tab:focus {
+  color: #000;
+}
+.tab.selected:hover,
+.tab.selected:focus {
+  color: #fff;
+}
+
+
 button {
   margin-right: 6px;
   background-color: #c0c0c0;
+}
+button.reset:hover,
+button.reset:focus {
+  background-color: #999;
 }
 
 p {

@@ -38,7 +38,7 @@ export default class Dimension extends React.Component {
     return (
       <li>
         <div class={`dimension ${this.state.hide ? "hidcol" : ""} ${this.state.show ? "selected" : ""}`}>
-          <strong onClick={this.showCategories.bind(this)}>
+          <strong tabindex="0" onClick={this.showCategories.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.showCategories(e);}}}>
             <span title={role} className={icon}></span>
             {" "}{title} ({size})
           </strong>

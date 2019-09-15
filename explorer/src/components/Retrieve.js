@@ -98,9 +98,9 @@ export default class Retrieve extends React.Component {
     return (
       <section id="form">
         <div className="select">
-          <span className={this.state.method==="get" ? "selected" : null} data-id="get" onClick={this.handleMethod.bind(this)}>GET</span>
-          <span className={this.state.method==="post" ? "selected" : null} data-id="post" onClick={this.handleMethod.bind(this)}>POST</span>
-          {this.state.method==="get" ? <a onClick={this.loadSample.bind(this)}>Load sample URL</a> : null}
+          <span tabindex={this.state.method==="get" ? null : "0"} className={this.state.method==="get" ? "selected" : null} data-id="get" onClick={this.handleMethod.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.handleMethod(e);}}}>GET</span>
+          <span tabindex={this.state.method==="post" ? null : "0"} className={this.state.method==="post" ? "selected" : null} data-id="post" onClick={this.handleMethod.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.handleMethod(e);}}}>POST</span>
+          {this.state.method==="get" ? <a tabindex="0" onClick={this.loadSample.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.loadSample(e);}}}>Load sample URL</a> : null}
         </div>
         <input type="text" ref="url" placeholder="URL" onKeyPress={this.handleKeyPress.bind(this)} />
         {
@@ -110,7 +110,7 @@ export default class Retrieve extends React.Component {
           null
         }
         <button className="btn btn-primary" onClick={this.submit.bind(this)}>Send</button>
-        <button className="btn" onClick={this.reset.bind(this)}>Reset</button> <div id="version">v. {this.props.version}</div>
+        <button className="btn reset" onClick={this.reset.bind(this)}>Reset</button> <div id="version">v. {this.props.version}</div>
         {getMessage(this.state.status)}
       </section>
     );

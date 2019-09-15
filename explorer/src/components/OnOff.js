@@ -4,8 +4,10 @@ export default class OnOff extends React.Component {
   render() {
     return (
       <div
+        tabindex="0"
         title={`Show ${this.props.text}`}
         onClick={this.props.toggle.bind(this)}
+        onKeyPress={e=>{if(e.key==="Enter"){this.props.toggle(e);}}}
         className={`${this.props.text} ${this.props.checked ? "on" : "off"}`}>
         <span className={`cntrl ${this.props.circle ? "circle" : ""}`}></span>
         {" "}

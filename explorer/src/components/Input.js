@@ -18,8 +18,8 @@ export default class Input extends React.Component {
     return (
       <section>
         <nav>
-          <div className={`tab ${this.state.tab==="retrieve" ? "selected" : ""}`} data-id="retrieve" onClick={this.handleTab.bind(this)}>Retrieve</div>
-          <div className={`tab ${this.state.tab==="paste" ? "selected" : ""}`} data-id="paste" onClick={this.handleTab.bind(this)}>Paste</div>
+          <div tabindex={this.state.tab==="retrieve" ? null : "0"} className={`tab ${this.state.tab==="retrieve" ? "selected" : ""}`} data-id="retrieve" onClick={this.handleTab.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.handleTab(e);}}}>Retrieve</div>
+          <div tabindex={this.state.tab==="paste" ? null : "0"} className={`tab ${this.state.tab==="paste" ? "selected" : ""}`} data-id="paste" onClick={this.handleTab.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.handleTab(e);}}}>Paste</div>
           {" "} some JSON-stat
         </nav>
         {

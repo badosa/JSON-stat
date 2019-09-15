@@ -87,7 +87,9 @@ export default class Categories extends React.Component {
               <li
                 className={ that.state.selected===id ? "selected" : null }
                 key={id}
+                tabindex="0"
                 onClick={that.selectCat.bind(that, id, label)}
+                onKeyPress={e=>{if(e.key==="Enter"){that.selectCat(id, label);}}}
               >{title} {unitText}</li>
             );
           })}
