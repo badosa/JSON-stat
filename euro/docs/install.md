@@ -13,7 +13,7 @@ const euroJSONstat=require("jsonstat-euro");
 ## ECMAScript module
 
 ```js
-import * as EuroJSONstat from "https://unpkg.com/jsonstat/euro/export.mjs";
+import * as EuroJSONstat from "https://unpkg.com/jsonstat-euro@0.1.0/export.mjs";
 ```
 
 ## In the browser
@@ -27,7 +27,7 @@ import * as EuroJSONstat from "https://unpkg.com/jsonstat/euro/export.mjs";
 
 ```html
 <script type="module">
-  import * as EuroJSONstat from "https://unpkg.com/jsonstat/euro/export.mjs";
+  import * as EuroJSONstat from "https://unpkg.com/jsonstat-euro@0.1.0/export.mjs";
 </script>
 ```
 
