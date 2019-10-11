@@ -1,0 +1,20 @@
+{
+	"name"          : "jsonstat-euro",
+	"description"   : "A library to deal with Eurostat's JSON-stat API",
+	"homepage"      : "https://github.com/badosa/JSON-stat/tree/master/eurostat",
+	"keywords"      : ["eurostat", "jsonstat", "stats", "data", "cube", "opendata", "table"],
+	"author"        : {
+		"name": "Xavier Badosa",
+		"url": "https://xavierbadosa.com"
+	},
+	"repository"    : {"type": "git", "url": "https://github.com/badosa/JSON-stat.git"},
+	"main"          : "module.js",
+	"module"				: "export.mjs",
+	"unpkg"					: "eurostat.js",
+	"dependencies": {
+		"jsonstat": "^0.13.9"
+	},
+	"version"       : "0.1.0",
+	"license"       : "Apache-2.0",
+	"files"         : ["module.js", "eurostat.js", "export.mjs", "LICENSE", "README.md"]
+}
