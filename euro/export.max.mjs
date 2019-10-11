@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 /* jshint newcap:false,esversion:8*/
 
-import { JSONstat } from "../export.js";
+import { JSONstat } from "../jsonstat/export.js";
 
 const version="0.1.0";
 
