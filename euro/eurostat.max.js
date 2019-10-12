@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.3 (requires JJT)
+JSON-stat for Eurostat v. 0.1.4 (requires JJT)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -199,12 +199,9 @@ const EuroJSONstat=function(){
     const
       q=JSON.parse(JSON.stringify(query)),
       aHasFilter=hasProp(aquery, "filter"),
-      qHasFilter=hasProp(q, "filter"),
       aHasCategory=
         hasProp(aquery, "label") &&
-        hasProp(aquery.label, "category"),
-      qHasLabel=hasProp(q, "label"),
-      qHasCategory=qHasLabel && hasProp(q.label, "category")
+        hasProp(aquery.label, "category")
     ;
 
     params.forEach(param=>{
@@ -212,7 +209,7 @@ const EuroJSONstat=function(){
         aHasFilter &&
         hasProp(aquery.filter, param)
       ){
-        if(!qHasFilter){
+        if(!hasProp(q, "filter")){
           q.filter={};
         }
 
@@ -223,9 +220,9 @@ const EuroJSONstat=function(){
         aHasCategory &&
         hasProp(aquery.label.category, param)
       ){
-        if(!qHasLabel){
+        if(!hasProp(q, "label")){
           q.label={};
-        }else if(!qHasCategory){
+        }else if(!hasProp(q.label, "category")){
           q.label.category={};
         }
 
@@ -236,8 +233,6 @@ const EuroJSONstat=function(){
     q.class="query";
     return q;
   }
-
-  //Takes a JSONstat ds object and a status id and returns a status label
 
   /**
    * Translates a Eurostat status id into a status label
@@ -425,6 +420,6 @@ const EuroJSONstat=function(){
     //DS transformation functions
     setRole,
 
-    version: "0.1.3"
+    version: "0.1.4"
   };
 }();

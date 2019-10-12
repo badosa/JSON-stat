@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.3 (requires JJT ES6 module) (ES6 module)
+JSON-stat for Eurostat v. 0.1.4 (requires JJT ES6 module) (ES6 module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -24,7 +24,7 @@ permissions and limitations under the License.
 
 import { JSONstat } from "../jsonstat/export.mjs";
 
-const version="0.1.3";
+const version="0.1.4";
 
 /**
  * Safely checks the existance of property f in object q
@@ -189,55 +189,50 @@ function querify(filter){
  * @param {Array} [params] Optional List of parameters to be imported
  * @returns {Object} New query without the specified parameters
  */
-function addParamQuery(query, aquery, params){
-  //Two arguments instead of three
-  if(typeof params==="undefined"){
-    params=Object.keys(aquery);
-    aquery=querify(aquery);
-  }
+ function addParamQuery(query, aquery, params){
+   //Two arguments instead of three
+   if(typeof params==="undefined"){
+     params=Object.keys(aquery);
+     aquery=querify(aquery);
+   }
 
-  const
-    q=JSON.parse(JSON.stringify(query)),
-    aHasFilter=hasProp(aquery, "filter"),
-    qHasFilter=hasProp(q, "filter"),
-    aHasCategory=
-      hasProp(aquery, "label") &&
-      hasProp(aquery.label, "category"),
-    qHasLabel=hasProp(q, "label"),
-    qHasCategory=qHasLabel && hasProp(q.label, "category")
-  ;
+   const
+     q=JSON.parse(JSON.stringify(query)),
+     aHasFilter=hasProp(aquery, "filter"),
+     aHasCategory=
+       hasProp(aquery, "label") &&
+       hasProp(aquery.label, "category")
+   ;
 
-  params.forEach(param=>{
-    if(
-      aHasFilter &&
-      hasProp(aquery.filter, param)
-    ){
-      if(!qHasFilter){
-        q.filter={};
-      }
+   params.forEach(param=>{
+     if(
+       aHasFilter &&
+       hasProp(aquery.filter, param)
+     ){
+       if(!hasProp(q, "filter")){
+         q.filter={};
+       }
 
-      q.filter[param]=aquery.filter[param];
-    }
+       q.filter[param]=aquery.filter[param];
+     }
 
-    if(
-      aHasCategory &&
-      hasProp(aquery.label.category, param)
-    ){
-      if(!qHasLabel){
-        q.label={};
-      }else if(!qHasCategory){
-        q.label.category={};
-      }
+     if(
+       aHasCategory &&
+       hasProp(aquery.label.category, param)
+     ){
+       if(!hasProp(q, "label")){
+         q.label={};
+       }else if(!hasProp(q.label, "category")){
+         q.label.category={};
+       }
 
-      q.label.category[param]=aquery.label.category[param];
-    }
-  });
+       q.label.category[param]=aquery.label.category[param];
+     }
+   });
 
-  q.class="query";
-  return q;
-}
-
-//Takes a JSONstat ds object and a status id and returns a status label
+   q.class="query";
+   return q;
+ }
 
 /**
  * Translates a Eurostat status id into a status label
