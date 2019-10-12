@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.0 (requires JJT ES6 module) (ES6 module)
+JSON-stat for Eurostat v. 0.1.1 (requires JJT ES6 module) (ES6 module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -24,7 +24,7 @@ permissions and limitations under the License.
 
 import { JSONstat } from "../jsonstat/export.js";
 
-const version="0.1.0";
+const version="0.1.1";
 
 /**
  * Safely checks the existance of property f in object q
