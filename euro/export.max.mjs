@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.4 (requires JJT ES6 module) (ES6 module)
+JSON-stat for Eurostat v. 0.1.5 (requires JJT ES6 module) (ES6 module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -24,7 +24,7 @@ permissions and limitations under the License.
 
 import { JSONstat } from "../jsonstat/export.mjs";
 
-const version="0.1.4";
+const version="0.1.5";
 
 /**
  * Safely checks the existance of property f in object q
@@ -294,7 +294,7 @@ const isNode=new Function("try {return this===global;}catch(e){return false;}");
 function fetchDataset(o){
   let goGet;
   if(isNode()){
-    goGet=require('node-fetch');
+    goGet=require('unfetch');
   }else{
     if(typeof fetch!=="function"){//Old browsers (won't happen thanks to polyfill)
       goGet=function(){window.alert("JSONstat for Eurostat: Old browsers are not supported, sorry. Use a polyfill for Fetch and Promise.");};

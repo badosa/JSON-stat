@@ -12,7 +12,8 @@
 	"module"				: "export.mjs",
 	"unpkg"					: "eurostat.js",
 	"dependencies": {
-		"jsonstat": "^0.13.9"
+		"jsonstat": "^0.13.9",
+		"unfetch": "^4.1.0"
 	},
 	"version"       : "0.1.4",
 	"license"       : "Apache-2.0",
