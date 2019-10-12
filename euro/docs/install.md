@@ -13,7 +13,7 @@ const euroJSONstat=require("jsonstat-euro");
 ## ECMAScript module
 
 ```js
-import * as EuroJSONstat from "https://unpkg.com/jsonstat-euro@0.1.0/export.mjs";
+import * as EuroJSONstat from "https://unpkg.com/jsonstat-euro@0.1.2/export.mjs";
 ```
 
 ## In the browser
@@ -22,12 +22,12 @@ import * as EuroJSONstat from "https://unpkg.com/jsonstat-euro@0.1.0/export.mjs"
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/jsonstat@0.13.9/json-stat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsonstat-euro@0.1.0/eurostat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsonstat-euro@0.1.2/eurostat.js"></script>
 ```
 
 ```html
 <script type="module">
-  import * as EuroJSONstat from "https://unpkg.com/jsonstat-euro@0.1.0/export.mjs";
+  import * as EuroJSONstat from "https://unpkg.com/jsonstat-euro@0.1.2/export.mjs";
 </script>
 ```
 
@@ -37,5 +37,5 @@ import * as EuroJSONstat from "https://unpkg.com/jsonstat-euro@0.1.0/export.mjs"
 <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
 <script src="https://unpkg.com/unfetch/polyfill"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsonstat@0.13.9/json-stat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsonstat-euro@0.1.0/eurostat-ie.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsonstat-euro@0.1.2/eurostat-ie.js"></script>
 ```

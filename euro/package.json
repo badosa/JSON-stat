@@ -14,7 +14,7 @@
 	"dependencies": {
 		"jsonstat": "^0.13.9"
 	},
-	"version"       : "0.1.1",
+	"version"       : "0.1.2",
 	"license"       : "Apache-2.0",
-	"files"         : ["module.js", "eurostat.js", "export.mjs", "LICENSE", "README.md"]
+	"files"         : ["module.js", "eurostat.js", "eurostat-ie.js", "export.mjs", "LICENSE", "README.md"]
 }

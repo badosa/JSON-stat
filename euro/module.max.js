@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.1 (requires JJT)  (Nodejs module)
+JSON-stat for Eurostat v. 0.1.2 (requires JJT)  (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -427,7 +427,7 @@ const
       //DS transformation functions
       setRole,
 
-      version: "0.1.1"
+      version: "0.1.2"
     };
   }()
 ;
