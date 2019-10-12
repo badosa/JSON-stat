@@ -13,9 +13,9 @@
 	"unpkg"					: "eurostat.js",
 	"dependencies": {
 		"jsonstat": "^0.13.9",
-		"unfetch": "^4.1.0"
+		"node-fetch": "^2.6.0"
 	},
-	"version"       : "0.1.5",
+	"version"       : "0.1.6",
 	"license"       : "Apache-2.0",
 	"files"         : ["module.js", "eurostat.js", "eurostat-ie.js", "export.mjs", "LICENSE", "README.md"]
 }

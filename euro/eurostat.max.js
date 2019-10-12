@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.5 (requires JJT)
+JSON-stat for Eurostat v. 0.1.6 (requires JJT)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -294,7 +294,7 @@ const EuroJSONstat=function(){
   function fetchDataset(o){
     let goGet;
     if(isNode()){
-      goGet=require('unfetch');
+      goGet=require('node-fetch');
     }else{
       if(typeof fetch!=="function"){//Old browsers (won't happen thanks to polyfill)
         goGet=function(){window.alert("JSONstat for Eurostat: Old browsers are not supported, sorry. Use a polyfill for Fetch and Promise.");};
@@ -420,6 +420,6 @@ const EuroJSONstat=function(){
     //DS transformation functions
     setRole,
 
-    version: "0.1.5"
+    version: "0.1.6"
   };
 }();
