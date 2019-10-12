@@ -9,13 +9,15 @@
 	},
 	"repository"    : {"type": "git", "url": "https://github.com/badosa/JSON-stat.git"},
 	"main"          : "module.js",
+	"module"				: "export.mjs",
+	"unpkg"					: "json-stat.js",
 	"scripts": {
 		"test": "node nodejs.js"
 	},
 	"dependencies": {},
 	"devDependencies": {},
-	"version"       : "0.13.9",
+	"version"       : "0.13.10",
 	"license"       : "Apache-2.0",
-	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js", "tonicdev.js", "json-stat.js", "export.js", "utils/export.js", "euro/export.js"],
+	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js", "tonicdev.js", "json-stat.js", "export.mjs", "utils/export.mjs", "euro/export.mjs"],
 	"tonicExampleFilename": "tonicdev.js"
 }

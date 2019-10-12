@@ -22,8 +22,7 @@ permissions and limitations under the License.
 //////////////////////////////////////////////////////
 //tbrowser and killconst removed in ES6 module
 
-
-import { JSONstat } from "../export.js";
+import { JSONstat } from "../jsonstat/export.mjs";
 
 const version="2.5.3";
 
