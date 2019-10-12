@@ -16,8 +16,8 @@
 	},
 	"dependencies": {},
 	"devDependencies": {},
-	"version"       : "0.13.10",
+	"version"       : "0.13.11",
 	"license"       : "Apache-2.0",
-	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js", "tonicdev.js", "json-stat.js", "export.mjs", "utils/export.mjs", "euro/export.mjs"],
+	"files"         : ["module.js", "LICENSE", "README.md", "nodejs.js", "tonicdev.js", "json-stat.js", "export.mjs", "utils/export.mjs", "euro/export.mjs", "export.js", "utils/export.js", "euro/export.js"],
 	"tonicExampleFilename": "tonicdev.js"
 }

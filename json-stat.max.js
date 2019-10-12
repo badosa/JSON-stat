@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.10 (JSON-stat v. 2.0 ready)
+JSON-stat Javascript Toolkit v. 0.13.11 (JSON-stat v. 2.0 ready)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -22,7 +22,7 @@ permissions and limitations under the License.
 
 var JSONstat = JSONstat || {};
 
-JSONstat.version="0.13.10";
+JSONstat.version="0.13.11";
 
 /* jshint newcap:false */
 function JSONstat(resp,f,p){
