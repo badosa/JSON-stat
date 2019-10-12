@@ -31,8 +31,8 @@ They are also available from several CDNs ([jsDelivr](https://www.jsdelivr.com/)
 ```
 
 ```html
-<script src="https://unpkg.com/jsonstat/json-stat.js"></script>
-<script src="https://unpkg.com/jsonstat-utils/json-stat.utils.js"></script>
+<script src="https://unpkg.com/jsonstat"></script>
+<script src="https://unpkg.com/jsonstat-utils"></script>
 ```
 
 Or using a particular version:
@@ -43,8 +43,8 @@ Or using a particular version:
 ```
 
 ```html
-<script src="https://unpkg.com/jsonstat@0.13.8/json-stat.js"></script>
-<script src="https://unpkg.com/jsonstat-utils@2.5.1/json-stat.utils.js"></script>
+<script src="https://unpkg.com/jsonstat@0.13.10"></script>
+<script src="https://unpkg.com/jsonstat-utils@2.5.3"></script>
 ```
 
 While the JJT library works on any browser, the JJUS library requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *Array.indexOf*, *trim*, *find*, *findIndex* and *reduce* (*querySelector*, *querySelectorAll* also required for [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)).
@@ -89,16 +89,7 @@ The ECMAScript module is available from several CDNs ([jsDelivr](https://www.jsd
 
 ```html
 <script type="module">
-  import * as JSONstatUtils from "https://unpkg.com/jsonstat/utils/export.js";
-</script>
-```
-
-Using these CDNs you cannot freely choose a version of JJUS: you can only pick a version of JJT (and you will get the JJUS version associated with it).
-
-```html
-<script type="module">
-  import * as JSONstatUtils from "https://cdn.jsdelivr.net/npm/jsonstat@0.13.8/utils/export.js";
-  //You'll get JJUS 2.5.1
+  import * as JSONstatUtils from "https://unpkg.com/jsonstat-utils@2.5.3/export.mjs";
 </script>
 ```
 
