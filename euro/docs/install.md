@@ -7,7 +7,7 @@ npm install jsonstat-euro
 ```
 
 ```js
-const euroJSONstat=require("jsonstat-euro");
+const EuroJSONstat=require("jsonstat-euro");
 ```
 
 ## ECMAScript module
