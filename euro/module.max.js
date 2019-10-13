@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.6 (requires JJT)  (Nodejs module)
+JSON-stat for Eurostat v. 0.1.7 (requires JJT)  (Nodejs module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -384,22 +384,26 @@ const
      * @returns {Object} a fully explicit query on success
      */
     function fetchFullQuery(query, geo){
-      const filter=(typeof geo==="string") ? addParamQuery(query, {geo: [geo]}) : query;
+     const filter=(typeof geo==="string") ?
+       addParamQuery(query, {geo: [geo]})
+       :
+       addParamQuery(query, {filterNonGeo: ["1"]})
+     ;
 
-      return fetchQuery( filter ).then(e=>{
-        if(e.class==="error"){
-          return e;
-        }
+     return fetchQuery( filter ).then(e=>{
+       if(e.class==="error"){
+         return e;
+       }
 
-        return fetchQuery( removeParamQuery(simpleQuery(e), ["time","geo"]) , false).then(
-          t=>{
-            if(t.class==="error"){
-              return t;
-            }
-            return addParamQuery(e,t,["time","geo"]);
-          }
-        );
-      });
+       return fetchQuery( removeParamQuery(simpleQuery(e), ["time", "geo"]) , false).then(
+         t=>{
+           if(t.class==="error"){
+             return t;
+           }
+           return addParamQuery(e,t,["time","geo"]);
+         }
+       );
+     });
     }
 
     return {
@@ -422,7 +426,7 @@ const
       //DS transformation functions
       setRole,
 
-      version: "0.1.6"
+      version: "0.1.7"
     };
   }()
 ;

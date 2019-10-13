@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.6 (requires JJT ES6 module) (ES6 module)
+JSON-stat for Eurostat v. 0.1.7 (requires JJT ES6 module) (ES6 module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -24,7 +24,7 @@ permissions and limitations under the License.
 
 import { JSONstat } from "../jsonstat/export.mjs";
 
-const version="0.1.6";
+const version="0.1.7";
 
 /**
  * Safely checks the existance of property f in object q
@@ -382,14 +382,18 @@ function fetchQuery(query, last){
  * @returns {Object} a fully explicit query on success
  */
 function fetchFullQuery(query, geo){
-  const filter=(typeof geo==="string") ? addParamQuery(query, {geo: [geo]}) : query;
+  const filter=(typeof geo==="string") ?
+    addParamQuery(query, {geo: [geo]})
+    :
+    addParamQuery(query, {filterNonGeo: ["1"]})
+  ;
 
   return fetchQuery( filter ).then(e=>{
     if(e.class==="error"){
       return e;
     }
 
-    return fetchQuery( removeParamQuery(simpleQuery(e), ["time","geo"]) , false).then(
+    return fetchQuery( removeParamQuery(simpleQuery(e), ["time", "geo"]) , false).then(
       t=>{
         if(t.class==="error"){
           return t;
