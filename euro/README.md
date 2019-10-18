@@ -100,7 +100,7 @@ Another special kind of object are filters. The "filter" property of queries are
 }
 ```
 
-Some **Euro**JSON**stat** functions accept filters as parameters. For example, the *addParamQuery* can create a new query from a query and a filter:
+Some **Euro**JSON**stat** functions accept filters as arguments. For example, the *addParamQuery* can create a new query from a query and a filter:
 
 ```js
 EuroJSONstat.addParamQuery(
@@ -158,7 +158,7 @@ EuroJSONstat.fetchDataset(uquery).then(ds=>{
 });
 ```
 
-### Resources
+## Resources
 
 * [Installation](https://github.com/badosa/JSON-stat/blob/master/euro/docs/install.md)
 * [API Reference](https://github.com/badosa/JSON-stat/blob/master/euro/docs/api.md)
