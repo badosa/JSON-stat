@@ -8,6 +8,11 @@ JSON-stat does not provide a single way to describe status symbols. Instead, if 
 
 A design principle of the JSON-stat format is the strict separation of data and metadata in order to allow the use of exactly the same structure for full (data and metadata) responses, data-only responses and metadata-only responses. Unfortunately, Eurostat does not support metadata-only responses (responses without *value* and *status*). **Euro**JSON**stat** offers ways to *try* to avoid this limitation (*fetchFullQuery*). It also includes a function to convert a full explicit query (see later) into a metadata-only dataset instance (*getEmptyDataset*).
 
+* [Queries](#queries)
+* [Filters](#filters)
+* [Sample code](#sample-code)
+* [Resources](#resources)
+
 ## Queries
 
 Queries are a special kind of object used in many **Euro**JSON**stat** functions as an argument (input query) but also as a return value (output query).
