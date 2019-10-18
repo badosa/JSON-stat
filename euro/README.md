@@ -1,6 +1,6 @@
 # JSON-stat for Eurostat
 
-JSON-stat for Eurostat (**Euro**JSON**stat**, for short) is a JavaScript library to deal with Eurostat's [JSON-stat](https://json-stat.org/format/) API (requests and responses). EuroJSONstat is part of the [JSON-stat Toolkit](https://json-stat.com). It is meant to complement, not replace, Eurostat's own set of libraries ([eurostat.js](https://github.com/eurostat/eurostat.js)). While the latter addresses many issues, **Euro**JSON**stat** library is focused on JSON-stat-related ones.
+JSON-stat for Eurostat (**Euro**JSON**stat**, for short) is a JavaScript library to deal with Eurostat's [JSON-stat](https://json-stat.org/format/) API (requests and responses). **Euro**JSON**stat** is part of the [JSON-stat Toolkit](https://json-stat.com). It is meant to complement, not replace, Eurostat's own set of libraries ([eurostat.js](https://github.com/eurostat/eurostat.js)). While the latter addresses many issues, **Euro**JSON**stat** library is focused on JSON-stat-related ones.
 
 For instance, Eurostat does not include roles in its datasets. **Euro**JSON**stat** offers a method to retrieve role-enriched datasets (*fetchDataset*) or allows you to add role information to an already retrieved Eurostat dataset (*setRole*). This is possible because Eurostat uses standardized dimension names.
 
