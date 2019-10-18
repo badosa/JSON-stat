@@ -6,7 +6,7 @@ For instance, Eurostat does not include roles in its datasets. **Euro**JSON**sta
 
 JSON-stat does not provide a single way to describe status symbols. Instead, if offers the [extension](https://json-stat.org/format/#extension) property to allow providers to customize their JSON-stat responses to their needs. Eurostat uses a standardized way to attach a label to each status symbol. **Euro**JSON**stat** offers a method to retrieve such information (*getStatusLabel*).
 
-A design principle of the JSON-stat format is the strict separation of data and metadata in order to allow the use of exactly the same structure for full (data and metadata) responses, data-only responses and metadata-only responses. Unfortunately, Eurostat does not support metadata-only responses (responses without *value* or *status*). **Euro**JSON**stat** offers ways to *try* to avoid this limitation (*fetchFullQuery*). It also includes a function to convert a full explicit query (see later) into a metadata-only dataset instance (*getEmptyDataset*).
+A design principle of the JSON-stat format is the strict separation of data and metadata in order to allow the use of exactly the same structure for full (data and metadata) responses, data-only responses and metadata-only responses. Unfortunately, Eurostat does not support metadata-only responses (responses without *value* and *status*). **Euro**JSON**stat** offers ways to *try* to avoid this limitation (*fetchFullQuery*). It also includes a function to convert a full explicit query (see later) into a metadata-only dataset instance (*getEmptyDataset*).
 
 ## Queries
 
