@@ -1,6 +1,6 @@
 /*
 
-JSON-stat for Eurostat v. 0.1.8 (requires JJT)
+JSON-stat for Eurostat v. 0.1.9 (requires JJT)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/eurostat
 
@@ -26,6 +26,12 @@ permissions and limitations under the License.
 const EuroJSONstat=function(){
   "use strict";
 
+  //Default values for queries
+  const
+    ELANG="en",
+    EVERSION="2.1"
+  ;
+
   /**
    * Safely checks the existance of property f in object q
    * @param {Object} q Object
@@ -47,8 +53,8 @@ const EuroJSONstat=function(){
     if(query.dataset){
       const
         filter=query.filter || null,
-        lang=query.lang || "en",
-        version=query.version || "2.1"
+        lang=query.lang || ELANG,
+        version=query.version || EVERSION
       ;
       let
         url=`${APIbase}v${version}/json/${lang}/${query.dataset}`,
@@ -89,6 +95,8 @@ const EuroJSONstat=function(){
     }
 
     q.class="query";
+    q.lang=query.lang ? query.lang : ELANG;
+    q.version=query.version ? query.version : EVERSION;
     return q;
   }
 
@@ -121,6 +129,8 @@ const EuroJSONstat=function(){
     }
 
     q.class="query";
+    q.lang=query.lang ? query.lang : ELANG;
+    q.version=query.version ? query.version : EVERSION;
     return q;
   }
 
@@ -155,6 +165,8 @@ const EuroJSONstat=function(){
     });
 
     q.class="query";
+    q.lang=query.lang ? query.lang : ELANG;
+    q.version=query.version ? query.version : EVERSION;
     return q;
   }
 
@@ -171,13 +183,17 @@ const EuroJSONstat=function(){
   /**
    * Transforms a filter into a query
    * @param {Object} filter Querifiable object (ex. { "geo": ["AT"]} })
+   * @param {string} [lang] Eurostat's API language
+   * @param {string} [version] Eurostat API version
    * @returns {Object} Dummy query (no dataset) for transformation purposes
    */
-  function querify(filter){
+  function querify(filter, lang, version){
     return {
       class: "query",
       dataset: null,
-      filter
+      filter,
+      lang: lang || ELANG,
+      version: version || EVERSION
     };
   }
 
@@ -186,8 +202,8 @@ const EuroJSONstat=function(){
    * or from a filter (ex. { "geo": ["AT"]} })
    * @param {Object} query Original query
    * @param {Object|Array} aquery New query or a filter (see querify())
-   * @param {Array} [params] Optional List of parameters to be imported
-   * @returns {Object} New query without the specified parameters
+   * @param {Array} [params] List of parameters to be imported
+   * @returns {Object} New query created from two queries
    */
   function addParamQuery(query, aquery, params){
     //Two arguments instead of three
@@ -231,6 +247,8 @@ const EuroJSONstat=function(){
     });
 
     q.class="query";
+    q.lang=query.lang ? query.lang : ELANG;
+    q.version=query.version ? query.version : EVERSION;
     return q;
   }
 
@@ -297,7 +315,11 @@ const EuroJSONstat=function(){
       };
 
       query.filter[i].forEach((c,p)=>{
-        Object.defineProperty(dimension[i].category.label, c, { value: query.label.category[i][p] });
+        Object.defineProperty(
+          dimension[i].category.label,
+          c,
+          { value: query.label.category[i][p] }
+        );
       });
     });
 
@@ -305,6 +327,7 @@ const EuroJSONstat=function(){
       js={
         version: "2.0",
         class: "dataset",
+        //href: getURL(query), Eurostat does not support valueless dataset requests
         label: query.label.dataset,
         id,
         size,
@@ -377,7 +400,7 @@ const EuroJSONstat=function(){
    * Converts (async) an implicit query into an explicit one
    * by fetching a dataset
    * @param {Object} query Implicit query
-   * @param {boolean} [last] true to retrieve all time (instead of last cat.)
+   * @param {boolean} [last] true (def.) to retrieve only the last time period
    * @returns {Object} an explicit query on success
    */
   function fetchQuery(query, last){
@@ -403,6 +426,7 @@ const EuroJSONstat=function(){
         });
 
         return {
+          class: "query",
           dataset: q.dataset,
           filter,
           label: {
@@ -410,7 +434,9 @@ const EuroJSONstat=function(){
             //not very useful in the case of present Eurostat API: label=id
             dimension,
             category
-          }
+          },
+          lang: q.lang || ELANG,
+          version: q.version || EVERSION
         };
       })
     ;
@@ -467,6 +493,6 @@ const EuroJSONstat=function(){
     //DS transformation functions
     setRole,
 
-    version: "0.1.8"
+    version: "0.1.9"
   };
 }();
