@@ -1,5 +1,5 @@
 /*
-JSON-stat Javascript Utilities Suite v. 2.5.3 (requires JJT ES6 module) (ES6 module)
+JSON-stat Javascript Utilities Suite v. 2.5.4 (requires JJT ES6 module) (ES6 module)
 
 https://json-stat.com
 
@@ -25,7 +25,7 @@ permissions and limitations under the License.
 
 import { JSONstat } from "../export.js";
 
-const version="2.5.3";
+const version="2.5.4";
 
 function datalist(jsonstat, options){
 	if(typeof jsonstat==="undefined"){
