@@ -9,13 +9,13 @@
 	},
 	"repository"    : {"type": "git", "url": "https://github.com/badosa/JSON-stat.git"},
 	"main"          : "module.js",
-	"module"				: "export.mjs",
-	"unpkg"					: "json-stat.utils.js",
+
+	"unpkg"		: "json-stat.utils.js",
 	"dependencies": {
-		"jsonstat": "^0.13.10"
+		"jsonstat": "^0.13.12"
 	},
 	"devDependencies": {},
-	"version"       : "2.5.3",
+	"version"       : "2.5.4",
 	"license"       : "Apache-2.0",
 	"files"         : ["module.js", "LICENSE", "README.md", "json-stat.utils.js", "export.mjs"]
 }
