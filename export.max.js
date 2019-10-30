@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Toolkit v. 0.13.11 (JSON-stat v. 2.0 ready) (ES6 module)
+JSON-stat Javascript Toolkit v. 0.13.12 (JSON-stat v. 2.0 ready) (ES6 module)
 https://json-stat.com
 https://github.com/badosa/JSON-stat
 
@@ -1254,7 +1254,7 @@ jsonstat.prototype.toString=function(){
 	return this.class;
 };
 
-export const version="0.13.11";
+export const version="0.13.12";
 export function JSONstat(resp){
 	return new jsonstat(resp);
 }
