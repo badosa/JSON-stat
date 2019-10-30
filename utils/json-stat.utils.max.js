@@ -1,6 +1,6 @@
 /*
 
-JSON-stat Javascript Utilities Suite v. 2.5.3 (requires JJT 0.10+)
+JSON-stat Javascript Utilities Suite v. 2.5.4 (requires JJT 0.10+)
 https://json-stat.com
 https://github.com/badosa/JSON-stat/tree/master/utils
 
@@ -1517,6 +1517,6 @@ var JSONstatUtils=function(){
 		toCSV: toCSV,
 		join: join,
 		fromSDMX: fromSDMX,
-		version: "2.5.3"
+		version: "2.5.4"
 	};
 }();
