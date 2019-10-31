@@ -23,9 +23,11 @@ export default class Categories extends React.Component {
     if(id===this.state.selected){
       this.setState({ selected: null });
       this.props.filterData(this.props.id, null, null);
+      document.getElementById("alert").innerHTML="Table modified: removed filter by category " + label + ".";
     }else{
       this.setState({ selected: id });
       this.props.filterData(this.props.id, id, label);
+      document.getElementById("alert").innerHTML="Table modified: rows filtered by category " + label + ".";
     }
   }
 
@@ -37,7 +39,7 @@ export default class Categories extends React.Component {
     ;
 
     return (
-      <div className={this.props.show ? "show" : "hidden"}>
+      <div id={this.props.aria} className={this.props.show ? "show" : "hidden"}>
         {
           data.role==="metric"
           &&
@@ -53,11 +55,12 @@ export default class Categories extends React.Component {
             null
         }
         <OnOff
+          aria={`catlist${this.props.aria}`}
           text="id"
           checked={this.state.id}
           toggle={this.toggleId.bind(this)}
         />
-        <ul className="category">
+        <ul className="category" id={`catlist${this.props.aria}`}>
           {data.id.map(function(id,i){
             const
               cat=data.Category(i),
@@ -85,6 +88,8 @@ export default class Categories extends React.Component {
 
             return (
               <li
+                aria-controls="table"
+                title={ that.state.selected===id ? "Deselect this category" : "Select this category" }
                 className={ that.state.selected===id ? "selected" : null }
                 key={id}
                 tabindex="0"

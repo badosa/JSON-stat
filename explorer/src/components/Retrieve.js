@@ -97,20 +97,20 @@ export default class Retrieve extends React.Component {
 
     return (
       <section id="form">
-        <div className="select">
-          <span tabindex={this.state.method==="get" ? null : "0"} className={this.state.method==="get" ? "selected" : null} data-id="get" onClick={this.handleMethod.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.handleMethod(e);}}}>GET</span>
-          <span tabindex={this.state.method==="post" ? null : "0"} className={this.state.method==="post" ? "selected" : null} data-id="post" onClick={this.handleMethod.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.handleMethod(e);}}}>POST</span>
-          {this.state.method==="get" ? <a tabindex="0" onClick={this.loadSample.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.loadSample(e);}}}>Load sample URL</a> : null}
+        <div role="tablist" className="select">
+          <span role="tab" aria-controls={this.state.method==="get" ? null : "form"} tabindex={this.state.method==="get" ? null : "0"} className={this.state.method==="get" ? "selected" : null} data-id="get" onClick={this.handleMethod.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.handleMethod(e);}}}>GET</span>
+          <span role="tab" aria-controls={this.state.method==="post" ? null : "form"} tabindex={this.state.method==="post" ? null : "0"} className={this.state.method==="post" ? "selected" : null} data-id="post" onClick={this.handleMethod.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.handleMethod(e);}}}>POST</span>
+          {this.state.method==="get" ? <a role="button" tabindex="0" onClick={this.loadSample.bind(this)} onKeyPress={e=>{if(e.key==="Enter"){this.loadSample(e);}}}>Load sample URL</a> : null}
         </div>
-        <input type="text" ref="url" placeholder="URL" onKeyPress={this.handleKeyPress.bind(this)} />
+        <input type="text" ref="url" aria-label="URL" autocomplete="off" placeholder="URL" onKeyPress={this.handleKeyPress.bind(this)} />
         {
           method==="post" ?
-            <textarea ref="query" placeholder="JSON query"></textarea>
+            <textarea ref="query" aria-label="JSON query" placeholder="JSON query"></textarea>
           :
           null
         }
-        <button className="btn btn-primary" onClick={this.submit.bind(this)}>Send</button>
-        <button className="btn reset" onClick={this.reset.bind(this)}>Reset</button> <div id="version">v. {this.props.version}</div>
+        <button aria-controls="content" className="btn btn-primary" onClick={this.submit.bind(this)}>Send</button>
+        <button aria-controls="form content" className="btn reset" onClick={this.reset.bind(this)}>Reset</button> <div id="version">v. {this.props.version}</div>
         {getMessage(this.state.status)}
       </section>
     );

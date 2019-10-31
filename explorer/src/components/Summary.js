@@ -6,7 +6,7 @@ export default class Summary extends React.Component {
 
     return (
       <header id="summary">
-        {this.props.label ? <div><strong>{this.props.label}</strong></div> : null}
+        {this.props.label ? <div><h1>{this.props.label}</h1></div> : null}
         <div>{this.props.type}. {
           !this.props.bundle ?
           className.charAt(0).toUpperCase() + className.slice(1) :

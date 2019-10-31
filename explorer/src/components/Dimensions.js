@@ -22,12 +22,13 @@ export default class Dimensions extends React.Component {
         <header>
           Dataset&rsquo;s Dimensions
           <OnOff
+            aria="dimlist"
             text="id"
             checked={this.state.checked}
             toggle={this.toggleId.bind(this)}
           />
         </header>
-        <ul>
+        <ul id="dimlist">
           {data.id.map((dimid,i) => (
             <Dimension
               data={data.Dimension(dimid)}

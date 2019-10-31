@@ -58,18 +58,21 @@ export default class Data extends React.Component {
           <caption>
             {caption}
             <OnOff
+              aria="table"
               text="id"
               checked={this.props.show}
               toggle={this.props.toggleId}
             />
             {unit}
             <OnOff
+              aria="table"
               text="status"
               checked={this.state.status}
               circle={false}
               toggle={this.toggleStatus.bind(this)}
             />
             <OnOff
+              aria="table"
               text="counter"
               checked={this.state.counter}
               circle={false}

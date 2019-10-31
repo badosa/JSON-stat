@@ -11,6 +11,30 @@ body {
   display: none;
 }
 
+.screenreader {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+#skip:focus {
+  top: 10px;
+  left: 340px;
+  padding: 10px;
+  background-color: #ffba66;
+  color: #000;
+  width: auto;
+}
+
+#content {
+  display: block;
+}
+
+h1 {
+  display: inline;
+  font-size: 100%;
+  font-weight: bold;
+}
+
 *:focus {
   outline: 0!important;
 }
@@ -323,7 +347,7 @@ tr:hover td.counter {
   cursor: pointer;
   border-radius: 4px 4px 0 0;
   color: #fff;
-  background-color: #888;
+  background-color: #737373;
   margin-top: 6px;
   margin-left: 4px;
 }
@@ -366,7 +390,7 @@ em {
 #version {
   display: block;
   float: right;
-  color: #999;
+  color: #ccc;
   padding: 6px 0;
 }
 
@@ -381,7 +405,7 @@ em {
   #form {
     border-radius: 0 4px 4px 4px;
   }
-  nav .tab {
+  .tab {
     margin-left: 0;
     margin-right: 4px;
   }
