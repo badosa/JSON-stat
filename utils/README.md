@@ -49,15 +49,15 @@ Or using a particular version:
 
 While the JJT library works on any browser, the JJUS library requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *Array.indexOf*, *trim*, *find*, *findIndex* and *reduce* (*querySelector*, *querySelectorAll* also required for [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)).
 
-To import the JJUS ECMAScript module in your webpage, download the latest versions of [export.js](https://github.com/badosa/JSON-stat/blob/master/export.js) and [utils/export.js](https://github.com/badosa/JSON-stat/blob/master/utils/export.js) and link to your own copy of the JJUS module:
+To import the JJUS ECMAScript module in your webpage, download the latest versions of [export.mjs](https://github.com/badosa/JSON-stat/blob/master/export.mjs) and [utils/export.mjs](https://github.com/badosa/JSON-stat/blob/master/utils/export.mjs) and link to your own copy of the JJUS module:
 
 ```html
 <script type="module">
-  //Asumming JJT export.js is at "/your-js-dir/"
-  import * as JSONstatUtils from "/your-js-dir/utils/export.js";
+  //Asumming JJT export.mjs is at "/your-js-dir/"
+  import * as JSONstatUtils from "/your-js-dir/utils/export.mjs";
 
   //Or importing only a particular function instead of the whole module:
-  //import { fromSDMX } from "/your-js-dir/utils/export.js";
+  //import { fromSDMX } from "/your-js-dir/utils/export.mjs";
 </script>
 ```
 
@@ -65,7 +65,7 @@ Because the JJUS module requires the JJT module, you don't need to import JJT wh
 
 ```html
 <script type="module">
-  import * as JSONstatUtils from "/your-js-dir/utils/export.js";
+  import * as JSONstatUtils from "/your-js-dir/utils/export.mjs";
   let JSONstat=JSONstatUtils.JSONstat;
 </script>
 ```
@@ -74,8 +74,8 @@ Or
 
 ```html
 <script type="module">
-  import * as JSONstatUtils from "/your-js-dir/utils/export.js";
-  import { JSONstat } from "/your-js-dir/utils/export.js";
+  import * as JSONstatUtils from "/your-js-dir/utils/export.mjs";
+  import { JSONstat } from "/your-js-dir/utils/export.mjs";
 </script>
 ```
 
@@ -83,13 +83,13 @@ The ECMAScript module is available from several CDNs ([jsDelivr](https://www.jsd
 
 ```html
 <script type="module">
-  import * as JSONstatUtils from "https://cdn.jsdelivr.net/npm/jsonstat@latest/utils/export.js";
+  import * as JSONstatUtils from "https://cdn.jsdelivr.net/npm/jsonstat/utils/export.mjs";
 </script>
 ```
 
 ```html
 <script type="module">
-  import * as JSONstatUtils from "https://unpkg.com/jsonstat-utils@2.5.3/export.mjs";
+  import * as JSONstatUtils from "https://unpkg.com/jsonstat-utils@2.5.4/export.mjs";
 </script>
 ```
 
