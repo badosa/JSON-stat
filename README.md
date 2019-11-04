@@ -78,10 +78,10 @@ It reads a JSON-stat response and returns an object.
 JSONstat( { ... } ).length
 //number of datasets in the object
 
-JSONstat( "http://json-stat.org/samples/oecd-canada-col.json" ).length
+JSONstat( "https://json-stat.org/samples/oecd-canada-col.json" ).length
 //number of items in oecd-canada-col.json. Sync connection. (Not available in the Node.js module.)
 
-JSONstat( "http://json-stat.org/samples/oecd-canada-col.json",
+JSONstat( "https://json-stat.org/samples/oecd-canada-col.json",
    function(){
       console.log( this.length );
    }
