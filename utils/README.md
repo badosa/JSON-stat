@@ -26,8 +26,8 @@ In your webpage, link to your own copies of the json-stat.js and json-stat.utils
 They are also available from several CDNs ([jsDelivr](https://www.jsdelivr.com/), [unpkg](https://unpkg.com/)):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/jsonstat/json-stat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsonstat-utils/json-stat.utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsonstat"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsonstat-utils"></script>
 ```
 
 ```html
@@ -35,16 +35,16 @@ They are also available from several CDNs ([jsDelivr](https://www.jsdelivr.com/)
 <script src="https://unpkg.com/jsonstat-utils"></script>
 ```
 
-Or using a particular version:
+Or using a particular version in production:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/jsonstat@0.13.8/json-stat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsonstat-utils@2.5.1/json-stat.utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsonstat@0.13.13"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsonstat-utils@2.5.5"></script>
 ```
 
 ```html
-<script src="https://unpkg.com/jsonstat@0.13.10"></script>
-<script src="https://unpkg.com/jsonstat-utils@2.5.3"></script>
+<script src="https://unpkg.com/jsonstat@0.13.13"></script>
+<script src="https://unpkg.com/jsonstat-utils@2.5.5"></script>
 ```
 
 While the JJT library works on any browser, the JJUS library requires a modern one. If you need to support very old browsers, provide polyfills for *forEach*, *Array.indexOf*, *trim*, *find*, *findIndex* and *reduce* (*querySelector*, *querySelectorAll* also required for [tbrowser()](https://github.com/badosa/JSON-stat/blob/master/utils/tbrowser.md)).
@@ -83,13 +83,13 @@ The ECMAScript module is available from several CDNs ([jsDelivr](https://www.jsd
 
 ```html
 <script type="module">
-  import * as JSONstatUtils from "https://cdn.jsdelivr.net/npm/jsonstat/utils/export.mjs";
+  import * as JSONstatUtils from "https://cdn.jsdelivr.net/npm/jsonstat-utils@2.5.5/export.mjs";
 </script>
 ```
 
 ```html
 <script type="module">
-  import * as JSONstatUtils from "https://unpkg.com/jsonstat-utils@2.5.4/export.mjs";
+  import * as JSONstatUtils from "https://unpkg.com/jsonstat-utils@2.5.5/export.mjs";
 </script>
 ```
 

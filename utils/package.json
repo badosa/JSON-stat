@@ -4,18 +4,18 @@
 	"homepage"      : "https://github.com/badosa/JSON-stat/tree/master/utils",
 	"keywords"      : ["util", "jsonstat", "stats", "data", "cube", "opendata", "csv", "table", "join"],
 	"author"        : {
-		"name": "Xavier Badosa",
-		"url": "https://xavierbadosa.com"
+		"name"				: "Xavier Badosa",
+		"url"					: "https://xavierbadosa.com"
 	},
-	"repository"    : {"type": "git", "url": "https://github.com/badosa/JSON-stat.git"},
+	"repository"    : { "type": "git", "url": "https://github.com/badosa/JSON-stat.git" },
 	"main"          : "module.js",
-
-	"unpkg"		: "json-stat.utils.js",
-	"dependencies": {
-		"jsonstat": "^0.13.12"
+	"unpkg"					: "json-stat.utils.js",
+	"jsdelivr"			: "json-stat.utils.js",
+	"dependencies"	: {
+		"jsonstat"		: "^0.13.13"
 	},
 	"devDependencies": {},
-	"version"       : "2.5.4",
+	"version"       : "2.5.5",
 	"license"       : "Apache-2.0",
 	"files"         : ["module.js", "LICENSE", "README.md", "json-stat.utils.js", "export.mjs"]
 }
