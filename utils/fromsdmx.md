@@ -14,6 +14,8 @@ var
 window.alert( ds.class ); //"dataset"
 ```
 
+**fromSDMX() does not support Internet Explorer unless polyfills are provided for [find](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find), [findIndex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex) and [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce).**
+
 ***
 
 ## Parameters
