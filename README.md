@@ -1,3 +1,7 @@
+# Important Notice
+
+This is the repository of JSON-stat Javascript Toolkit version 0 ([**jsonstat** module](https://www.npmjs.com/package/jsonstat)). This repository is frozen and is no longer maintained. JSON-stat Javascript Toolkit version 1 ([**jsonstat-toolkit** module](https://www.npmjs.com/package/jsonstat)) is the current active release and is available in a new repository: https://github.com/jsonstat/toolkit.
+
 # JSON-stat Javascript Toolkit
 
 The [JSON-stat format](https://json-stat.org/format/) is a simple lightweight JSON format for data dissemination. It is based in a cube model that arises from the evidence that the most common form of data dissemination is the tabular form. In this cube model, **datasets** are organized in **dimensions**. Dimensions are organized in **categories**.
