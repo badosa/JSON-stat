@@ -1,3 +1,7 @@
+# Important Notice
+
+This is the repository of JSON-stat Javascript Utilities Suite version 2 or lower ([**jsonstat-utils** module](https://www.npmjs.com/package/jsonstat-utils)). This repository is frozen and is no longer maintained. JSON-stat Javascript Utilities Suite version 3 ([**jsonstat-suite** module](https://www.npmjs.com/package/jsonstat-suite)) is the current active release and is available in a new repository: https://github.com/jsonstat/suite.
+
 # JSON-stat Javascript Utilities Suite (JJUS)
 
 JJUS is a set of high level functions.
