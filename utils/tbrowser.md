@@ -2,7 +2,7 @@
 
 Inserts an interactive table ("table browser") displaying the data of a JSON-stat dataset inside an HTML document element. The JSON-stat input must be of class "dataset", "collection" (and have some embedded dataset) or "bundle". Currently, the JSON-stat dataset to be displayed must have at least two dimensions.
 
-**Warning:** This function are not available in the [JJUS Node.js module](https://www.npmjs.com/package/jsonstat-utils).
+**Warning:** This function is not available in the [JJUS Node.js module](https://www.npmjs.com/package/jsonstat-utils).
 
 **<code>JSONstatUtils.tbrowser ( <i>object</i> or <i>string</i> jsonstat , <i>object</i> element [, <i>object</i> options] )
 </code>**
