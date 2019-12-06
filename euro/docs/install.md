@@ -1,5 +1,7 @@
 # Installation
 
+> This documentation is about the **experimental release** (version 0) of JSON-stat for Eurostat. **DO NOT USE THIS VERSION**, it has been superseded by **version** 1 which has slightly different installation procedures and is available in at a **different repository** ([github.com/jsonstat/euro](https://github.com/jsonstat/euro))..
+
 ## Node.js module
 
 ```
