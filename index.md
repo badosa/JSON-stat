@@ -20,6 +20,8 @@ The JSON-stat Toolkit is a set of tools for the JSON-stat format:
 
 **[JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv)** allows transforming and converting JSON-stat to/from different formats from the command line.
 
-**[JSON-stat Explorer](https://json-stat.com/explorer/)** is a web tool to view the contents of JSON-stat documents.
-
 **[JSON-stat for Eurostat](https://www.npmjs.com/package/jsonstat-euro)** is a JavaScript library to deal with Eurostat's JSON-stat API.
+
+**[JSON-stat Explorer](https://jsonstat.com/explorer/)** is a web tool to view the contents of JSON-stat documents.
+
+**[JSON-stat Subsetter](https://jsonstat.com/subsetter/)** is a web tool to view, filter and export the contents of JSON-stat documents.
