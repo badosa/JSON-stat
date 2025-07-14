@@ -14,9 +14,9 @@ The JSON-stat format is documented at [JSON-stat.org](https://json-stat.org/form
 
 The JSON-stat Toolkit is a set of tools for the JSON-stat format:
 
-**[JSON-stat Javascript Toolkit](https://www.npmjs.com/package/jsonstat)** (JJT) is a library to deal with JSON-stat in JavaScript.
+**[JSON-stat JavaScript Toolkit](https://www.npmjs.com/package/jsonstat)** (JJT) is a library to deal with JSON-stat in JavaScript.
 
-**[JSON-stat Javascript Utilities Suite](https://www.npmjs.com/package/jsonstat-utils)** (JJUS) is a library of high level functions built on top of JJT.
+**[JSON-stat JavaScript Utilities Suite](https://www.npmjs.com/package/jsonstat-utils)** (JJUS) is a library of high level functions built on top of JJT.
 
 **[JSON-stat Command Line Conversion Tools](https://www.npmjs.com/package/jsonstat-conv)** allows transforming and converting JSON-stat to/from different formats from the command line.
 
