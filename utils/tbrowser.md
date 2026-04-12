@@ -148,3 +148,5 @@ It is used to select a dataset when the JSON-stat input is of class "collection"
 ### Return Value
 
 Void.
+
+Full example: [fromCSV() example](https://jsonstat.com/examples/ce3bc50e7b569bef24f8)
