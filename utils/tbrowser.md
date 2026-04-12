@@ -149,4 +149,4 @@ It is used to select a dataset when the JSON-stat input is of class "collection"
 
 Void.
 
-Full example: [fromCSV() example](https://jsonstat.com/examples/ce3bc50e7b569bef24f8)
+Full example: [fromCSV() example](https://jsonstat.com/examples/ce3bc50e7b569bef24f8), [Sequential Dataset Join](https://jsonstat.com/examples/a1fb2b272a1f4a0bba9c041a4cf09078), [Dataset Join by Sex](https://jsonstat.com/examples/e1acf16f8a7ed871cff61d849706c202), [Dataset Join by Concept](https://jsonstat.com/examples/a1fb2b272a1f4a0bba9c041a4cf09078), [Dataset Join by Sex and Concept](https://jsonstat.com/examples/5c788a54b4145d2b4c04dc718112af5d)
