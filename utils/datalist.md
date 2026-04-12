@@ -114,3 +114,5 @@ It is used to select a dataset when the JSON-stat input is of class "collection"
 ### Return Value
 
 It returns an HTML table string. On error it returns *null*.
+
+Full example: [datalist() example](https://jsonstat.com/examples/c34d7392cf9c8cec201e)
