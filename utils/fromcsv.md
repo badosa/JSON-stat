@@ -82,3 +82,5 @@ When *true*, the *status* property in the resulting JSON-stat object, if present
 ### Return Value
 
 It returns an object in the JSON-stat format of class "dataset". This object can be processed by JJT. On error it returns *null*.
+
+Full example: [fromCSV() example](https://jsonstat.com/examples/ce3bc50e7b569bef24f8)
